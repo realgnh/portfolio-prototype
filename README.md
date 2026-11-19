@@ -1,6 +1,6 @@
 # Portfolio prototype
 
-A personal portfolio prototype for a computer science student, built with Vite, React, TypeScript, React Router, and plain CSS. The identity, portrait, school, skills, social and Roblox links, résumé, five projects, and metrics are placeholders. See [IDEAS.md](IDEAS.md) for directions to try when you replace them.
+A personal portfolio prototype for a computer science student, built with Vite, React, TypeScript, React Router, and plain CSS. The identity, school, skills, social and Roblox links, résumé, five projects, and metrics are placeholders. See [IDEAS.md](IDEAS.md) for directions to try when you replace them.
 
 ## Run locally
 
@@ -17,18 +17,18 @@ Open the URL printed by Vite. For a static deployment, publish `dist/` and rewri
 
 ## Replace the content
 
-- **Profile:** Edit [`src/data/site.ts`](src/data/site.ts) for the name, role, hero copy, biography, school, skill stack, email, X, LinkedIn, GitHub, navigation labels, and page metadata. Replace the two game links in `site.about.roblox.games` with published Roblox experience URLs when ready. Update [`Portrait.tsx`](src/components/Portrait.tsx) with your own photo and meaningful alt text.
+- **Profile:** Edit [`src/data/site.ts`](src/data/site.ts) for the name, role, hero copy, biography, school, skill stack, email, X, LinkedIn, GitHub, navigation labels, and page metadata. Social links appear in the contact list in data order, most prominent first. Replace the two game links in `site.about.roblox.games` with published Roblox experience URLs when ready.
 - **Résumé:** Replace [`public/resume.pdf`](public/resume.pdf) with your own PDF. If you rename it, update `site.resume.download.href`.
 - **Projects:** Add or replace one object in [`src/data/projects.ts`](src/data/projects.ts). Use a unique URL-friendly `slug`, an outcome-first `summary`, two or three `metrics` (each with a `value` and `label`), `caseStudy` copy for the problem, role, actions, and outcome, and a `faq` array of question/answer pairs. The work index, route, metadata, and next-project link come from the array. Order the array to control the reading sequence.
 - **Thumbnails:** Choose `steps`, `grid`, `index`, `relay`, or `components` for the project's `thumbnail`; an unrecognized value uses the grid illustration. They are decorative, so the card doesn't depend on them to tell its story. If you add meaningful imagery later, include equivalent alt text.
 
 ## Change fonts and colors
 
-[`src/styles/tokens.css`](src/styles/tokens.css) holds the four font variables, palette, and spacing tokens. Update color tokens in both the default and dark blocks. The light theme is the default unless the visitor's system prefers dark; an explicit toggle choice takes precedence on later visits. When switching typefaces, change the Fontsource packages and imports in [`src/main.tsx`](src/main.tsx), the font preload links in [`index.html`](index.html), and the CSS variables. The prototype loads Latin builds of only the weights and styles it uses; add subsets if your copy needs more glyph coverage.
+[`src/styles/tokens.css`](src/styles/tokens.css) holds the font, palette, and spacing tokens. Each mixed color lists the light endpoint first and the dark endpoint second. The light theme is the default unless the visitor's system prefers dark; an explicit toggle choice takes precedence on later visits. When switching typefaces, change the Fontsource packages and imports in [`src/main.tsx`](src/main.tsx), the font preload links in [`index.html`](index.html), and the CSS variables. The prototype loads Latin builds of only the weights and styles it uses; add subsets if your copy needs more glyph coverage.
 
 ## Motion
 
-The theme toggle covers the viewport with 25 staggered bands in the destination color before applying the palette. Navigation updates immediately while the new content fades in and the active pill slides into place. When the system prefers reduced motion, the theme, route, and card reveals use brief fades, the toggle icons do not spin, and the pill and control feedback are shorter and subtler.
+The theme toggle dissolves between the two rendered palettes with a continuous opacity animation. Without View Transitions, it interpolates the colors in Oklab using eased progress rounded to 0.001 per animation frame. The home glow softens as the visitor scrolls. Navigation updates immediately while the new content fades in and the active pill slides into place. Reduced motion uses a shorter dissolve, removes icon spin, and keeps the route, card, and control feedback brief.
 
 ## Extension points
 
@@ -51,4 +51,4 @@ Playwright covers navigation, keyboard access, metadata, FAQs, the résumé down
 - Home is the personal introduction and now contains About. The old `/about` URL redirects to `/#about`. Roblox development is presented as a side interest rather than as part of the main Work index.
 - The one-page résumé is a placeholder. Case studies are available online under Work; there is no downloadable copy of the portfolio.
 - The framed profile and greyscale palette take cues from Perry Wang; the oversized headline takes a cue from Daniel Sun. The layout, artwork, and copy are original.
-- Contact is email plus placeholder links, repeated in the footer. There is no backend, analytics, CMS, or form submission.
+- Contact puts email first, with placeholder social links below it. There is no backend, analytics, CMS, or form submission.
