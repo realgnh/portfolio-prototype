@@ -102,7 +102,7 @@ test('uses the OS theme first and persists an explicit keyboard toggle', async (
   await expect(page.locator('html')).toHaveAttribute('data-theme', 'light')
 })
 
-test('animates page changes and theme reveals in both directions when motion is allowed', async ({ page }) => {
+test('slides the active tab and fades toward each theme when motion is allowed', async ({ page }) => {
   await page.emulateMedia({ colorScheme: 'dark', reducedMotion: 'no-preference' })
   await page.addInitScript(() => {
     const start = document.startViewTransition.bind(document)
@@ -112,15 +112,39 @@ test('animates page changes and theme reveals in both directions when motion is 
     }
   })
   await page.goto('/')
-  await page.getByRole('navigation').getByRole('link', { name: 'Work' }).click()
+  const nav = page.getByRole('navigation')
+  await expect(nav.getByRole('link', { name: 'Home' })).toHaveAttribute('aria-current', 'page')
+  const indicator = nav.locator('.pill-indicator')
+  const homeX = await indicator.evaluate(el => el.getBoundingClientRect().x)
+  await nav.getByRole('link', { name: 'Work' }).click()
   await expect(page.getByRole('heading', { level: 1 })).toHaveText(site.work.heading)
   await expect(page.locator('html')).toHaveAttribute('data-view-transition-invoked', '')
-  for (const [label, theme] of [[ui.switchToLight, 'light'], [ui.switchToDark, 'dark']]) {
+  await expect.poll(() => indicator.evaluate(el => el.getBoundingClientRect().x)).toBeGreaterThan(homeX + 15)
+  for (const [label, theme, animation] of [
+    [ui.switchToLight, 'light', 'theme-brighten'],
+    [ui.switchToDark, 'dark', 'theme-dim'],
+  ]) {
     await page.getByRole('button', { name: label }).click()
-    await expect(page.locator('html')).toHaveAttribute('data-theme-transition', '')
+    await expect(page.locator('html')).toHaveAttribute('data-theme-transition', theme)
     await expect(page.locator('html')).toHaveAttribute('data-theme', theme)
+    await expect.poll(() => page.evaluate(() => document.getAnimations()
+      .flatMap(item => item instanceof CSSAnimation ? [item.animationName] : []))).toContain(animation)
     await expect(page.locator('html')).not.toHaveAttribute('data-theme-transition')
   }
+})
+
+test('the project index button shimmers on hover and theme switching has a fallback', async ({ page }) => {
+  await page.emulateMedia({ colorScheme: 'light', reducedMotion: 'no-preference' })
+  await page.addInitScript(() => Object.defineProperty(document, 'startViewTransition', { value: undefined }))
+  await page.goto('/')
+  const cta = page.getByRole('link', { name: site.work.browse })
+  await cta.hover()
+  expect((await cta.boundingBox())?.height).toBeGreaterThanOrEqual(50)
+  await expect.poll(() => cta.locator('.cta-shimmer').evaluate(el =>
+    getComputedStyle(el, '::before').animationName)).toBe('button-sweep')
+  await page.getByRole('button', { name: ui.switchToDark }).click()
+  await expect(page.locator('html')).toHaveAttribute('data-theme', 'dark')
+  await expect(page.locator('html')).toHaveAttribute('data-theme-fallback', '')
 })
 
 function luminance(hex: string) {
@@ -171,7 +195,7 @@ for (const width of [360, 768, 1440]) {
       expect(await page.locator('html').evaluate(el => el.scrollWidth)).toBe(width)
       if (evidence) await page.screenshot({ path: join(evidence, `home-${width}-${theme}.png`) })
       if (evidence && width === 1440) {
-        await page.locator('#resume').scrollIntoViewIfNeeded()
+        await page.locator('#stack').evaluate(el => el.scrollIntoView({ block: 'start' }))
         await page.screenshot({ path: join(evidence, `home-details-${width}-${theme}.png`) })
       }
       await page.goto('/work')

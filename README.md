@@ -1,6 +1,6 @@
 # Portfolio prototype
 
-A personal portfolio prototype for a computer science student, built with Vite, React, TypeScript, React Router, and plain CSS. The identity, portrait, school, skills, social URLs, PDFs, five projects, and metrics are placeholders. See [IDEAS.md](IDEAS.md) for directions to try when you replace them.
+A personal portfolio prototype for a computer science student, built with Vite, React, TypeScript, React Router, and plain CSS. The identity, portrait, school, skills, social and Roblox links, résumé, five projects, and metrics are placeholders. See [IDEAS.md](IDEAS.md) for directions to try when you replace them.
 
 ## Run locally
 
@@ -17,8 +17,8 @@ Open the URL printed by Vite. For a static deployment, publish `dist/` and rewri
 
 ## Replace the content
 
-- **Profile:** Edit [`src/data/site.ts`](src/data/site.ts) for the name, role, hero copy, biography, education, skill stack, email, X, LinkedIn, GitHub, navigation labels, and page metadata. Change [`Portrait.tsx`](src/components/Portrait.tsx) once to replace the placeholder on both Home and About, and supply meaningful alt text.
-- **Downloads:** Replace [`public/portfolio.pdf`](public/portfolio.pdf) and [`public/resume.pdf`](public/resume.pdf) with your own PDFs. If you rename either file, update its link in `site.resume.downloads`.
+- **Profile:** Edit [`src/data/site.ts`](src/data/site.ts) for the name, role, hero copy, biography, school, skill stack, email, X, LinkedIn, GitHub, navigation labels, and page metadata. Replace the two game links in `site.about.roblox.games` with published Roblox experience URLs when ready. Update [`Portrait.tsx`](src/components/Portrait.tsx) with your own photo and meaningful alt text.
+- **Résumé:** Replace [`public/resume.pdf`](public/resume.pdf) with your own PDF. If you rename it, update `site.resume.download.href`.
 - **Projects:** Add or replace one object in [`src/data/projects.ts`](src/data/projects.ts). Use a unique URL-friendly `slug`, an outcome-first `summary`, two or three `metrics` (each with a `value` and `label`), `caseStudy` copy for the problem, role, actions, and outcome, and a `faq` array of question/answer pairs. The work index, route, metadata, and next-project link come from the array. Order the array to control the reading sequence.
 - **Thumbnails:** Choose `steps`, `grid`, `index`, `relay`, or `components` for the project's `thumbnail`; an unrecognized value uses the grid illustration. They are decorative, so the card doesn't depend on them to tell its story. If you add meaningful imagery later, include equivalent alt text.
 
@@ -40,11 +40,11 @@ npx playwright install chromium
 npm test
 ```
 
-Playwright covers navigation, keyboard access, metadata, FAQs, PDF downloads, theme persistence and transitions, WCAG AA text contrast, and 360/768/1440px layouts. Set `CHROME_BIN` to use an existing Chromium executable instead. Set `PORTFOLIO_SCREENSHOTS` to an output directory to save the responsive screenshots.
+Playwright covers navigation, keyboard access, metadata, FAQs, the résumé download, theme persistence and transitions, WCAG AA text contrast, and 360/768/1440px layouts. Set `CHROME_BIN` to use an existing Chromium executable instead. Set `PORTFOLIO_SCREENSHOTS` to an output directory to save the responsive screenshots.
 
 ## Assumptions
 
-- Home is the personal introduction, while Work is a separate project index. Case studies belong to Work; the last project links back to the first.
-- Home includes both downloadable files: the portfolio is a short index of the sample projects, while the résumé is a one-page placeholder. Neither contains real credentials or outcomes.
-- The framed profile and restrained charcoal theme take cues from Perry Wang; the warm highlight takes a cue from Daniel Sun. The layout, artwork, and copy are original.
+- Home is the personal introduction and now contains About. The old `/about` URL redirects to `/#about`. Roblox development is presented as a side interest rather than as part of the main Work index.
+- The one-page résumé is a placeholder. Case studies are available online under Work; there is no downloadable copy of the portfolio.
+- The framed profile and greyscale palette take cues from Perry Wang; the oversized headline takes a cue from Daniel Sun. The layout, artwork, and copy are original.
 - Contact is email plus placeholder links, repeated in the footer. There is no backend, analytics, CMS, or form submission.
