@@ -57,7 +57,10 @@ export function Layout() {
         <PillNav />
         <div className="masthead-links">
           {featuredLink && <a href={featuredLink.href}>{featuredLink.label} <span aria-hidden="true">↗</span></a>}
-          <Link to="/#resume">{ui.resume} <span aria-hidden="true">↗</span></Link>
+          <Link className="cta-button masthead-resume" to="/resume">
+            <span className="cta-shimmer" aria-hidden="true" />
+            {ui.resume} <span aria-hidden="true">↗</span>
+          </Link>
         </div>
       </header>
       <main id="main-content" ref={main} tabIndex={-1}>

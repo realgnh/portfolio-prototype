@@ -18,7 +18,7 @@ Open the URL printed by Vite. For a static deployment, publish `dist/` and rewri
 ## Replace the content
 
 - **Profile:** Edit [`src/data/site.ts`](src/data/site.ts) for the name, role, hero copy, biography, school, skill stack, email, X, LinkedIn, GitHub, navigation labels, and page metadata. Social links appear in the contact list in data order, most prominent first.
-- **Résumé:** Replace [`public/resume.pdf`](public/resume.pdf) with your own PDF. If you rename it, update `site.resume.download.href`.
+- **Résumé:** Edit `site.resume.education` and `site.resume.experience` in [`src/data/site.ts`](src/data/site.ts). The `/resume` page reuses the Home skill stack and links to case studies selected by `site.resume.projectSlugs`. Replace [`public/resume.pdf`](public/resume.pdf) with your own PDF. If you rename it, update `site.resume.download.href`.
 - **Projects:** Add or replace one object in [`src/data/projects.ts`](src/data/projects.ts). Use a unique URL-friendly `slug`, an outcome-first `summary`, two or three `metrics` (each with a `value` and `label`), `caseStudy` copy for the problem, actions, and outcome, and a `faq` array of question/answer pairs. Add `xyz: { accomplished, measuredBy, byDoing }` for the Google XYZ statement: “Accomplished X, as measured by Y, by doing Z.” Replace the example measurements with real evidence. The Projects index, case study routes, metadata, and next-project links follow the array's order.
 - **Thumbnails:** Choose `steps`, `grid`, `index`, `relay`, or `components` for the project's `thumbnail`; an unrecognized value uses the grid illustration. They are decorative, so the card doesn't depend on them to tell its story. If you add meaningful imagery later, include equivalent alt text.
 

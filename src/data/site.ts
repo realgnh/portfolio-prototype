@@ -18,11 +18,13 @@ export const site = {
   navItems: [
     { label: 'Home', to: '/' },
     { label: 'Projects', to: '/projects' },
+    { label: 'Resume', to: '/resume' },
     { label: 'Contact', to: '/contact' },
   ],
   pages: {
     home: { title: 'Home', description: 'Alex Morgan’s placeholder computer science portfolio, skill stack, and résumé.' },
     projects: { title: 'Projects', description: 'Five fictional projects with example results for Alex Morgan’s portfolio.' },
+    resume: { title: 'Resume', description: 'Alex Morgan’s sample education, experience, skills, selected projects, and downloadable résumé.' },
     contact: { title: 'Contact', description: 'Placeholder contact details, LinkedIn, and résumé for Alex Morgan.' },
   },
   projects: { heading: 'Projects', caption: 'Fictional projects · Example results', browse: 'See the project index' },
@@ -43,10 +45,22 @@ export const site = {
     ],
   },
   resume: {
-    eyebrow: '03 / Download',
+    homeEyebrow: '03 / Career',
+    eyebrow: 'Sample résumé',
     heading: 'Résumé',
-    intro: 'A one-page résumé with sample education, skills, and contact details.',
+    intro: 'Education, experience, and selected projects in software and applied AI.',
+    viewLabel: 'View résumé',
     download: { label: 'Download résumé', href: '/resume.pdf' },
+    education: [{ program: 'Computer Science', school: 'X university', period: 'Expected 20XX' }],
+    experience: [
+      {
+        role: 'Software engineering intern',
+        organization: 'Example Organization',
+        period: 'Summer 20XX',
+        highlights: ['Prototyped an internal tool and documented how to test and maintain it.'],
+      },
+    ],
+    projectSlugs: ['clearpath-onboarding', 'signal-dashboard', 'index-library'],
   },
   contact: {
     eyebrow: 'Placeholder contact details',

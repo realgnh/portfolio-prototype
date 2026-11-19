@@ -14,7 +14,7 @@ test('keyboard navigation, active sections and metadata follow the route', async
   const nav = page.getByRole('navigation', { name: ui.navigation })
   await expect(nav.getByRole('link', { name: 'Home' })).toHaveAttribute('aria-current', 'page')
 
-  for (const key of ['projects', 'contact'] as const) {
+  for (const key of ['projects', 'resume', 'contact'] as const) {
     const { title, description } = site.pages[key]
     const link = nav.getByRole('link', { name: title })
     await link.focus()
@@ -88,11 +88,12 @@ test('old Work URLs redirect to Projects without losing query strings or anchors
   await expect(page.getByRole('heading', { name: projects[0].title, level: 1 })).toBeVisible()
 })
 
-test('home introduces the owner, links to Projects and includes About and a résumé download', async ({ page }) => {
+test('home introduces the owner, links to Projects and includes About and a résumé shortcut', async ({ page }) => {
   await page.goto('/')
   await expect(page.getByText(site.hero.intro)).toBeVisible()
   const hero = page.locator('.hero')
   await expect(hero.getByRole('img')).toHaveCount(0)
+  await expect(hero.locator('em')).toHaveCSS('font-style', 'normal')
   expect(await hero.locator('.hero-bar > span').first().evaluate(label => getComputedStyle(label, '::before').content)).toBe('none')
   await expect(page.getByRole('heading', { name: site.skills.heading })).toBeVisible()
   for (const group of site.skills.groups) {
@@ -104,8 +105,41 @@ test('home introduces the owner, links to Projects and includes About and a rés
   const about = page.getByRole('region', { name: site.about.heading })
   await expect(about.getByText(site.about.bio, { exact: true })).toBeVisible()
   await expect(about.getByText('Also: Roblox development')).toHaveCount(0)
-  const { label, href } = site.resume.download
+  await expect(page.getByRole('link', { name: site.resume.viewLabel })).toHaveAttribute('href', '/resume')
   await expect(page.getByRole('link', { name: 'Download portfolio' })).toHaveCount(0)
+
+  await page.goto('/about')
+  await expect(page).toHaveURL('/#about')
+  await expect(about.getByRole('heading', { name: site.about.heading })).toBeInViewport()
+})
+
+test('the prominent header shortcut opens the résumé with case studies and a PDF download', async ({ page }) => {
+  await page.goto('/')
+  const shortcut = page.locator('.masthead-links').getByRole('link', { name: ui.resume })
+  const linkedin = page.locator('.masthead-links').getByRole('link', { name: 'LinkedIn' })
+  await expect(shortcut).toBeVisible()
+  const fontSize = (element: Element) => parseFloat(getComputedStyle(element).fontSize)
+  expect(await shortcut.evaluate(fontSize)).toBeGreaterThan(await linkedin.evaluate(fontSize))
+  await shortcut.click()
+  await expect(page).toHaveURL('/resume')
+  await expect(page.getByRole('heading', { level: 1 })).toHaveText(site.resume.heading)
+  for (const { school, program } of site.resume.education) {
+    const education = page.getByRole('region', { name: 'Education' })
+    await expect(education.getByText(school, { exact: false })).toBeVisible()
+    await expect(education.getByRole('heading', { name: program })).toBeVisible()
+  }
+  for (const { role } of site.resume.experience) {
+    await expect(page.getByRole('region', { name: 'Experience' }).getByRole('heading', { name: role })).toBeVisible()
+  }
+  for (const { title } of site.skills.groups) {
+    await expect(page.getByRole('region', { name: 'Skills' }).getByText(title, { exact: true })).toBeVisible()
+  }
+  const selected = page.getByRole('region', { name: 'Selected projects' })
+  await expect(selected.getByRole('link')).toHaveCount(site.resume.projectSlugs.length)
+  for (const project of projects.filter(project => site.resume.projectSlugs.includes(project.slug))) {
+    await expect(selected.getByRole('link', { name: project.title })).toHaveAttribute('href', `/projects/${project.slug}`)
+  }
+  const { label, href } = site.resume.download
   const [download] = await Promise.all([
     page.waitForEvent('download'),
     page.getByRole('link', { name: label }).click(),
@@ -115,10 +149,6 @@ test('home introduces the owner, links to Projects and includes About and a rés
   const response = await page.request.get(href)
   expect(response.headers()['content-type']).toContain('application/pdf')
   expect((await response.body()).subarray(0, 5).toString()).toBe('%PDF-')
-
-  await page.goto('/about')
-  await expect(page).toHaveURL('/#about')
-  await expect(about.getByRole('heading', { name: site.about.heading })).toBeInViewport()
 })
 
 test('the full-width glow softens when scrolling beyond the hero', async ({ page }) => {
@@ -350,7 +380,7 @@ for (const theme of ['light', 'dark'] as const) {
 
 for (const width of [360, 768, 1440]) {
   for (const theme of ['light', 'dark'] as const) {
-    test(`home and case study fit at ${width}px in ${theme}`, async ({ page }) => {
+    test(`home, résumé and case study fit at ${width}px in ${theme}`, async ({ page }) => {
       await page.setViewportSize({ width, height: width === 1440 ? 1000 : 900 })
       await page.emulateMedia({ colorScheme: theme })
       const evidence = process.env.PORTFOLIO_SCREENSHOTS
@@ -362,6 +392,11 @@ for (const width of [360, 768, 1440]) {
         return { height: bounds.height, lineHeight: parseFloat(getComputedStyle(el).lineHeight) }
       })
       expect(heading.height).toBeLessThan(heading.lineHeight * 2.5)
+      const nav = page.getByRole('navigation')
+      await expect(nav.getByRole('link', { name: ui.resume })).toBeInViewport()
+      const bounds = await nav.boundingBox()
+      expect(bounds!.x).toBeGreaterThanOrEqual(0)
+      expect(bounds!.x + bounds!.width).toBeLessThanOrEqual(width)
       expect(await page.locator('html').evaluate(el => el.scrollWidth)).toBe(width)
       if (evidence) await page.screenshot({ path: join(evidence, `home-${width}-${theme}.png`) })
       if (evidence && width === 1440) {
@@ -382,6 +417,9 @@ for (const width of [360, 768, 1440]) {
       if (evidence && width === 1440) {
         await page.screenshot({ path: join(evidence, `case-study-1440-${theme}.png`), fullPage: true })
       }
+      await page.goto('/resume')
+      await expect(page.getByRole('link', { name: site.resume.download.label })).toBeInViewport()
+      expect(await page.locator('html').evaluate(el => el.scrollWidth)).toBe(width)
     })
   }
 }

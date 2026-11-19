@@ -37,14 +37,14 @@ export function Home() {
       </section>
       <section id="resume" className="home-section resume-section shell" aria-labelledby="resume-title">
         <header className="home-section-heading">
-          <p className="eyebrow">{resume.eyebrow}</p>
+          <p className="eyebrow">{resume.homeEyebrow}</p>
           <h2 id="resume-title">{resume.heading}</h2>
           <p>{resume.intro}</p>
         </header>
-        <a className="cta-button" href={resume.download.href} download>
+        <Link className="cta-button" to="/resume">
           <span className="cta-shimmer" aria-hidden="true" />
-          {resume.download.label} <span className="cta-icon" aria-hidden="true">↓</span>
-        </a>
+          {resume.viewLabel} <span className="cta-icon" aria-hidden="true">→</span>
+        </Link>
       </section>
     </>
   )

@@ -1,6 +1,5 @@
 import '@fontsource/inter-tight/latin-400.css'
 import '@fontsource/newsreader/latin-400.css'
-import '@fontsource/newsreader/latin-400-italic.css'
 import '@fontsource/inter-tight/latin-600.css'
 import './styles/tokens.css'
 import './styles/base.css'
@@ -15,6 +14,7 @@ import { Contact } from './pages/Contact'
 import { Home } from './pages/Home'
 import { NotFound } from './pages/NotFound'
 import { Projects } from './pages/Projects'
+import { Resume } from './pages/Resume'
 
 function LegacyProjectsRedirect() {
   const { slug } = useParams()
@@ -32,6 +32,7 @@ const router = createBrowserRouter([
       { path: 'projects/:slug', element: <CaseStudy /> },
       { path: 'work/:slug?', element: <LegacyProjectsRedirect /> },
       { path: 'about', element: <Navigate to="/#about" replace /> },
+      { path: 'resume', element: <Resume /> },
       { path: 'contact', element: <Contact /> },
       { path: '*', element: <NotFound /> },
     ],
