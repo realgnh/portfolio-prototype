@@ -7,7 +7,7 @@ export function Hero() {
     <section className="hero shell" aria-labelledby="intro-title">
       <div className="hero-frame">
         <div className="hero-bar eyebrow">
-          <span>{site.hero.tab}</span>
+          <span>{site.name} / {site.hero.tab}</span>
           <span className="hero-status">{site.hero.status}</span>
         </div>
         <div className="hero-content">

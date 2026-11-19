@@ -2,12 +2,12 @@
 export const site = {
   name: 'Alex Morgan',
   role: 'CS student',
-  tagline: { before: 'Always building.', accent: 'learning', after: '.' },
+  tagline: { before: 'From classwork', accent: 'software', after: '.' },
   hero: {
-    tab: 'ALEX MORGAN / PROFILE',
-    status: 'Student portfolio',
-    secondLine: 'Always ',
-    intro: 'I’m Alex, a computer science student interested in useful software and the small details that make it easier to use.',
+    tab: 'Profile',
+    status: 'CS portfolio',
+    secondLine: 'to useful ',
+    intro: 'I’m Alex, a computer science student exploring software engineering and applied AI. This is where I keep notes on what I build.',
     scroll: 'Explore the stack',
   },
   email: 'alex@example.com',
@@ -43,7 +43,7 @@ export const site = {
   skills: {
     eyebrow: '01 / Tools',
     heading: 'Skill stack',
-    intro: 'An example of how I’d group the tools I’m learning and building with.',
+    intro: 'A working list of tools for software, data, and AI.',
     groups: [
       { title: 'Languages', tools: ['Python', 'TypeScript', 'SQL'] },
       { title: 'Web & data', tools: ['React', 'FastAPI', 'PostgreSQL'] },
