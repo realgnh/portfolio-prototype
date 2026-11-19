@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { ui } from '../data/site'
 
 type Theme = 'dark' | 'light'
@@ -7,15 +7,16 @@ export function ThemeToggle() {
   const [theme, setTheme] = useState<Theme>(
     () => document.documentElement.dataset.theme === 'dark' ? 'dark' : 'light',
   )
+  const choseTheme = useRef(false)
 
   useEffect(() => {
     const preference = window.matchMedia('(prefers-color-scheme: dark)')
     function followSystem(event: MediaQueryListEvent) {
+      if (choseTheme.current) return
       try {
-        if (localStorage.getItem('portfolio-theme')) return
-      } catch {
-        return
-      }
+        const savedTheme = localStorage.getItem('portfolio-theme')
+        if (savedTheme === 'light' || savedTheme === 'dark') return
+      } catch {}
       const next = event.matches ? 'dark' : 'light'
       document.documentElement.dataset.theme = next
       setTheme(next)
@@ -28,6 +29,7 @@ export function ThemeToggle() {
   const label = next === 'light' ? ui.switchToLight : ui.switchToDark
 
   function toggle() {
+    choseTheme.current = true
     document.documentElement.dataset.theme = next
     setTheme(next)
     try {

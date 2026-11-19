@@ -94,7 +94,7 @@
 
 .hero h1 {
   max-width: 100%;
-  font-size: clamp(3.625rem, 8.2vw, 7.1rem);
+  font-size: clamp(3.625rem, 8.2vw, 5.75rem);
   letter-spacing: -0.025em;
   overflow-wrap: anywhere;
 }
