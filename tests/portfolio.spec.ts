@@ -101,7 +101,14 @@ for (const width of [360, 768, 1440]) {
         const bounds = el.getBoundingClientRect()
         return { height: bounds.height, lineHeight: parseFloat(getComputedStyle(el).lineHeight) }
       })
-      if (width === 1440) expect(heading.height).toBeLessThan(heading.lineHeight * 1.5)
+      if (width === 1440) {
+        expect(heading.height).toBeLessThan(heading.lineHeight * 1.5)
+        const support = await page.locator('.hero > p').evaluate(el => ({
+          height: el.getBoundingClientRect().height,
+          lineHeight: parseFloat(getComputedStyle(el).lineHeight),
+        }))
+        expect(support.height).toBeLessThan(support.lineHeight * 1.5)
+      }
       expect(await page.locator('html').evaluate(el => el.scrollWidth)).toBe(width)
       if (evidence) await page.screenshot({ path: join(evidence, `home-${width}-${theme}.png`) })
       await page.goto(`/work/${projects[0].slug}`)

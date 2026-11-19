@@ -109,7 +109,6 @@
 }
 
 .hero > p {
-  max-width: 42rem;
   margin-block-start: 1rem;
   color: var(--text-muted);
   font-size: clamp(1.13rem, 2vw, 1.38rem);
