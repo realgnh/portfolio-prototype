@@ -1,0 +1,33 @@
+:root {
+  color-scheme: light;
+  --font-display: "Bebas Neue", "Arial Narrow", sans-serif;
+  --font-body: "Newsreader", Georgia, serif;
+  --font-accent: "Newsreader", Georgia, serif;
+  --font-ui: "Inter Tight", system-ui, sans-serif;
+
+  --bg: #e6e9ec;
+  --card: #ffffff;
+  --text: #111214;
+  --text-muted: #5a6067;
+  --accent: #b92e20;
+  --rule: #c2c7cc;
+  --thumb: #eef0f2;
+  --thumb-ink: #4e5b67;
+  --nav-shadow: 0 3px 18px #11121414;
+
+  --gutter: clamp(1rem, 4vw, 3rem);
+  --shell: 60rem;
+}
+
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --bg: #16181b;
+  --card: #212428;
+  --text: #f1f2f3;
+  --text-muted: #adb5bd;
+  --accent: #ff8b7a;
+  --rule: #494e55;
+  --thumb: #2b3036;
+  --thumb-ink: #b6c0ca;
+  --nav-shadow: 0 3px 18px #0004;
+}

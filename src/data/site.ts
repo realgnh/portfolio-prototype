@@ -2,7 +2,7 @@
 export const site = {
   name: 'Alex Morgan',
   role: 'Product designer',
-  tagline: { before: 'I make complex things ', accent: 'simple', after: '.' },
+  tagline: { before: 'I make complex products ', accent: 'simple', after: '.' },
   location: 'Brooklyn, NY',
   background: 'Previously at Example Studio',
   email: 'alex@example.com',
@@ -18,7 +18,7 @@ export const site = {
     about: { title: 'About', description: 'Placeholder biography and experience for Alex Morgan.' },
     contact: { title: 'Contact', description: 'Placeholder contact details, LinkedIn, and résumé for Alex Morgan.' },
   },
-  work: { eyebrow: 'Portfolio prototype', heading: 'Selected work', caption: 'Five fictional projects · Example results' },
+  work: { heading: 'Selected work', caption: 'Fictional projects · Example results' },
   about: {
     eyebrow: 'Placeholder biography',
     bio: 'I’m Alex, a product designer who turns complicated workflows into things people can use with confidence. I like to start with the part of the process people work around, then design from there.',
