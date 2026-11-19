@@ -1,4 +1,5 @@
 import { Metadata } from '../components/Metadata'
+import { Portrait } from '../components/Portrait'
 import { ProfileLinks } from '../components/ProfileLinks'
 import { site } from '../data/site'
 
@@ -24,15 +25,7 @@ export function About() {
             </ul>
           </section>
         </div>
-        <figure>
-          <div className="portrait" role="img" aria-label={about.portraitLabel}>
-            <svg aria-hidden="true" viewBox="0 0 100 100" fill="none" stroke="currentColor" strokeWidth="1.35">
-              <circle cx="50" cy="37" r="13" />
-              <path d="M25 78a25 25 0 0 1 50 0H25Z" />
-            </svg>
-          </div>
-          <figcaption className="eyebrow">{about.portraitCaption}</figcaption>
-        </figure>
+        <Portrait />
       </div>
     </article>
   )

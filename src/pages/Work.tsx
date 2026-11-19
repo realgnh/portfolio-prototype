@@ -1,4 +1,3 @@
-import { Hero } from '../components/Hero'
 import { Metadata } from '../components/Metadata'
 import { ProjectCard } from '../components/ProjectCard'
 import { Reveal } from '../components/Reveal'
@@ -10,11 +9,10 @@ export function Work() {
   return (
     <>
       <Metadata {...site.pages.work} />
-      <Hero />
-      <section className="work shell" aria-labelledby="selected-work">
-        <header className="section-index">
-          <h2 id="selected-work">{site.work.heading}</h2>
-          <p>{site.work.caption}</p>
+      <section className="work inner-page shell" aria-labelledby="selected-work">
+        <header className="page-heading">
+          <p className="eyebrow">{site.work.caption}</p>
+          <h1 id="selected-work">{site.work.heading}</h1>
         </header>
         <ul className="project-list">
           {projects.map(project => <Reveal key={project.slug}><ProjectCard project={project} /></Reveal>)}

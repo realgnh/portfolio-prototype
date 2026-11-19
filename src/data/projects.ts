@@ -8,6 +8,7 @@ export type Project = {
   thumbnail: string
   metrics: { value: string; label: string }[]
   caseStudy: { problem: string; role: string; actions: string[]; outcome: string }
+  faq: { question: string; answer: string }[]
 }
 
 // PLACEHOLDERS: All projects, dates, roles, and reported outcomes are fictional.
@@ -18,13 +19,13 @@ export const projects: Project[] = [
     title: 'Clearpath Onboarding',
     summary: 'Raised signup completion by 36% by replacing a sprawling setup flow with three clear steps.',
     year: '2025',
-    role: 'Lead designer',
-    tags: ['Onboarding', 'Product design'],
+    role: 'Full-stack contributor',
+    tags: ['Onboarding', 'TypeScript'],
     thumbnail: 'steps',
     metrics: [{ value: '+36%', label: 'Signup completion' }, { value: '−20%', label: 'Time to first value' }],
     caseStudy: {
       problem: 'New accounts faced seven setup screens before they could try the product. Most could not tell which choices mattered or whether they could change them later.',
-      role: 'I led the flow redesign and partnered with a researcher and two engineers.',
+      role: 'I built the revised flow and worked with the team to define which steps were essential.',
       actions: [
         'Mapped the first session and interviewed people who left during setup.',
         'Moved optional configuration out of signup and tested a three-step prototype.',
@@ -32,14 +33,18 @@ export const projects: Project[] = [
       ],
       outcome: 'In the fictional release, signup completion increased by 36% and time to first value fell by 20%.',
     },
+    faq: [
+      { question: 'What was the main engineering trade-off?', answer: 'Keeping the setup state on the server took more work up front but made it possible to save progress across devices.' },
+      { question: 'What would come next?', answer: 'Test the new flow with keyboard-only users and check completion against the same baseline.' },
+    ],
   },
   {
     slug: 'signal-dashboard',
     title: 'Signal Dashboard',
     summary: 'Cut weekly reporting time by 42% by bringing operational alerts and sources into one view.',
     year: '2024',
-    role: 'Product designer',
-    tags: ['Dashboards', 'Research'],
+    role: 'Frontend contributor',
+    tags: ['Dashboards', 'Data visualization'],
     thumbnail: 'grid',
     metrics: [{ value: '−42%', label: 'Reporting time' }, { value: '+18%', label: 'Issues caught early' }],
     caseStudy: {
@@ -52,14 +57,18 @@ export const projects: Project[] = [
       ],
       outcome: 'In the fictional pilot, weekly reporting took 42% less time and teams caught 18% more issues early.',
     },
+    faq: [
+      { question: 'Where did the data come from?', answer: 'The prototype combined three sample exports. It kept source labels and timestamps beside every alert so operators could verify it.' },
+      { question: 'Why not build real-time streaming?', answer: 'A scheduled refresh covered the reporting workflow. Live updates would have added complexity without helping the pilot answer its main question.' },
+    ],
   },
   {
     slug: 'index-library',
     title: 'Index Library',
     summary: 'Improved first-search success by 28% with clearer categories and a more useful results page.',
     year: '2024',
-    role: 'Design researcher',
-    tags: ['Information architecture', 'Search'],
+    role: 'Search prototype developer',
+    tags: ['Search', 'Information architecture'],
     thumbnail: 'index',
     metrics: [{ value: '+28%', label: 'First-search success' }, { value: '−31%', label: 'Repeat searches' }],
     caseStudy: {
@@ -72,14 +81,18 @@ export const projects: Project[] = [
       ],
       outcome: 'In the fictional usability study, first-search success rose 28% and repeat searches fell 31%.',
     },
+    faq: [
+      { question: 'Did this need AI-powered search?', answer: 'No. The main issue was inconsistent labels. A controlled vocabulary and keyword search made a useful baseline.' },
+      { question: 'How was success measured?', answer: 'Participants tried to find a known item without changing their first query. The numbers are illustrative, not from a real study.' },
+    ],
   },
   {
     slug: 'relay-handoffs',
     title: 'Relay Handoffs',
     summary: 'Reduced missed handoffs by 24% by showing who owned each request and what needed to happen next.',
     year: '2023',
-    role: 'Product designer',
-    tags: ['Workflow', 'Prototyping'],
+    role: 'Full-stack contributor',
+    tags: ['Workflow', 'State modeling'],
     thumbnail: 'relay',
     metrics: [{ value: '−24%', label: 'Missed handoffs' }, { value: '−16%', label: 'Resolution time' }],
     caseStudy: {
@@ -92,14 +105,18 @@ export const projects: Project[] = [
       ],
       outcome: 'In the fictional pilot, missed handoffs fell by 24% and average resolution time dropped by 16%.',
     },
+    faq: [
+      { question: 'How did you model ownership?', answer: 'Each pending request had one owner and one next action. Reassignment created a new event without losing the history.' },
+      { question: 'What was intentionally out of scope?', answer: 'Notifications stayed in the existing channel. The prototype only tested whether clearer ownership reduced missed handoffs.' },
+    ],
   },
   {
     slug: 'common-components',
     title: 'Common Components',
     summary: 'Halved the time needed to prototype recurring screens by making reliable patterns easier to find.',
     year: '2023',
-    role: 'Design systems designer',
-    tags: ['Design systems', 'Documentation'],
+    role: 'Frontend contributor',
+    tags: ['Components', 'Documentation'],
     thumbnail: 'components',
     metrics: [{ value: '−50%', label: 'Prototyping time' }, { value: '+32%', label: 'Component reuse' }],
     caseStudy: {
@@ -112,5 +129,9 @@ export const projects: Project[] = [
       ],
       outcome: 'In the fictional comparison, teams prototyped recurring screens in half the time and component reuse rose by 32%.',
     },
+    faq: [
+      { question: 'What made a pattern worth sharing?', answer: 'It had to recur in at least two workflows and have similar behavior, not just a similar appearance.' },
+      { question: 'How did you handle accessibility?', answer: 'The sample library specified keyboard behavior and focus styles alongside its visible states.' },
+    ],
   },
 ]

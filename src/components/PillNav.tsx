@@ -12,7 +12,7 @@ export function PillNav() {
           key={to}
           to={to}
           viewTransition
-          aria-current={pathname === to || (to === '/' && caseStudy) ? 'page' : undefined}
+          aria-current={pathname === to || (to === '/work' && caseStudy) ? 'page' : undefined}
         >
           {label}
         </Link>

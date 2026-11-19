@@ -10,7 +10,7 @@ export function NotFound() {
         <h1>{ui.notFound.title}</h1>
         <p className="lede">{ui.notFound.description}</p>
       </header>
-      <Link className="action" to="/" viewTransition>{ui.allWork}</Link>
+      <Link className="action" to="/work" viewTransition>{ui.allWork}</Link>
     </section>
   )
 }

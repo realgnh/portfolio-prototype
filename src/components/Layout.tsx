@@ -1,29 +1,36 @@
-import { useEffect, useRef } from 'react'
-import { Outlet, useLocation, useNavigationType } from 'react-router-dom'
-import { ui } from '../data/site'
+import { useLayoutEffect, useRef } from 'react'
+import { Link, Outlet, useLocation, useNavigationType } from 'react-router-dom'
+import { site, ui } from '../data/site'
 import { Footer } from './Footer'
 import { PillNav } from './PillNav'
-import { ProfileLinks } from './ProfileLinks'
 
 export function Layout() {
-  const { pathname } = useLocation()
+  const { pathname, hash } = useLocation()
   const navigationType = useNavigationType()
   const previousPath = useRef(pathname)
   const main = useRef<HTMLElement>(null)
 
-  useEffect(() => {
-    if (previousPath.current === pathname) return
+  useLayoutEffect(() => {
+    const changed = previousPath.current !== pathname
     previousPath.current = pathname
-    main.current?.focus({ preventScroll: true })
-    if (navigationType !== 'POP') window.scrollTo(0, 0)
-  }, [pathname, navigationType])
+    if (changed) main.current?.focus({ preventScroll: true })
+    if (hash) document.getElementById(hash.slice(1))?.scrollIntoView()
+    else if (changed && navigationType !== 'POP') window.scrollTo({ top: 0, behavior: 'instant' })
+  }, [pathname, hash, navigationType])
 
   return (
     <>
       <a className="skip-link" href="#main-content">{ui.skip}</a>
       <header className="masthead">
+        <Link to="/" viewTransition className="wordmark">
+          <span>{site.name}</span>
+          <small>{site.role}</small>
+        </Link>
         <PillNav />
-        <ProfileLinks className="masthead-links" />
+        <div className="masthead-links">
+          <a href={site.socialLinks[0].href}>{site.socialLinks[0].label} <span aria-hidden="true">↗</span></a>
+          <Link to="/#resume" viewTransition>{ui.resume} <span aria-hidden="true">↗</span></Link>
+        </div>
       </header>
       <main id="main-content" ref={main} tabIndex={-1}>
         <Outlet />

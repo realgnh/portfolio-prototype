@@ -17,7 +17,7 @@ export function CaseStudy() {
   return (
     <article className="inner-page shell">
       <Metadata title={project.title} description={`${ui.caseStudy}. ${project.summary}`} />
-      <Link className="action back-link" to="/" viewTransition><span aria-hidden="true">←</span> {ui.allWork}</Link>
+      <Link className="action back-link" to="/work" viewTransition><span aria-hidden="true">←</span> {ui.allWork}</Link>
       <header className="page-heading case-heading">
         <div>
           <p className="eyebrow">{ui.caseStudy} · {project.year}</p>
@@ -33,6 +33,17 @@ export function CaseStudy() {
         <section><h2>{ui.actions}</h2><ul>{actions.map(action => <li key={action}>{action}</li>)}</ul></section>
         <section><h2>{ui.outcome}</h2><p>{outcome}</p><MetricList metrics={project.metrics} /></section>
       </div>
+      <section className="project-faq" aria-labelledby="faq-title">
+        <h2 id="faq-title">{ui.faq}</h2>
+        <div>
+          {project.faq.map(({ question, answer }) => (
+            <details key={question}>
+              <summary>{question}</summary>
+              <p>{answer}</p>
+            </details>
+          ))}
+        </div>
+      </section>
       {next !== project && (
         <Link className="next-project" to={`/work/${next.slug}`} viewTransition>
           <span className="eyebrow">{ui.next}</span>
