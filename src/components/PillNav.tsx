@@ -33,7 +33,6 @@ export function PillNav() {
         <Link
           key={to}
           to={to}
-          viewTransition
           aria-current={activePath === to ? 'page' : undefined}
         >
           <span>{label}</span>

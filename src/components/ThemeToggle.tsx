@@ -1,14 +1,19 @@
 import { useEffect, useRef, useState } from 'react'
-import { flushSync } from 'react-dom'
+import type { CSSProperties } from 'react'
+import { createPortal } from 'react-dom'
 import { ui } from '../data/site'
 
 type Theme = 'dark' | 'light'
+
+const bands = Array.from({ length: 25 }, (_, index) => Math.min(index, 24 - index))
 
 export function ThemeToggle() {
   const [theme, setTheme] = useState<Theme>(
     () => document.documentElement.dataset.theme === 'dark' ? 'dark' : 'light',
   )
+  const [target, setTarget] = useState<Theme | null>(null)
   const choseTheme = useRef(false)
+  const mask = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
     const preference = window.matchMedia('(prefers-color-scheme: dark)')
@@ -26,52 +31,72 @@ export function ThemeToggle() {
     return () => preference.removeEventListener('change', followSystem)
   }, [])
 
-  const next = theme === 'dark' ? 'light' : 'dark'
-  const label = next === 'light' ? ui.switchToLight : ui.switchToDark
+  useEffect(() => {
+    if (!target) return
+    let cancelled = false
+    const animations = mask.current?.getAnimations?.({ subtree: true }) ?? []
+    if (!mask.current?.getAnimations) {
+      const timeout = window.setTimeout(() => {
+        applyTheme(target)
+        setTarget(null)
+      }, 420)
+      return () => window.clearTimeout(timeout)
+    }
+    void Promise.allSettled(animations.map(animation => animation.finished)).then(() => {
+      if (cancelled) return
+      applyTheme(target)
+      setTarget(null)
+    })
+    return () => { cancelled = true }
+  }, [target])
+
+  function applyTheme(next: Theme) {
+    document.documentElement.dataset.theme = next
+    setTheme(next)
+  }
 
   function toggle() {
-    const root = document.documentElement
-    if (root.hasAttribute('data-theme-transition')) return
+    if (target) return
+    const next = theme === 'dark' ? 'light' : 'dark'
     choseTheme.current = true
     try {
       localStorage.setItem('portfolio-theme', next)
-    } catch {
-      // The current theme still works when storage is unavailable.
-    }
-    function applyTheme() {
-      root.dataset.theme = next
-      setTheme(next)
-    }
+    } catch {}
 
     if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
-      applyTheme()
-      return
+      applyTheme(next)
+    } else {
+      setTarget(next)
     }
-    if (!document.startViewTransition) {
-      root.setAttribute('data-theme-fallback', '')
-      applyTheme()
-      return
-    }
-
-    root.dataset.themeTransition = next
-
-    function reset() {
-      root.removeAttribute('data-theme-transition')
-    }
-    const transition = document.startViewTransition(() => flushSync(applyTheme))
-    void transition.finished.then(reset, reset)
   }
 
+  const preview = target ?? theme
+
   return (
-    <button className="theme-toggle" type="button" onClick={toggle} aria-label={label} title={label}>
-      <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
-        {next === 'light' ? (
-          <>
-            <circle cx="12" cy="12" r="4" />
-            <path d="M12 2v2m0 16v2M2 12h2m16 0h2M5 5l1.5 1.5m11 11L19 19M5 19l1.5-1.5m11-11L19 5" />
-          </>
-        ) : <path d="M20.8 15.2A9 9 0 0 1 8.8 3.2a9.1 9.1 0 1 0 12 12Z" />}
-      </svg>
-    </button>
+    <>
+      <button
+        className="theme-toggle"
+        type="button"
+        onClick={toggle}
+        aria-label={ui.darkMode}
+        aria-pressed={theme === 'dark'}
+        data-preview-theme={preview}
+      >
+        <svg className="theme-sun" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
+          <circle cx="12" cy="12" r="4" />
+          <path d="M12 2v2m0 16v2M2 12h2m16 0h2M5 5l1.5 1.5m11 11L19 19M5 19l1.5-1.5m11-11L19 5" />
+        </svg>
+        <svg className="theme-moon" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
+          <path d="M20.8 15.2A9 9 0 0 1 8.8 3.2a9.1 9.1 0 1 0 12 12Z" />
+        </svg>
+        <span className="theme-label" aria-hidden="true">{preview === 'dark' ? ui.lightTheme : ui.darkTheme}</span>
+      </button>
+      {target && createPortal(
+        <div className="theme-mask" data-theme-target={target} ref={mask} aria-hidden="true">
+          {bands.map((delay, index) => <div key={index} style={{ '--i': delay } as CSSProperties} />)}
+        </div>,
+        document.body,
+      )}
+    </>
   )
 }

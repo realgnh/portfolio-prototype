@@ -94,57 +94,76 @@ test('uses the OS theme first and persists an explicit keyboard toggle', async (
   await page.emulateMedia({ colorScheme: 'dark' })
   await page.goto('/')
   await expect(page.locator('html')).toHaveAttribute('data-theme', 'dark')
-  await page.getByRole('button', { name: ui.switchToLight }).focus()
+  const toggle = page.getByRole('button', { name: ui.darkMode })
+  await expect(toggle).toHaveAttribute('aria-pressed', 'true')
+  await toggle.focus()
   await page.keyboard.press('Space')
   await expect(page.locator('html')).toHaveAttribute('data-theme', 'light')
-  await expect(page.locator('html')).not.toHaveAttribute('data-theme-transition')
+  await expect(toggle).toHaveAttribute('aria-pressed', 'false')
+  await expect(page.locator('.theme-mask')).toHaveCount(0)
   await page.reload()
   await expect(page.locator('html')).toHaveAttribute('data-theme', 'light')
 })
 
-test('slides the active tab and fades toward each theme when motion is allowed', async ({ page }) => {
+test('slides the active tab and animates the staggered mask in both theme directions', async ({ page }) => {
   await page.emulateMedia({ colorScheme: 'dark', reducedMotion: 'no-preference' })
-  await page.addInitScript(() => {
-    const start = document.startViewTransition.bind(document)
-    document.startViewTransition = (...args: Parameters<typeof start>) => {
-      document.documentElement.dataset.viewTransitionInvoked = ''
-      return start(...args)
-    }
-  })
   await page.goto('/')
   const nav = page.getByRole('navigation')
   await expect(nav.getByRole('link', { name: 'Home' })).toHaveAttribute('aria-current', 'page')
   const indicator = nav.locator('.pill-indicator')
   const homeX = await indicator.evaluate(el => el.getBoundingClientRect().x)
-  await nav.getByRole('link', { name: 'Work' }).click()
+  const work = nav.getByRole('link', { name: 'Work' })
+  await work.hover()
+  await page.mouse.down()
+  await expect(work).toHaveCSS('scale', '1.04')
+  await expect(work).toHaveCSS('transition-duration', '0.2s, 0s')
+  await page.mouse.up()
+  await expect(page).toHaveURL('/work')
   await expect(page.getByRole('heading', { level: 1 })).toHaveText(site.work.heading)
-  await expect(page.locator('html')).toHaveAttribute('data-view-transition-invoked', '')
+  await expect(page.locator('.route-frame')).toHaveCSS('animation-name', 'route-in')
+  await expect(work).toHaveCSS('transition-duration', '0.2s, 0.18s')
   await expect.poll(() => indicator.evaluate(el => el.getBoundingClientRect().x)).toBeGreaterThan(homeX + 15)
-  for (const [label, theme, animation] of [
-    [ui.switchToLight, 'light', 'theme-brighten'],
-    [ui.switchToDark, 'dark', 'theme-dim'],
-  ]) {
-    await page.getByRole('button', { name: label }).click()
-    await expect(page.locator('html')).toHaveAttribute('data-theme-transition', theme)
+  const toggle = page.getByRole('button', { name: ui.darkMode })
+  await toggle.hover()
+  await expect(toggle.locator('.theme-label')).toHaveCSS('opacity', '1')
+  for (const [theme, previousTheme] of [['light', 'dark'], ['dark', 'light']]) {
+    const mask = page.locator('.theme-mask')
+    const frame = await toggle.evaluate(button => {
+      if (!(button instanceof HTMLButtonElement)) throw new Error('Expected a theme button')
+      button.click()
+      return new Promise<{ theme: string | undefined; delays: number[]; target: string | undefined }>(resolve => {
+        const readMask = () => {
+          const element = document.querySelector<HTMLElement>('.theme-mask')
+          const delays = (element?.getAnimations({ subtree: true }) ?? [])
+            .map(animation => animation.effect?.getTiming().delay ?? -1)
+          resolve({ theme: document.documentElement.dataset.theme, delays, target: element?.dataset.themeTarget })
+        }
+        requestAnimationFrame(() => requestAnimationFrame(readMask))
+      })
+    })
+    expect(frame.target).toBe(theme)
+    expect(frame.theme).toBe(previousTheme)
+    expect(frame.delays).toEqual(Array.from({ length: 25 }, (_, i) => Math.min(i, 24 - i) * 10))
     await expect(page.locator('html')).toHaveAttribute('data-theme', theme)
-    await expect.poll(() => page.evaluate(() => document.getAnimations()
-      .flatMap(item => item instanceof CSSAnimation ? [item.animationName] : []))).toContain(animation)
-    await expect(page.locator('html')).not.toHaveAttribute('data-theme-transition')
+    await expect(mask).toHaveCount(0)
+    await expect(toggle).toHaveAttribute('aria-pressed', String(theme === 'dark'))
+    await expect(toggle.locator(theme === 'dark' ? '.theme-sun' : '.theme-moon')).toHaveCSS('scale', '1')
   }
 })
 
-test('the project index button shimmers on hover and theme switching has a fallback', async ({ page }) => {
+test('the project index button shimmers on hover and the mask works without the Web Animations API', async ({ page }) => {
   await page.emulateMedia({ colorScheme: 'light', reducedMotion: 'no-preference' })
-  await page.addInitScript(() => Object.defineProperty(document, 'startViewTransition', { value: undefined }))
+  await page.addInitScript(() => Object.defineProperty(Element.prototype, 'getAnimations', { value: undefined }))
   await page.goto('/')
   const cta = page.getByRole('link', { name: site.work.browse })
   await cta.hover()
   expect((await cta.boundingBox())?.height).toBeGreaterThanOrEqual(50)
   await expect.poll(() => cta.locator('.cta-shimmer').evaluate(el =>
     getComputedStyle(el, '::before').animationName)).toBe('button-sweep')
-  await page.getByRole('button', { name: ui.switchToDark }).click()
+  await page.getByRole('button', { name: ui.darkMode }).click()
+  await expect(page.locator('.theme-mask')).toHaveAttribute('data-theme-target', 'dark')
   await expect(page.locator('html')).toHaveAttribute('data-theme', 'dark')
-  await expect(page.locator('html')).toHaveAttribute('data-theme-fallback', '')
+  await expect(page.locator('.theme-mask')).toHaveCount(0)
 })
 
 function luminance(hex: string) {

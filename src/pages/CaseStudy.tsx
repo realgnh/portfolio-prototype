@@ -17,7 +17,7 @@ export function CaseStudy() {
   return (
     <article className="inner-page shell">
       <Metadata title={project.title} description={`${ui.caseStudy}. ${project.summary}`} />
-      <Link className="action back-link" to="/work" viewTransition><span aria-hidden="true">←</span> {ui.allWork}</Link>
+      <Link className="action back-link" to="/work"><span aria-hidden="true">←</span> {ui.allWork}</Link>
       <header className="page-heading case-heading">
         <div>
           <p className="eyebrow">{ui.caseStudy} · {project.year}</p>
@@ -45,7 +45,7 @@ export function CaseStudy() {
         </div>
       </section>
       {next !== project && (
-        <Link className="next-project" to={`/work/${next.slug}`} viewTransition>
+        <Link className="next-project" to={`/work/${next.slug}`}>
           <span className="eyebrow">{ui.next}</span>
           <span>{next.title} <span aria-hidden="true">↗</span></span>
         </Link>

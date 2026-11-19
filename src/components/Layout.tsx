@@ -23,14 +23,14 @@ export function Layout() {
     <>
       <a className="skip-link" href="#main-content">{ui.skip}</a>
       <header className="masthead">
-        <Link to="/" viewTransition className="wordmark">
+        <Link to="/" className="wordmark">
           <span>{site.name}</span>
           <small>{site.role}</small>
         </Link>
         <PillNav />
         <div className="masthead-links">
           {featuredLink && <a href={featuredLink.href}>{featuredLink.label} <span aria-hidden="true">↗</span></a>}
-          <Link to="/#resume" viewTransition>{ui.resume} <span aria-hidden="true">↗</span></Link>
+          <Link to="/#resume">{ui.resume} <span aria-hidden="true">↗</span></Link>
         </div>
       </header>
       <main id="main-content" ref={main} tabIndex={-1}>

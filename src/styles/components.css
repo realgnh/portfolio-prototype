@@ -1,7 +1,6 @@
 .masthead {
   position: absolute;
   inset: calc(1rem + env(safe-area-inset-top)) 0 auto;
-  z-index: 2;
   display: grid;
   grid-template-columns: 1fr auto 1fr;
   align-items: center;
@@ -32,6 +31,7 @@
 .pill-nav {
   position: fixed;
   inset: calc(1rem + env(safe-area-inset-top)) auto auto 50%;
+  z-index: 2;
   grid-column: 2;
   display: flex;
   align-items: center;
@@ -56,7 +56,7 @@
   opacity: 0;
   pointer-events: none;
   transform: translateX(var(--tab-left, 0px));
-  transition: transform 300ms cubic-bezier(.2, .8, .25, 1), width 300ms cubic-bezier(.2, .8, .25, 1), opacity 160ms ease;
+  transition: transform 240ms cubic-bezier(.2, .8, .25, 1), width 240ms cubic-bezier(.2, .8, .25, 1), opacity 160ms ease;
 }
 
 .pill-nav:has([aria-current="page"]) .pill-indicator {
@@ -83,13 +83,13 @@
   min-height: 2.3rem;
   place-items: center;
   border-radius: 99rem;
-  transition: color 170ms ease, background-color 170ms ease, transform 170ms ease;
 }
 
 .pill-nav a {
   padding-inline: clamp(0.58rem, 1.4vw, 0.9rem);
   color: var(--text-muted);
   text-decoration: none;
+  transition: color var(--control-motion), scale var(--press-motion);
 }
 
 .pill-nav a:is(:hover, :focus-visible),
@@ -131,19 +131,91 @@
   width: 2.3rem;
   padding: 0;
   border: 0;
+  outline: 1px solid var(--frame);
+  outline-offset: -1px;
   background: transparent;
   color: var(--text);
   cursor: pointer;
+  transition: outline-width var(--control-motion), outline-color var(--control-motion), background-color var(--control-motion), scale var(--press-motion);
+}
+
+.theme-toggle:is(:hover, :focus-visible) {
+  outline-width: 4px;
+  outline-color: var(--frame);
+}
+
+.theme-toggle:focus-visible {
+  outline-color: var(--accent);
 }
 
 .theme-toggle svg {
+  grid-area: 1 / 1;
   width: 1rem;
   height: 1rem;
-  transition: transform 250ms ease;
+  scale: 1;
+  rotate: 0turn;
+  transition: scale 285ms cubic-bezier(.22, 1, .36, 1), rotate 460ms cubic-bezier(.22, 1, .36, 1), opacity 180ms ease;
 }
 
-.theme-toggle:is(:hover, :focus-visible) svg {
-  transform: rotate(-18deg);
+.theme-toggle[data-preview-theme="dark"] svg {
+  rotate: 1turn;
+}
+
+.theme-toggle[data-preview-theme="light"] .theme-sun,
+.theme-toggle[data-preview-theme="dark"] .theme-moon {
+  scale: 0;
+  opacity: 0;
+}
+
+.theme-label {
+  position: absolute;
+  top: calc(100% + 0.55rem);
+  left: 50%;
+  padding: 0.32rem 0.48rem;
+  border: 1px solid var(--frame);
+  border-radius: 0.3rem;
+  background: var(--card);
+  color: var(--text-muted);
+  font: 400 0.62rem/1 var(--font-meta);
+  letter-spacing: 0.065em;
+  text-transform: uppercase;
+  pointer-events: none;
+  opacity: 0;
+  transform: translate(-50%, -0.3rem);
+  transition: transform 200ms cubic-bezier(.22, 1, .36, 1), opacity 170ms ease;
+}
+
+.theme-toggle:is(:hover, :focus-visible) .theme-label {
+  opacity: 1;
+  transform: translate(-50%, 0);
+}
+
+.theme-mask {
+  position: fixed;
+  z-index: 1;
+  inset: 0;
+  display: grid;
+  grid-template-rows: repeat(25, minmax(0, 1fr));
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.theme-mask[data-theme-target="light"] {
+  --mask-color: var(--theme-light-bg);
+}
+
+.theme-mask[data-theme-target="dark"] {
+  --mask-color: var(--theme-dark-bg);
+}
+
+.theme-mask > div {
+  background: var(--mask-color);
+  animation: theme-band-in 300ms cubic-bezier(.45, 0, .55, 1) calc(var(--i) * 10ms) both;
+}
+
+@keyframes theme-band-in {
+  from { transform: scale(0); }
+  to { transform: scale(1.25); }
 }
 
 .masthead-links,
@@ -259,6 +331,7 @@
   color: var(--text-muted);
   font: 400 0.72rem/1.2 var(--font-meta);
   text-decoration: none;
+  transition: color var(--control-motion), scale var(--press-motion);
 }
 
 .hero-scroll > span {
@@ -271,7 +344,7 @@
   transition: transform 180ms ease, background-color 180ms ease;
 }
 
-.hero-scroll:hover > span {
+.hero-scroll:is(:hover, :focus-visible) > span {
   transform: translateY(3px);
   background: var(--press);
 }
@@ -370,7 +443,7 @@
   color: var(--cta-ink);
   font: 600 0.9rem/1.3 var(--font-ui);
   text-decoration: none;
-  transition: transform 180ms ease, box-shadow 180ms ease;
+  transition: transform var(--control-motion), box-shadow var(--control-motion), scale var(--press-motion);
 }
 
 .cta-primary {
@@ -439,12 +512,11 @@
   transform: translate(2px, -2px);
 }
 
-.pill-nav a:active,
-.theme-toggle:active,
-.cta-button:active,
-.action:active,
-.hero-scroll:active {
-  transform: scale(0.96);
+@media (prefers-reduced-motion: no-preference) {
+  :is(.pill-nav a, .theme-toggle, .cta-button, .action, .hero-scroll, .project-faq summary, .next-project):active {
+    --press-motion: 0ms;
+    scale: 1.04;
+  }
 }
 
 .eyebrow,
@@ -535,14 +607,14 @@
   min-height: 1.9rem;
   color: var(--accent);
   font: 600 0.875rem/1.2 var(--font-ui);
-  transition: transform 170ms ease;
+  transition: color var(--control-motion), scale var(--press-motion);
 }
 
 .action > span {
   transition: transform 170ms ease;
 }
 
-.action:hover > span {
+.action:is(:hover, :focus-visible) > span {
   transform: translate(2px, -2px);
 }
 
@@ -628,7 +700,7 @@
   cursor: pointer;
   list-style: none;
   font-weight: 600;
-  transition: color 170ms ease, transform 170ms ease;
+  transition: color var(--control-motion), scale var(--press-motion);
 }
 
 .project-faq summary::-webkit-details-marker {
@@ -646,12 +718,8 @@
   transform: rotate(45deg);
 }
 
-.project-faq summary:hover {
+.project-faq summary:is(:hover, :focus-visible) {
   color: var(--accent);
-}
-
-.project-faq summary:active {
-  transform: translateY(2px);
 }
 
 .project-faq details + details {
@@ -672,6 +740,7 @@
   font: 600 clamp(1.5rem, 4vw, 2.65rem)/1 var(--font-display);
   letter-spacing: -0.035em;
   text-decoration: none;
+  transition: color var(--control-motion), scale var(--press-motion);
 }
 
 .next-project > span:last-child {

@@ -87,63 +87,12 @@ main:focus {
   overflow: hidden;
 }
 
-main {
-  view-transition-name: page;
-}
-
-::view-transition-old(root),
-::view-transition-new(root) {
-  animation: none;
-}
-
-::view-transition-old(page) {
-  animation: route-out 140ms both ease-out;
-}
-
-::view-transition-new(page) {
-  animation: route-in 280ms 35ms both cubic-bezier(.22, 1, .36, 1);
-}
-
-@supports not (view-transition-name: page) {
-  .route-frame { animation: route-in 260ms both ease-out; }
-}
-
-@keyframes route-out {
-  to { opacity: 0; }
+.route-frame {
+  animation: route-in 225ms cubic-bezier(.22, 1, .36, 1);
 }
 
 @keyframes route-in {
-  from { opacity: 0; transform: translateY(0.5rem); }
-}
-
-[data-theme-transition] main {
-  view-transition-name: none;
-}
-
-[data-theme-transition]::view-transition-old(root),
-[data-theme-transition]::view-transition-new(root) {
-  mix-blend-mode: normal;
-}
-
-[data-theme-transition="light"]::view-transition-new(root) {
-  animation: theme-brighten 430ms cubic-bezier(.35, 0, .2, 1) both;
-}
-
-[data-theme-transition="dark"]::view-transition-old(root) {
-  z-index: 1;
-  animation: theme-dim 430ms cubic-bezier(.35, 0, .2, 1) both;
-}
-
-[data-theme-fallback] :is(body, .hero-frame, .pill-nav, .portrait, .thumbnail) {
-  transition: background-color 380ms ease, color 380ms ease, border-color 380ms ease;
-}
-
-@keyframes theme-brighten {
-  from { opacity: 0; }
-}
-
-@keyframes theme-dim {
-  to { opacity: 0; }
+  from { opacity: 0.6; transform: translateY(0.3rem); }
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -152,9 +101,5 @@ main {
   *, *::before, *::after {
     animation: none !important;
     transition: none !important;
-  }
-
-  ::view-transition-group(*), ::view-transition-old(*), ::view-transition-new(*) {
-    animation: none !important;
   }
 }

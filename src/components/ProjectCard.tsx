@@ -13,7 +13,7 @@ export function ProjectCard({ project }: { project: Project }) {
         <h3>{project.title}</h3>
         <p className="project-summary">{project.summary}</p>
         <MetricList metrics={project.metrics} />
-        <Link to={`/work/${project.slug}`} viewTransition className="action" aria-label={`${ui.readMore}: ${project.title}`}>
+        <Link to={`/work/${project.slug}`} className="action" aria-label={`${ui.readMore}: ${project.title}`}>
           {ui.readMore} <span aria-hidden="true">↗</span>
         </Link>
       </div>

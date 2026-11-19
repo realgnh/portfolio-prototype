@@ -23,7 +23,7 @@ export function Home() {
             </section>
           ))}
         </div>
-        <Link className="cta-button cta-primary" viewTransition to="/work">
+        <Link className="cta-button cta-primary" to="/work">
           <span className="cta-shimmer" aria-hidden="true" />
           {site.work.browse} <span className="cta-icon" aria-hidden="true">↗</span>
         </Link>
