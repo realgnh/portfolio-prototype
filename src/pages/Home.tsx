@@ -23,7 +23,10 @@ export function Home() {
             </section>
           ))}
         </div>
-        <Link className="action" viewTransition to="/work">{site.work.browse} <span aria-hidden="true">↗</span></Link>
+        <Link className="cta-button cta-primary" viewTransition to="/work">
+          <span className="cta-shimmer" aria-hidden="true" />
+          {site.work.browse} <span className="cta-icon" aria-hidden="true">↗</span>
+        </Link>
       </section>
       <section id="about" className="home-section profile-section shell" aria-labelledby="about-title">
         <header className="home-section-heading">
@@ -50,8 +53,9 @@ export function Home() {
           <h2 id="resume-title">{resume.heading}</h2>
           <p>{resume.intro}</p>
         </header>
-        <a className="download-button" href={resume.download.href} download>
-          {resume.download.label} <span aria-hidden="true">↓</span>
+        <a className="cta-button" href={resume.download.href} download>
+          <span className="cta-shimmer" aria-hidden="true" />
+          {resume.download.label} <span className="cta-icon" aria-hidden="true">↓</span>
         </a>
       </section>
     </>

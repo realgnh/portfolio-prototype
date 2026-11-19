@@ -125,17 +125,25 @@ main {
   mix-blend-mode: normal;
 }
 
-[data-theme-transition]::view-transition-new(root) {
-  animation: theme-reveal 470ms cubic-bezier(.22, 1, .36, 1) both;
+[data-theme-transition="light"]::view-transition-new(root) {
+  animation: theme-brighten 430ms cubic-bezier(.35, 0, .2, 1) both;
+}
+
+[data-theme-transition="dark"]::view-transition-old(root) {
+  z-index: 1;
+  animation: theme-dim 430ms cubic-bezier(.35, 0, .2, 1) both;
 }
 
 [data-theme-fallback] :is(body, .hero-frame, .pill-nav, .portrait, .thumbnail) {
-  transition: background-color 250ms ease, color 250ms ease, border-color 250ms ease;
+  transition: background-color 380ms ease, color 380ms ease, border-color 380ms ease;
 }
 
-@keyframes theme-reveal {
-  from { clip-path: circle(0 at var(--switch-x) var(--switch-y)); }
-  to { clip-path: circle(var(--switch-radius) at var(--switch-x) var(--switch-y)); }
+@keyframes theme-brighten {
+  from { opacity: 0; }
+}
+
+@keyframes theme-dim {
+  to { opacity: 0; }
 }
 
 @media (prefers-reduced-motion: reduce) {

@@ -1,5 +1,4 @@
 import { useEffect, useRef, useState } from 'react'
-import type { MouseEvent } from 'react'
 import { flushSync } from 'react-dom'
 import { ui } from '../data/site'
 
@@ -30,7 +29,7 @@ export function ThemeToggle() {
   const next = theme === 'dark' ? 'light' : 'dark'
   const label = next === 'light' ? ui.switchToLight : ui.switchToDark
 
-  function toggle(event: MouseEvent<HTMLButtonElement>) {
+  function toggle() {
     const root = document.documentElement
     if (root.hasAttribute('data-theme-transition')) return
     choseTheme.current = true
@@ -54,18 +53,10 @@ export function ThemeToggle() {
       return
     }
 
-    const { left, top, width, height } = event.currentTarget.getBoundingClientRect()
-    const x = left + width / 2
-    const y = top + height / 2
-    const radius = Math.hypot(Math.max(x, innerWidth - x), Math.max(y, innerHeight - y))
-    root.style.setProperty('--switch-x', `${x}px`)
-    root.style.setProperty('--switch-y', `${y}px`)
-    root.style.setProperty('--switch-radius', `${radius}px`)
-    root.setAttribute('data-theme-transition', '')
+    root.dataset.themeTransition = next
 
     function reset() {
       root.removeAttribute('data-theme-transition')
-      for (const name of ['--switch-x', '--switch-y', '--switch-radius']) root.style.removeProperty(name)
     }
     const transition = document.startViewTransition(() => flushSync(applyTheme))
     void transition.finished.then(reset, reset)
