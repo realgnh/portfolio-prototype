@@ -26,6 +26,10 @@ Open the URL printed by Vite. For a static deployment, publish `dist/` and rewri
 
 [`src/styles/tokens.css`](src/styles/tokens.css) holds the four font variables, palette, and spacing tokens. Update color tokens in both the default and dark blocks. The light theme is the default unless the visitor's system prefers dark; an explicit toggle choice takes precedence on later visits. When switching typefaces, change the Fontsource packages and imports in [`src/main.tsx`](src/main.tsx), the font preload links in [`index.html`](index.html), and the CSS variables. The prototype loads Latin builds of only the weights and styles it uses; add subsets if your copy needs more glyph coverage.
 
+## Motion
+
+The theme toggle covers the viewport with 25 staggered bands in the destination color before applying the palette. Navigation updates immediately while the new content fades in and the active pill slides into place. Reduced motion skips these effects.
+
 ## Extension points
 
 - [`src/pages/Work.tsx`](src/pages/Work.tsx): Filter by tags before rendering the cards.
