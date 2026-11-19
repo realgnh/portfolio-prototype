@@ -116,7 +116,7 @@ test('slides the active tab and animates the staggered mask in both theme direct
   await work.hover()
   await page.mouse.down()
   await expect(work).toHaveCSS('scale', '1.04')
-  await expect(work).toHaveCSS('transition-duration', '0.2s, 0s')
+  await expect(work).toHaveCSS('transition-duration', '0.2s, 0.18s')
   await page.mouse.up()
   await expect(page).toHaveURL('/work')
   await expect(page.getByRole('heading', { level: 1 })).toHaveText(site.work.heading)
@@ -148,6 +148,49 @@ test('slides the active tab and animates the staggered mask in both theme direct
     await expect(mask).toHaveCount(0)
     await expect(toggle).toHaveAttribute('aria-pressed', String(theme === 'dark'))
     await expect(toggle.locator(theme === 'dark' ? '.theme-sun' : '.theme-moon')).toHaveCSS('scale', '1')
+  }
+})
+
+test('tabs, the theme toggle, and the main CTA ease into and out of scaling', async ({ page }) => {
+  await page.emulateMedia({ reducedMotion: 'no-preference' })
+  await page.goto('/')
+
+  for (const control of [
+    page.getByRole('link', { name: 'Home', exact: true }),
+    page.getByRole('button', { name: ui.darkMode }),
+    page.getByRole('link', { name: site.work.browse }),
+  ]) {
+    const sampleScale = () => control.evaluate(el => {
+      const transition = el.getAnimations()
+        .find(animation => animation instanceof CSSTransition && animation.transitionProperty === 'scale')
+      if (!transition) throw new Error('Expected an active scale transition')
+      const frames = [0, 30, 60, 90].map(time => {
+        transition.currentTime = time
+        const scale = getComputedStyle(el).scale
+        return scale === 'none' ? 1 : Number(scale)
+      })
+      transition.finish()
+      return frames
+    })
+
+    await control.hover()
+    const hover = await sampleScale()
+    expect(hover).toEqual([...new Set(hover)].sort((a, b) => a - b))
+    expect(hover[0]).toBe(1)
+    expect(hover[3]).toBeLessThan(1.02)
+
+    await page.mouse.down()
+    const press = await sampleScale()
+    expect(press).toEqual([...new Set(press)].sort((a, b) => a - b))
+    expect(press[0]).toBeCloseTo(1.02)
+    expect(press[3]).toBeLessThan(1.04)
+
+    await page.mouse.move(0, 0)
+    await page.mouse.up()
+    const release = await sampleScale()
+    expect(release).toEqual([...new Set(release)].sort((a, b) => b - a))
+    expect(release[0]).toBeCloseTo(1.04)
+    expect(release[3]).toBeGreaterThan(1)
   }
 })
 

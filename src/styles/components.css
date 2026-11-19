@@ -512,9 +512,14 @@
   transform: translate(2px, -2px);
 }
 
+@media (prefers-reduced-motion: no-preference) and (hover: hover) {
+  :is(.pill-nav a, .theme-toggle, .cta-button, .action, .hero-scroll, .project-faq summary, .next-project):hover {
+    scale: 1.02;
+  }
+}
+
 @media (prefers-reduced-motion: no-preference) {
   :is(.pill-nav a, .theme-toggle, .cta-button, .action, .hero-scroll, .project-faq summary, .next-project):active {
-    --press-motion: 0ms;
     scale: 1.04;
   }
 }
