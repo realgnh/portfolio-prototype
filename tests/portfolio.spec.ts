@@ -14,7 +14,7 @@ test('keyboard navigation, active sections and metadata follow the route', async
   const nav = page.getByRole('navigation', { name: ui.navigation })
   await expect(nav.getByRole('link', { name: 'Home' })).toHaveAttribute('aria-current', 'page')
 
-  for (const key of ['work', 'contact'] as const) {
+  for (const key of ['projects', 'contact'] as const) {
     const { title, description } = site.pages[key]
     const link = nav.getByRole('link', { name: title })
     await link.focus()
@@ -31,8 +31,14 @@ test('keyboard navigation, active sections and metadata follow the route', async
   const rows = await contact.getByRole('link').evaluateAll(links => links.map(link => ({
     size: parseFloat(getComputedStyle(link).fontSize),
     top: link.getBoundingClientRect().top,
+    left: link.getBoundingClientRect().left,
+    background: getComputedStyle(link).background,
   })))
   expect(rows).toHaveLength(contactLinks.length)
+  for (const row of rows) {
+    expect(row.left).toBeCloseTo(rows[0].left)
+    expect(row.background).toContain('rgba(0, 0, 0, 0) none')
+  }
   for (let i = 1; i < rows.length; i++) {
     expect(rows[i].top).toBeGreaterThan(rows[i - 1].top)
     expect(rows[i].size).toBeLessThan(rows[i - 1].size)
@@ -45,11 +51,16 @@ test('keyboard navigation, active sections and metadata follow the route', async
 test('every card opens a case study with results and links to the next project', async ({ page }) => {
   for (const [index, project] of projects.entries()) {
     const next = projects[(index + 1) % projects.length]
-    await page.goto('/work')
+    await page.goto('/projects')
     await expect(page.getByRole('article')).toHaveCount(projects.length)
-    await page.getByRole('link', { name: `${ui.readMore}: ${project.title}` }).click()
+    await expect(page.getByRole('link', { name: /read more/i })).toHaveCount(0)
+    await page.getByRole('heading', { name: project.title }).getByRole('link', { name: project.title }).click()
     await expect(page.getByRole('heading', { level: 1 })).toHaveText(project.title)
-    await expect(page.getByRole('navigation').getByRole('link', { name: 'Work' })).toHaveAttribute('aria-current', 'page')
+    await expect(page.getByRole('navigation').getByRole('link', { name: 'Projects' })).toHaveAttribute('aria-current', 'page')
+    const { accomplished, measuredBy, byDoing } = project.xyz
+    await expect(page.getByRole('region', { name: ui.projectXyz })).toContainText(`${accomplished}, as measured by ${measuredBy}, by ${byDoing}.`)
+    await expect(page.getByRole('heading', { name: 'Role', exact: true })).toHaveCount(0)
+    await expect(page.getByText(project.role, { exact: true })).toHaveCount(0)
     await expect(page.getByRole('heading', { name: ui.outcome })).toBeVisible()
     for (const metric of project.metrics) await expect(page.getByText(metric.value, { exact: true })).toBeVisible()
     await expect(page.getByRole('heading', { name: ui.faq })).toBeVisible()
@@ -63,13 +74,21 @@ test('every card opens a case study with results and links to the next project',
       await page.keyboard.press('Enter')
       await expect(response).toBeHidden()
     }
-    await expect(page.getByRole('link', { name: `${ui.next} ${next.title}` })).toHaveAttribute('href', `/work/${next.slug}`)
+    await expect(page.getByRole('link', { name: `${ui.next} ${next.title}` })).toHaveAttribute('href', `/projects/${next.slug}`)
   }
-  await page.goto('/work/not-a-project')
+  await page.goto('/projects/not-a-project')
   await expect(page.getByRole('heading', { level: 1 })).toHaveText(ui.notFound.title)
 })
 
-test('home introduces the owner, links to work and includes About and a résumé download', async ({ page }) => {
+test('old Work URLs redirect to Projects without losing query strings or anchors', async ({ page }) => {
+  await page.goto('/work')
+  await expect(page).toHaveURL('/projects')
+  await page.goto(`/work/${projects[0].slug}?from=bookmark#faq-title`)
+  await expect(page).toHaveURL(`/projects/${projects[0].slug}?from=bookmark#faq-title`)
+  await expect(page.getByRole('heading', { name: projects[0].title, level: 1 })).toBeVisible()
+})
+
+test('home introduces the owner, links to Projects and includes About and a résumé download', async ({ page }) => {
   await page.goto('/')
   await expect(page.getByText(site.hero.intro)).toBeVisible()
   const hero = page.locator('.hero')
@@ -79,13 +98,12 @@ test('home introduces the owner, links to work and includes About and a résumé
   for (const group of site.skills.groups) {
     await expect(page.getByRole('heading', { name: group.title })).toBeVisible()
   }
-  await expect(page.getByRole('link', { name: site.work.browse })).toHaveAttribute('href', '/work')
+  await expect(hero.getByRole('link', { name: 'Explore the stack' })).toHaveCount(0)
+  await expect(page.getByRole('link', { name: site.projects.browse })).toHaveAttribute('href', '/projects')
   await expect(page.getByRole('navigation').getByRole('link', { name: 'About' })).toHaveCount(0)
   const about = page.getByRole('region', { name: site.about.heading })
   await expect(about.getByText(site.about.bio, { exact: true })).toBeVisible()
-  for (const game of site.about.roblox.games) {
-    await expect(about.getByRole('link', { name: game.name })).toHaveAttribute('href', game.href)
-  }
+  await expect(about.getByText('Also: Roblox development')).toHaveCount(0)
   const { label, href } = site.resume.download
   await expect(page.getByRole('link', { name: 'Download portfolio' })).toHaveCount(0)
   const [download] = await Promise.all([
@@ -134,16 +152,16 @@ test('slides the active tab and blends the palette in both theme directions', as
   await expect(nav.getByRole('link', { name: 'Home' })).toHaveAttribute('aria-current', 'page')
   const indicator = nav.locator('.pill-indicator')
   const homeX = await indicator.evaluate(el => el.getBoundingClientRect().x)
-  const work = nav.getByRole('link', { name: 'Work' })
-  await work.hover()
+  const projectsTab = nav.getByRole('link', { name: 'Projects' })
+  await projectsTab.hover()
   await page.mouse.down()
-  await expect(work).toHaveCSS('scale', '1.04')
-  await expect(work).toHaveCSS('transition-duration', '0.2s, 0.18s')
+  await expect(projectsTab).toHaveCSS('scale', '1.04')
+  await expect(projectsTab).toHaveCSS('transition-duration', '0.2s, 0.18s')
   await page.mouse.up()
-  await expect(page).toHaveURL('/work')
-  await expect(page.getByRole('heading', { level: 1 })).toHaveText(site.work.heading)
+  await expect(page).toHaveURL('/projects')
+  await expect(page.getByRole('heading', { level: 1 })).toHaveText(site.projects.heading)
   await expect(page.locator('.route-frame')).toHaveCSS('animation-name', 'route-in')
-  await expect(work).toHaveCSS('transition-duration', '0.2s, 0.18s')
+  await expect(projectsTab).toHaveCSS('transition-duration', '0.2s, 0.18s')
   await expect.poll(() => indicator.evaluate(el => el.getBoundingClientRect().x)).toBeGreaterThan(homeX + 15)
   const toggle = page.getByRole('button', { name: ui.darkMode })
   await toggle.hover()
@@ -185,7 +203,7 @@ test('tabs, the theme toggle, and the main CTA ease into and out of scaling', as
   for (const control of [
     page.getByRole('link', { name: 'Home', exact: true }),
     page.getByRole('button', { name: ui.darkMode }),
-    page.getByRole('link', { name: site.work.browse }),
+    page.getByRole('link', { name: site.projects.browse }),
   ]) {
     const sampleScale = () => control.evaluate(el => {
       const transition = el.getAnimations()
@@ -260,8 +278,8 @@ test.describe('touch preview with reduced motion', () => {
     expect(themeFrame.iconRotation).toBe('0deg')
     await expect(toggle).toHaveAttribute('aria-pressed', 'false')
 
-    await page.getByRole('link', { name: 'Work', exact: true }).tap()
-    await expect(page).toHaveURL('/work')
+    await page.getByRole('link', { name: 'Projects', exact: true }).tap()
+    await expect(page).toHaveURL('/projects')
     await expect(page.locator('.route-frame')).toHaveCSS('animation-name', 'route-fade')
     await expect(page.locator('.pill-indicator')).toHaveCSS('transition-duration', '0.135s, 0.135s, 0.135s')
     const card = page.locator('.reveal').first()
@@ -274,7 +292,7 @@ test('the project index button shimmers and theme colors interpolate without Vie
   await page.emulateMedia({ colorScheme: 'light', reducedMotion: 'no-preference' })
   await page.addInitScript(() => Object.defineProperty(document, 'startViewTransition', { value: undefined }))
   await page.goto('/')
-  const cta = page.getByRole('link', { name: site.work.browse })
+  const cta = page.getByRole('link', { name: site.projects.browse })
   await cta.hover()
   expect((await cta.boundingBox())?.height).toBeGreaterThanOrEqual(50)
   await expect.poll(() => cta.locator('.cta-shimmer').evaluate(el =>
@@ -350,13 +368,15 @@ for (const width of [360, 768, 1440]) {
         await page.locator('#stack').evaluate(el => el.scrollIntoView({ block: 'start' }))
         await page.screenshot({ path: join(evidence, `home-details-${width}-${theme}.png`) })
       }
-      await page.goto('/work')
-      await expect(page.getByRole('heading', { level: 1 })).toHaveText(site.work.heading)
+      await page.goto('/projects')
+      await expect(page.getByRole('heading', { level: 1 })).toHaveText(site.projects.heading)
+      const firstCard = page.getByRole('article').first()
+      expect(await firstCard.evaluate(card => parseFloat(getComputedStyle(card).borderRadius))).toBeGreaterThan(0)
       expect(await page.locator('html').evaluate(el => el.scrollWidth)).toBe(width)
       if (evidence && width === 1440 && theme === 'dark') {
-        await page.screenshot({ path: join(evidence, 'work-1440-dark.png') })
+        await page.screenshot({ path: join(evidence, 'projects-1440-dark.png') })
       }
-      await page.goto(`/work/${projects[0].slug}`)
+      await page.goto(`/projects/${projects[0].slug}`)
       await expect(page.getByRole('heading', { level: 1 })).toHaveText(projects[0].title)
       expect(await page.locator('html').evaluate(el => el.scrollWidth)).toBe(width)
       if (evidence && width === 1440) {

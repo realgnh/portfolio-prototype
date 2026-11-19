@@ -23,29 +23,17 @@ export function Home() {
             </section>
           ))}
         </div>
-        <Link className="cta-button cta-primary" to="/work">
+        <Link className="cta-button cta-primary" to="/projects">
           <span className="cta-shimmer" aria-hidden="true" />
-          {site.work.browse} <span className="cta-icon" aria-hidden="true">↗</span>
+          {site.projects.browse} <span className="cta-icon" aria-hidden="true">↗</span>
         </Link>
       </section>
-      <section id="about" className="home-section profile-section shell" aria-labelledby="about-title">
+      <section id="about" className="home-section shell" aria-labelledby="about-title">
         <header className="home-section-heading">
           <p className="eyebrow">{about.eyebrow}</p>
           <h2 id="about-title">{about.heading}</h2>
           <p>{about.bio}</p>
         </header>
-        <div className="side-projects">
-          <h3>{about.roblox.heading}</h3>
-          <p>{about.roblox.intro}</p>
-          <ul>
-            {about.roblox.games.map(({ name, description, href }) => (
-              <li key={name}>
-                <a href={href}>{name} <span aria-hidden="true">↗</span></a>
-                <p>{description}</p>
-              </li>
-            ))}
-          </ul>
-        </div>
       </section>
       <section id="resume" className="home-section resume-section shell" aria-labelledby="resume-title">
         <header className="home-section-heading">

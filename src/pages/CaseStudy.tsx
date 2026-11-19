@@ -12,24 +12,28 @@ export function CaseStudy() {
   if (index === -1) return <NotFound />
   const project = projects[index]
   const next = projects[(index + 1) % projects.length]
-  const { problem, role, actions, outcome } = project.caseStudy
+  const { problem, actions, outcome } = project.caseStudy
+  const { accomplished, measuredBy, byDoing } = project.xyz
 
   return (
     <article className="inner-page shell">
       <Metadata title={project.title} description={`${ui.caseStudy}. ${project.summary}`} />
-      <Link className="action back-link" to="/work"><span aria-hidden="true">←</span> {ui.allWork}</Link>
+      <Link className="action back-link" to="/projects"><span aria-hidden="true">←</span> {ui.allProjects}</Link>
       <header className="page-heading case-heading">
         <div>
           <p className="eyebrow">{ui.caseStudy} · {project.year}</p>
           <h1>{project.title}</h1>
           <p className="lede">{project.summary}</p>
-          <p className="eyebrow">{[project.role, ...(project.tags ?? [])].join(' · ')}</p>
+          {project.tags?.length ? <p className="eyebrow">{project.tags.join(' · ')}</p> : null}
         </div>
         <Thumbnail variant={project.thumbnail} />
       </header>
+      <section className="project-xyz" aria-labelledby="project-xyz-title">
+        <h2 className="eyebrow" id="project-xyz-title">{ui.projectXyz}</h2>
+        <p>{accomplished}, as measured by <strong>{measuredBy}</strong>, by {byDoing}.</p>
+      </section>
       <div className="case-sections">
         <section><h2>{ui.problem}</h2><p>{problem}</p></section>
-        <section><h2>{ui.role}</h2><p>{role}</p></section>
         <section><h2>{ui.actions}</h2><ul>{actions.map(action => <li key={action}>{action}</li>)}</ul></section>
         <section><h2>{ui.outcome}</h2><p>{outcome}</p><MetricList metrics={project.metrics} /></section>
       </div>
@@ -45,7 +49,7 @@ export function CaseStudy() {
         </div>
       </section>
       {next !== project && (
-        <Link className="next-project" to={`/work/${next.slug}`}>
+        <Link className="next-project" to={`/projects/${next.slug}`}>
           <span className="eyebrow">{ui.next}</span>
           <span>{next.title} <span aria-hidden="true">↗</span></span>
         </Link>

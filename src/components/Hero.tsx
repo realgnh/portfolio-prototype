@@ -38,11 +38,10 @@ export function Hero() {
         </div>
         <div className="hero-content">
           <div className="hero-copy">
-            <h1 id="intro-title">{before}<br />{site.hero.secondLine}<em>{accent}</em>{after}</h1>
+            <h1 id="intro-title">{before}<br />{site.hero.secondLine}<span className="hero-accent"><em>{accent}</em>{after}</span></h1>
             <p>{site.hero.intro}</p>
           </div>
         </div>
-        <a className="hero-scroll" href="#stack"><span aria-hidden="true">↓</span>{site.hero.scroll}</a>
       </div>
     </section>
   )

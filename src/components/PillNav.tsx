@@ -4,10 +4,10 @@ import { site, ui } from '../data/site'
 import { ThemeToggle } from './ThemeToggle'
 
 export function PillNav() {
-  const caseStudy = useMatch('/work/:slug')
+  const projects = useMatch('/projects/*')
   const { pathname } = useLocation()
   const navRef = useRef<HTMLElement>(null)
-  const activePath = caseStudy ? '/work' : pathname
+  const activePath = projects ? '/projects' : pathname
 
   useLayoutEffect(() => {
     const nav = navRef.current

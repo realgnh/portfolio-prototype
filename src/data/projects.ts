@@ -7,7 +7,8 @@ export type Project = {
   tags?: string[]
   thumbnail: string
   metrics: { value: string; label: string }[]
-  caseStudy: { problem: string; role: string; actions: string[]; outcome: string }
+  xyz: { accomplished: string; measuredBy: string; byDoing: string }
+  caseStudy: { problem: string; actions: string[]; outcome: string }
   faq: { question: string; answer: string }[]
 }
 
@@ -23,9 +24,13 @@ export const projects: Project[] = [
     tags: ['Onboarding', 'TypeScript'],
     thumbnail: 'steps',
     metrics: [{ value: '+36%', label: 'Signup completion' }, { value: '−20%', label: 'Time to first value' }],
+    xyz: {
+      accomplished: 'Improved onboarding',
+      measuredBy: '36% higher signup completion',
+      byDoing: 'replacing seven setup screens with three essential steps',
+    },
     caseStudy: {
       problem: 'New accounts faced seven setup screens before they could try the product. Most could not tell which choices mattered or whether they could change them later.',
-      role: 'I built the revised flow and worked with the team to define which steps were essential.',
       actions: [
         'Mapped the first session and interviewed people who left during setup.',
         'Moved optional configuration out of signup and tested a three-step prototype.',
@@ -47,9 +52,13 @@ export const projects: Project[] = [
     tags: ['Dashboards', 'Data visualization'],
     thumbnail: 'grid',
     metrics: [{ value: '−42%', label: 'Reporting time' }, { value: '+18%', label: 'Issues caught early' }],
+    xyz: {
+      accomplished: 'Made weekly reporting faster',
+      measuredBy: 'a 42% reduction in reporting time',
+      byDoing: 'consolidating alerts and their sources in one dashboard',
+    },
     caseStudy: {
       problem: 'Operations teams pieced together status reports from multiple exports and spreadsheets, often overlooking changes between reporting cycles.',
-      role: 'I designed the dashboard and worked with an analyst to define useful signals.',
       actions: [
         'Shadowed reporting sessions to learn which metrics actually drove decisions.',
         'Grouped signals by urgency and showed the underlying source next to each one.',
@@ -71,9 +80,13 @@ export const projects: Project[] = [
     tags: ['Search', 'Information architecture'],
     thumbnail: 'index',
     metrics: [{ value: '+28%', label: 'First-search success' }, { value: '−31%', label: 'Repeat searches' }],
+    xyz: {
+      accomplished: 'Made library resources easier to find',
+      measuredBy: 'a 28% increase in first-search success',
+      byDoing: 'using clearer categories and adding useful details to search results',
+    },
     caseStudy: {
       problem: 'A resource library used internal team names as categories, so visitors often searched more than once for an item they knew existed.',
-      role: 'I led the discovery work and co-designed the new taxonomy with a content strategist.',
       actions: [
         'Used common search queries to draft a vocabulary for card sorting.',
         'Validated labels with a tree test and surfaced useful details on result cards.',
@@ -95,9 +108,13 @@ export const projects: Project[] = [
     tags: ['Workflow', 'State modeling'],
     thumbnail: 'relay',
     metrics: [{ value: '−24%', label: 'Missed handoffs' }, { value: '−16%', label: 'Resolution time' }],
+    xyz: {
+      accomplished: 'Improved request handoffs',
+      measuredBy: '24% fewer missed handoffs',
+      byDoing: 'showing a named owner and next action for every pending request',
+    },
     caseStudy: {
       problem: 'Requests moved between support and operations in messages, leaving the next action and its owner unclear.',
-      role: 'I designed the handoff workflow alongside support leads and an engineer.',
       actions: [
         'Collected examples of stalled handoffs and identified common gaps.',
         'Prototyped a dedicated next-action field with an explicit owner.',
@@ -119,9 +136,13 @@ export const projects: Project[] = [
     tags: ['Components', 'Documentation'],
     thumbnail: 'components',
     metrics: [{ value: '−50%', label: 'Prototyping time' }, { value: '+32%', label: 'Component reuse' }],
+    xyz: {
+      accomplished: 'Made recurring screens faster to prototype',
+      measuredBy: 'a 50% reduction in prototyping time',
+      byDoing: 'cataloging and documenting reusable interface patterns',
+    },
     caseStudy: {
       problem: 'Several teams maintained slightly different versions of the same screens, making prototypes slow and product behavior inconsistent.',
-      role: 'I coordinated the UI audit and partnered with engineering on the initial library.',
       actions: [
         'Audited recurring screens and prioritized patterns by usage.',
         'Documented the default, error, and empty states for the first set of components.',

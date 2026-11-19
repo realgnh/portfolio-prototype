@@ -4,7 +4,7 @@ import { contactLinks, site, ui } from '../data/site'
 export function Contact() {
   // EXTENSION POINT: Add a contact form and submit handler here.
   return (
-    <article className="inner-page contact-page shell">
+    <article className="inner-page shell">
       <Metadata {...site.pages.contact} />
       <header className="page-heading">
         <p className="eyebrow">{site.contact.eyebrow}</p>

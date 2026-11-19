@@ -8,7 +8,6 @@ export const site = {
     status: 'CS portfolio',
     secondLine: 'to useful ',
     intro: 'I’m Alex, a computer science student exploring software engineering and applied AI. This is where I keep notes on what I build.',
-    scroll: 'Explore the stack',
   },
   email: 'alex@example.com',
   socialLinks: [
@@ -18,27 +17,19 @@ export const site = {
   ],
   navItems: [
     { label: 'Home', to: '/' },
-    { label: 'Work', to: '/work' },
+    { label: 'Projects', to: '/projects' },
     { label: 'Contact', to: '/contact' },
   ],
   pages: {
     home: { title: 'Home', description: 'Alex Morgan’s placeholder computer science portfolio, skill stack, and résumé.' },
-    work: { title: 'Work', description: 'Five fictional projects with example results for Alex Morgan’s portfolio.' },
+    projects: { title: 'Projects', description: 'Five fictional projects with example results for Alex Morgan’s portfolio.' },
     contact: { title: 'Contact', description: 'Placeholder contact details, LinkedIn, and résumé for Alex Morgan.' },
   },
-  work: { heading: 'Selected work', caption: 'Fictional projects · Example results', browse: 'See the project index' },
+  projects: { heading: 'Projects', caption: 'Fictional projects · Example results', browse: 'See the project index' },
   about: {
     eyebrow: '02 / Background',
     heading: 'About me',
     bio: 'I study Computer Science at X university aspiring to be a Software/AI Engineer',
-    roblox: {
-      heading: 'Also: Roblox development',
-      intro: 'On the side, I build games in Roblox Studio. These two links are placeholders.',
-      games: [
-        { name: 'Checkpoint Trail', description: 'A short obstacle course.', href: 'https://www.roblox.com/games/0000000000/Checkpoint-Trail' },
-        { name: 'Pocket Arcade', description: 'A collection of small multiplayer games.', href: 'https://www.roblox.com/games/0000000000/Pocket-Arcade' },
-      ],
-    },
   },
   skills: {
     eyebrow: '01 / Tools',
@@ -47,7 +38,8 @@ export const site = {
     groups: [
       { title: 'Languages', tools: ['Python', 'TypeScript', 'SQL'] },
       { title: 'Web & data', tools: ['React', 'FastAPI', 'PostgreSQL'] },
-      { title: 'Development & AI', tools: ['Git', 'Docker', 'PyTorch'] },
+      { title: 'Tools', tools: ['Git', 'Docker'] },
+      { title: 'AI / ML', tools: ['PyTorch'] },
     ],
   },
   resume: {
@@ -72,10 +64,9 @@ export const ui = {
   darkMode: 'Dark mode',
   lightTheme: 'Light',
   darkTheme: 'Dark',
-  readMore: 'Read more',
-  allWork: 'All work',
+  allProjects: 'All projects',
+  projectXyz: 'Google XYZ · Example result',
   problem: 'Problem',
-  role: 'Role',
   actions: 'What I did',
   outcome: 'Outcome',
   next: 'Next project',

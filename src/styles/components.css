@@ -35,13 +35,13 @@
   grid-column: 2;
   display: flex;
   align-items: center;
-  gap: 0.125rem;
+  gap: clamp(0.2rem, 0.9vw, 0.55rem);
   padding: 0.25rem;
   border: 1px solid transparent;
   border-radius: 99rem;
-  background: linear-gradient(180deg, var(--card), color-mix(in oklab, var(--card) 78%, transparent));
+  background: linear-gradient(180deg, color-mix(in oklab, var(--card) 78%, transparent), color-mix(in oklab, var(--card) 62%, transparent));
   box-shadow: 0 0.35rem 1.2rem -0.5rem var(--shadow), inset 0 1px var(--inset);
-  backdrop-filter: blur(0.85rem);
+  backdrop-filter: blur(0.5rem);
   pointer-events: auto;
   font: 600 0.78rem/1 var(--font-ui);
   transform: translateX(-50%);
@@ -87,7 +87,7 @@
 }
 
 .pill-nav a {
-  padding-inline: clamp(0.58rem, 1.4vw, 0.9rem);
+  padding-inline: clamp(0.65rem, 1.5vw, 1rem);
   color: var(--text-muted);
   text-decoration: none;
   transition: color var(--control-motion), scale var(--press-motion);
@@ -211,7 +211,7 @@
 }
 
 .hero {
-  padding-block-start: calc(clamp(6rem, 10.4vw, 9.75rem) + env(safe-area-inset-top));
+  padding-block-start: calc(clamp(4.75rem, 8.7vw, 7.75rem) + env(safe-area-inset-top));
 }
 
 .hero-frame {
@@ -260,21 +260,27 @@
 }
 
 .hero h1 {
-  font-size: clamp(2.2rem, 6.1vw, 5.4rem);
-  letter-spacing: -0.05em;
-  line-height: 0.99;
-  overflow-wrap: anywhere;
-  word-spacing: 0.02em;
+  font-size: clamp(1.9rem, 6vw, 5.3rem);
+  font-weight: 400;
+  letter-spacing: -0.025em;
+  line-height: 1.06;
   text-shadow: 0 0 1.9rem color-mix(in oklab, var(--headline-halo) calc(var(--top-glow-opacity, 1) * 100%), transparent);
 }
 
+.hero-accent {
+  white-space: nowrap;
+}
+
 .hero em {
+  display: inline-block;
+  padding-inline-end: 0.1em;
+  margin-inline-end: -0.07em;
   color: var(--headline-end);
   background-image: linear-gradient(165deg, var(--headline-start) 12%, var(--headline-end) 95%);
   background-clip: text;
   -webkit-text-fill-color: transparent;
-  font: italic 400 1.11em/0 var(--font-accent);
-  letter-spacing: -0.05em;
+  font: italic 400 1.12em/0.94 var(--font-accent);
+  letter-spacing: -0.035em;
   text-shadow: none;
   filter: drop-shadow(0 0 0.65rem color-mix(in oklab, var(--headline-halo) calc(var(--top-glow-opacity, 1) * 100%), transparent));
 }
@@ -286,30 +292,11 @@
   line-height: 1.55;
 }
 
-.hero-scroll {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.55rem;
-  margin: 0 clamp(0.9rem, 5vw, 4.8rem) clamp(1.15rem, 3vw, 2.5rem);
-  color: var(--text-muted);
-  font: 400 0.72rem/1.2 var(--font-meta);
-  text-decoration: none;
-  transition: color var(--control-motion), scale var(--press-motion);
-}
-
-.hero-scroll > span {
-  display: grid;
-  width: 1.75rem;
-  height: 1.75rem;
-  place-items: center;
-  border: 1px solid var(--frame);
-  border-radius: 50%;
-  transition: transform 180ms ease, background-color 180ms ease;
-}
-
-.hero-scroll:is(:hover, :focus-visible) > span {
-  transform: translateY(3px);
-  background: var(--press);
+:is(.home-section, .project-card, .project-xyz) {
+  border: 1px solid var(--rule);
+  border-radius: clamp(1.15rem, 3vw, 1.9rem);
+  background: linear-gradient(155deg, var(--card), color-mix(in oklab, var(--card) 62%, var(--bg)));
+  box-shadow: inset 0 1px var(--inset), 0 1rem 2.5rem -1.4rem var(--shadow);
 }
 
 .home-section {
@@ -317,10 +304,6 @@
   gap: 1.25rem;
   margin-block-start: clamp(1.5rem, 4vw, 3.5rem);
   padding: clamp(1.2rem, 3.8vw, 3rem);
-  border: 1px solid var(--rule);
-  border-radius: clamp(1.15rem, 3vw, 1.9rem);
-  background: linear-gradient(155deg, var(--card), color-mix(in oklab, var(--card) 62%, var(--bg)));
-  box-shadow: inset 0 1px var(--inset), 0 1rem 2.5rem -1.4rem var(--shadow);
 }
 
 .home-section-heading .eyebrow {
@@ -457,11 +440,11 @@
   transform: translate(2px, -2px);
 }
 
-:is(.pill-nav a, .theme-toggle, .cta-button, .action, .hero-scroll, .project-faq summary, .next-project, .contact-links a):is(:hover, :focus-visible) {
+:is(.pill-nav a, .theme-toggle, .cta-button, .action, .project-title, .project-faq summary, .next-project, .contact-links a):is(:hover, :focus-visible) {
   scale: var(--hover-scale);
 }
 
-:is(.pill-nav a, .theme-toggle, .cta-button, .action, .hero-scroll, .project-faq summary, .next-project, .contact-links a):is(:active, [data-touch-pressed]) {
+:is(.pill-nav a, .theme-toggle, .cta-button, .action, .project-title, .project-faq summary, .next-project, .contact-links a):is(:active, [data-touch-pressed]) {
   scale: var(--active-scale);
 }
 
@@ -475,9 +458,9 @@
 
 .project-list {
   display: grid;
+  gap: clamp(0.85rem, 2vw, 1.5rem);
   margin: 0;
   padding: 0;
-  border-block-end: 1px solid var(--rule);
   list-style: none;
 }
 
@@ -485,8 +468,11 @@
   display: grid;
   gap: clamp(1rem, 4vw, 2.75rem);
   align-items: center;
-  padding-block: clamp(1.1rem, 3vw, 2.1rem);
-  border-block-start: 1px solid var(--rule);
+  padding: clamp(1.1rem, 3vw, 2.1rem);
+}
+
+.project-card .thumbnail {
+  border-radius: 0.7rem;
 }
 
 .thumbnail {
@@ -513,9 +499,33 @@
   min-width: 0;
 }
 
-.project-card h3 {
+.project-card h2 {
   margin-block: 0.35rem 0.42rem;
   font-size: clamp(1.7rem, 4vw, 2.8rem);
+  overflow-wrap: anywhere;
+}
+
+.project-title {
+  display: inline-block;
+  text-decoration: none;
+  transform-origin: left;
+  transition: color var(--control-motion), scale var(--press-motion);
+}
+
+.project-title > span {
+  display: inline-block;
+  color: var(--steel);
+  font-size: 0.55em;
+  vertical-align: 0.15em;
+  transition: transform var(--control-motion);
+}
+
+.project-title:is(:hover, :focus-visible) {
+  color: var(--steel);
+}
+
+.project-title:is(:hover, :focus-visible) > span {
+  transform: translate(2px, -2px);
 }
 
 .project-summary {
@@ -641,6 +651,25 @@
   width: min(100%, 11rem);
 }
 
+.project-xyz {
+  margin-block-end: 1.5rem;
+  padding: clamp(1.1rem, 3vw, 2rem);
+}
+
+.project-xyz h2 {
+  color: var(--steel);
+}
+
+.project-xyz p {
+  max-width: 46rem;
+  margin-block-start: 0.6rem;
+  font: 400 clamp(1.14rem, 2.2vw, 1.55rem)/1.4 var(--font-body);
+}
+
+.project-xyz strong {
+  font-weight: 600;
+}
+
 .case-sections section,
 .project-faq {
   display: grid;
@@ -733,44 +762,6 @@
   transform: translateX(4px);
 }
 
-.side-projects {
-  max-width: 28rem;
-  padding: clamp(0.9rem, 2vw, 1.35rem);
-  border-radius: 1rem;
-  background: color-mix(in oklab, var(--bg) 59%, transparent);
-}
-
-.side-projects h3 {
-  margin-block-end: 0.45rem;
-  font-size: 1.125rem;
-  letter-spacing: -0.025em;
-}
-
-.side-projects ul {
-  margin-block: 0.85rem 0;
-  padding: 0;
-  list-style: none;
-}
-
-.side-projects li {
-  padding-block: 0.55rem;
-  border-top: 1px solid var(--rule);
-}
-
-.side-projects p {
-  color: var(--text-muted);
-  font-size: 0.875rem;
-}
-
-.side-projects a {
-  font-weight: 600;
-}
-
-.contact-page {
-  max-width: 51rem;
-  margin-inline: auto;
-}
-
 .contact-links {
   display: grid;
   gap: 0.65rem;
@@ -780,30 +771,26 @@
 }
 
 .contact-links a {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) auto;
+  display: inline-grid;
+  grid-template-columns: minmax(0, auto) auto;
   align-items: center;
-  gap: 0.25rem 1rem;
-  padding: 0.8rem clamp(1rem, 3vw, 1.5rem);
-  border: 1px solid var(--rule);
-  border-radius: 1rem;
-  background: color-mix(in oklab, var(--card) 62%, var(--bg));
+  gap: 0.25rem 0.6rem;
+  padding-block: 0.4rem;
   font: 600 0.95rem/1.2 var(--font-ui);
   overflow-wrap: anywhere;
   text-decoration: none;
-  transition: border-color var(--control-motion), background-color var(--control-motion), color var(--control-motion), scale var(--press-motion);
+  transform-origin: left;
+  transition: color var(--control-motion), scale var(--press-motion);
 }
 
 .contact-links a:is(:hover, :focus-visible) {
-  border-color: var(--steel);
-  background: var(--card);
+  color: var(--steel);
+  text-decoration: underline;
+  text-underline-offset: 0.18em;
 }
 
 .contact-links li:first-child a {
-  padding-block: 1.15rem;
-  border-radius: 1.3rem;
-  background: linear-gradient(150deg, var(--card), var(--bg));
-  box-shadow: inset 0 1px var(--inset);
+  margin-block-end: 0.4rem;
   font-size: clamp(1.6rem, 5.3vw, 2.5rem);
 }
 
@@ -844,12 +831,6 @@
     margin-inline-end: clamp(0rem, 8vw, 8rem);
   }
 
-  .hero-scroll {
-    display: flex;
-    width: max-content;
-    margin-inline: auto;
-  }
-
   .project-card {
     grid-template-columns: minmax(0, 1fr) minmax(0, 3.3fr);
   }
@@ -882,11 +863,5 @@
 
   .resume-section .cta-button {
     justify-self: end;
-  }
-
-  .profile-section {
-    grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr);
-    gap: 2.75rem;
-    align-items: start;
   }
 }
