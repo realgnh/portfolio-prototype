@@ -1,7 +1,7 @@
 import { expect, test } from '@playwright/test'
 import { join } from 'node:path'
 import { projects } from '../src/data/projects'
-import { profileLinks, site, ui } from '../src/data/site'
+import { contactLinks, site, ui } from '../src/data/site'
 
 test('keyboard navigation, active sections and metadata follow the route', async ({ page }) => {
   await page.goto('/')
@@ -24,11 +24,22 @@ test('keyboard navigation, active sections and metadata follow the route', async
     await expect(page).toHaveTitle(`${title} · ${site.name}`)
     await expect(page.locator('meta[name="description"]')).toHaveAttribute('content', description)
   }
-  const footer = page.getByRole('contentinfo')
-  await expect(footer.getByRole('link', { name: site.email })).toHaveAttribute('href', `mailto:${site.email}`)
-  for (const { label, href } of profileLinks) {
-    await expect(footer.getByRole('link', { name: label, exact: true })).toHaveAttribute('href', href)
+  const contact = page.getByRole('list', { name: ui.contactLinks })
+  for (const { label, href } of contactLinks) {
+    await expect(contact.getByRole('link', { name: label, exact: true })).toHaveAttribute('href', href)
   }
+  const rows = await contact.getByRole('link').evaluateAll(links => links.map(link => ({
+    size: parseFloat(getComputedStyle(link).fontSize),
+    top: link.getBoundingClientRect().top,
+  })))
+  expect(rows).toHaveLength(contactLinks.length)
+  for (let i = 1; i < rows.length; i++) {
+    expect(rows[i].top).toBeGreaterThan(rows[i - 1].top)
+    expect(rows[i].size).toBeLessThan(rows[i - 1].size)
+  }
+  const footer = page.getByRole('contentinfo')
+  await expect(footer.getByRole('link')).toHaveCount(0)
+  await expect(footer).toHaveText(site.footer.note)
 })
 
 test('every card opens a case study with results and links to the next project', async ({ page }) => {
@@ -61,7 +72,9 @@ test('every card opens a case study with results and links to the next project',
 test('home introduces the owner, links to work and includes About and a résumé download', async ({ page }) => {
   await page.goto('/')
   await expect(page.getByText(site.hero.intro)).toBeVisible()
-  await expect(page.getByRole('img', { name: site.about.portraitLabel })).toBeVisible()
+  const hero = page.locator('.hero')
+  await expect(hero.getByRole('img')).toHaveCount(0)
+  expect(await hero.locator('.hero-bar > span').first().evaluate(label => getComputedStyle(label, '::before').content)).toBe('none')
   await expect(page.getByRole('heading', { name: site.skills.heading })).toBeVisible()
   for (const group of site.skills.groups) {
     await expect(page.getByRole('heading', { name: group.title })).toBeVisible()
@@ -90,6 +103,15 @@ test('home introduces the owner, links to work and includes About and a résumé
   await expect(about.getByRole('heading', { name: site.about.heading })).toBeInViewport()
 })
 
+test('the full-width glow softens when scrolling beyond the hero', async ({ page }) => {
+  await page.emulateMedia({ reducedMotion: 'no-preference' })
+  await page.goto('/')
+  const html = page.locator('html')
+  await expect(html).toHaveCSS('--top-glow-opacity', '1.000')
+  await page.evaluate(() => window.scrollTo({ top: 520, behavior: 'instant' }))
+  await expect(html).toHaveCSS('--top-glow-opacity', '0.680')
+})
+
 test('uses the OS theme first and persists an explicit keyboard toggle', async ({ page }) => {
   await page.emulateMedia({ colorScheme: 'dark' })
   await page.goto('/')
@@ -100,12 +122,12 @@ test('uses the OS theme first and persists an explicit keyboard toggle', async (
   await page.keyboard.press('Space')
   await expect(page.locator('html')).toHaveAttribute('data-theme', 'light')
   await expect(toggle).toHaveAttribute('aria-pressed', 'false')
-  await expect(page.locator('.theme-mask')).toHaveCount(0)
+  await expect(page.locator('html')).toHaveCSS('--theme-blend', '0')
   await page.reload()
   await expect(page.locator('html')).toHaveAttribute('data-theme', 'light')
 })
 
-test('slides the active tab and animates the staggered mask in both theme directions', async ({ page }) => {
+test('slides the active tab and blends the palette in both theme directions', async ({ page }) => {
   await page.emulateMedia({ colorScheme: 'dark', reducedMotion: 'no-preference' })
   await page.goto('/')
   const nav = page.getByRole('navigation')
@@ -126,28 +148,33 @@ test('slides the active tab and animates the staggered mask in both theme direct
   const toggle = page.getByRole('button', { name: ui.darkMode })
   await toggle.hover()
   await expect(toggle.locator('.theme-label')).toHaveCSS('opacity', '1')
-  for (const [theme, previousTheme] of [['light', 'dark'], ['dark', 'light']]) {
-    const mask = page.locator('.theme-mask')
-    const frame = await toggle.evaluate(button => {
+  for (const theme of ['light', 'dark']) {
+    const frames = await toggle.evaluate(button => {
       if (!(button instanceof HTMLButtonElement)) throw new Error('Expected a theme button')
+      const root = document.documentElement
       button.click()
-      return new Promise<{ theme: string | undefined; delays: number[]; target: string | undefined }>(resolve => {
-        const readMask = () => {
-          const element = document.querySelector<HTMLElement>('.theme-mask')
-          const delays = (element?.getAnimations({ subtree: true }) ?? [])
-            .map(animation => animation.effect?.getTiming().delay ?? -1)
-          resolve({ theme: document.documentElement.dataset.theme, delays, target: element?.dataset.themeTarget })
+      return new Promise<number[]>(resolve => {
+        const started = performance.now()
+        const samples: number[] = []
+        function sample() {
+          const fading = document.getAnimations().some(animation =>
+            animation instanceof CSSAnimation && animation.animationName === 'theme-dissolve')
+          if (fading) samples.push(Number(getComputedStyle(root, '::view-transition-old(root)').opacity))
+          const ended = samples.length && !fading
+          if (ended || performance.now() - started > 1800) resolve(samples)
+          else requestAnimationFrame(sample)
         }
-        requestAnimationFrame(() => requestAnimationFrame(readMask))
+        requestAnimationFrame(sample)
       })
     })
-    expect(frame.target).toBe(theme)
-    expect(frame.theme).toBe(previousTheme)
-    expect(frame.delays).toEqual(Array.from({ length: 25 }, (_, i) => Math.min(i, 24 - i) * 10))
+    const dark = theme === 'dark'
+    expect(frames[0]).toBeGreaterThan(0.9)
+    expect(frames.at(-1)).toBeLessThan(0.1)
+    expect(frames).toEqual([...frames].sort((a, b) => b - a))
+    expect(new Set(frames).size).toBeGreaterThan(8)
     await expect(page.locator('html')).toHaveAttribute('data-theme', theme)
-    await expect(mask).toHaveCount(0)
-    await expect(toggle).toHaveAttribute('aria-pressed', String(theme === 'dark'))
-    await expect(toggle.locator(theme === 'dark' ? '.theme-sun' : '.theme-moon')).toHaveCSS('scale', '1')
+    await expect(toggle).toHaveAttribute('aria-pressed', String(dark))
+    await expect(toggle.locator(dark ? '.theme-sun' : '.theme-moon')).toHaveCSS('scale', '1')
   }
 })
 
@@ -214,31 +241,23 @@ test.describe('touch preview with reduced motion', () => {
     const themeFrame = await toggle.evaluate(button => {
       if (!(button instanceof HTMLButtonElement)) throw new Error('Expected a theme button')
       button.click()
-      return new Promise<{ count: number; name: string; transform: string; opacity: number; iconRotation: string } | null>(
-        resolve => requestAnimationFrame(() => requestAnimationFrame(() => {
-          const mask = document.querySelector('.theme-mask')
-          const animations = mask?.getAnimations({ subtree: true }) ?? []
-          const band = mask?.firstElementChild
-          if (!band) {
-            resolve(null)
-            return
-          }
-          const style = getComputedStyle(band)
-          resolve({
-            count: animations.length,
-            name: style.animationName,
-            transform: style.transform,
-            opacity: Number(style.opacity),
-            iconRotation: getComputedStyle(button.querySelector('svg')!).rotate,
-          })
-        })),
-      )
+      return new Promise<{ opacity: number; duration: string; iconRotation: string }>(resolve => {
+        const started = performance.now()
+        function sample() {
+          const style = getComputedStyle(document.documentElement, '::view-transition-old(root)')
+          const opacity = Number(style.opacity)
+          const fading = style.animationName === 'theme-dissolve' && opacity > 0 && opacity < 1
+          if (fading || performance.now() - started > 700) {
+            resolve({ opacity, duration: style.animationDuration, iconRotation: getComputedStyle(button.querySelector('svg')!).rotate })
+          } else requestAnimationFrame(sample)
+        }
+        requestAnimationFrame(sample)
+      })
     })
-    expect(themeFrame).toEqual({
-      count: 25, name: 'theme-band-fade', transform: 'none',
-      opacity: expect.any(Number), iconRotation: '0deg',
-    })
-    expect(themeFrame?.opacity).toBeLessThan(1)
+    expect(themeFrame.opacity).toBeGreaterThan(0)
+    expect(themeFrame.opacity).toBeLessThan(1)
+    expect(themeFrame.duration).toBe('0.2s')
+    expect(themeFrame.iconRotation).toBe('0deg')
     await expect(toggle).toHaveAttribute('aria-pressed', 'false')
 
     await page.getByRole('link', { name: 'Work', exact: true }).tap()
@@ -251,9 +270,9 @@ test.describe('touch preview with reduced motion', () => {
   })
 })
 
-test('the project index button shimmers on hover and the mask works without the Web Animations API', async ({ page }) => {
+test('the project index button shimmers and theme colors interpolate without View Transitions', async ({ page }) => {
   await page.emulateMedia({ colorScheme: 'light', reducedMotion: 'no-preference' })
-  await page.addInitScript(() => Object.defineProperty(Element.prototype, 'getAnimations', { value: undefined }))
+  await page.addInitScript(() => Object.defineProperty(document, 'startViewTransition', { value: undefined }))
   await page.goto('/')
   const cta = page.getByRole('link', { name: site.work.browse })
   await cta.hover()
@@ -261,14 +280,25 @@ test('the project index button shimmers on hover and the mask works without the 
   await expect.poll(() => cta.locator('.cta-shimmer').evaluate(el =>
     getComputedStyle(el, '::before').animationName)).toBe('button-sweep')
   await page.getByRole('button', { name: ui.darkMode }).click()
-  await expect(page.locator('.theme-mask')).toHaveAttribute('data-theme-target', 'dark')
   await expect(page.locator('html')).toHaveAttribute('data-theme', 'dark')
-  await expect(page.locator('.theme-mask')).toHaveCount(0)
+  const progress = await page.locator('html').evaluate(root => new Promise<number>(resolve => {
+    const element = root as HTMLElement
+    function sample() {
+      const value = element.style.getPropertyValue('--theme-blend')
+      if (value === '0.000') requestAnimationFrame(sample)
+      else resolve(value ? Number(value) : 1)
+    }
+    requestAnimationFrame(sample)
+  }))
+  expect(progress).toBeGreaterThan(0)
+  expect(progress).toBeLessThan(1)
+  expect(progress * 1000).toBeCloseTo(Math.round(progress * 1000))
+  await expect(page.locator('html')).toHaveCSS('--theme-blend', '1')
 })
 
-function luminance(hex: string) {
-  const channels = [1, 3, 5].map(index => parseInt(hex.slice(index, index + 2), 16) / 255)
-  return channels.reduce((result, value, index) => {
+function luminance(rgb: number[]) {
+  return rgb.reduce((result, channel, index) => {
+    const value = channel / 255
     const linear = value <= 0.04045 ? value / 12.92 : ((value + 0.055) / 1.055) ** 2.4
     return result + linear * [0.2126, 0.7152, 0.0722][index]
   }, 0)
@@ -278,14 +308,17 @@ for (const theme of ['light', 'dark'] as const) {
   test(`${theme} theme text meets WCAG AA on the page and cards`, async ({ page }) => {
     await page.emulateMedia({ colorScheme: theme })
     await page.goto('/')
-    const palette = await page.locator('html').evaluate(element =>
-      Object.fromEntries(['text', 'text-muted', 'accent', 'bg', 'card'].map(token =>
-        [token, getComputedStyle(element).getPropertyValue(`--${token}`).trim()],
-      )),
-    )
+    const palette = await page.locator('html').evaluate(element => {
+      const ctx = document.createElement('canvas').getContext('2d')!
+      return Object.fromEntries(['text', 'text-muted', 'accent', 'steel', 'bg', 'card'].map(token => {
+        ctx.fillStyle = getComputedStyle(element).getPropertyValue(`--${token}`).trim()
+        ctx.fillRect(0, 0, 1, 1)
+        return [token, Array.from(ctx.getImageData(0, 0, 1, 1).data.slice(0, 3))]
+      }))
+    })
     const ratios = []
     for (const surface of ['bg', 'card']) {
-      for (const color of ['text', 'text-muted', 'accent']) {
+      for (const color of ['text', 'text-muted', 'accent', 'steel']) {
         const a = luminance(palette[color])
         const b = luminance(palette[surface])
         const ratio = (Math.max(a, b) + 0.05) / (Math.min(a, b) + 0.05)

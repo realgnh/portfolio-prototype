@@ -6,27 +6,32 @@
   --font-ui: "Inter Tight", system-ui, sans-serif;
   --font-meta: ui-monospace, "SFMono-Regular", Consolas, monospace;
 
-  --theme-light-bg: #e3e5e8;
-  --theme-dark-bg: #0e0f12;
-  --bg: var(--theme-light-bg);
+  --theme-blend: 0;
+  --theme-weight: calc(var(--theme-blend) * 100%);
   --control-motion: 200ms cubic-bezier(.22, 1, .36, 1);
   --press-motion: 180ms cubic-bezier(.22, 1, .36, 1);
   --hover-scale: 1.02;
   --active-scale: 1.04;
-  --card: #eef0f2;
-  --text: #212226;
-  --text-muted: #53565e;
-  --accent: #343943;
-  --accent-lit: #595e69;
-  --rule: #cdd0d5;
-  --frame: #a9adb5;
-  --gridline: #24283411;
-  --thumb: #e0e2e6;
-  --thumb-ink: #555962;
-  --glow: #adb2be55;
-  --inset: #ffffffa0;
-  --shadow: #17192620;
-  --press: #d7dae0;
+  --bg: color-mix(in oklab, #e3e5e8, #0e0f12 var(--theme-weight));
+  --card: color-mix(in oklab, #eef0f2, #17191d var(--theme-weight));
+  --text: color-mix(in oklab, #212226, #f1f2f4 var(--theme-weight));
+  --text-muted: color-mix(in oklab, #53565e, #b6b9c1 var(--theme-weight));
+  --accent: color-mix(in oklab, #343943, #d6dae1 var(--theme-weight));
+  --accent-lit: color-mix(in oklab, #595e69, #f9fafb var(--theme-weight));
+  --rule: color-mix(in oklab, #cdd0d5, #373a42 var(--theme-weight));
+  --frame: color-mix(in oklab, #a9adb5, #4a4e58 var(--theme-weight));
+  --gridline: color-mix(in oklab, #24283411, #dbe2f00c var(--theme-weight));
+  --thumb: color-mix(in oklab, #e0e2e6, #26282e var(--theme-weight));
+  --thumb-ink: color-mix(in oklab, #555962, #a7acb8 var(--theme-weight));
+  --glow: color-mix(in oklab, #f5f7fa86, #b7bfcf25 var(--theme-weight));
+  --inset: color-mix(in oklab, #ffffffa0, #f0f3fa20 var(--theme-weight));
+  --shadow: color-mix(in oklab, #17192620, #0006 var(--theme-weight));
+  --press: color-mix(in oklab, #d7dae0, #2b2e36 var(--theme-weight));
+  --steel: color-mix(in oklab, #3f5a75, #9eb8d2 var(--theme-weight));
+  --sky-halo: color-mix(in oklab, #f8f9fce0, #c6cbdc30 var(--theme-weight));
+  --headline-start: color-mix(in oklab, #555b66, #c7ccd6 var(--theme-weight));
+  --headline-end: color-mix(in oklab, #282e38, #858c9b var(--theme-weight));
+  --headline-halo: color-mix(in oklab, #fbfcfcd4, #d3daeb57 var(--theme-weight));
   --spark: #ffffff;
   --gutter: clamp(0.875rem, 5vw, 4.25rem);
   --shell: 69rem;
@@ -34,22 +39,7 @@
 
 :root[data-theme="dark"] {
   color-scheme: dark;
-  --bg: var(--theme-dark-bg);
-  --card: #17191d;
-  --text: #f1f2f4;
-  --text-muted: #b6b9c1;
-  --accent: #d6dae1;
-  --accent-lit: #f9fafb;
-  --rule: #373a42;
-  --frame: #4a4e58;
-  --gridline: #dbe2f00c;
-  --thumb: #26282e;
-  --thumb-ink: #a7acb8;
-  --glow: #c2cad735;
-  --inset: #f0f3fa20;
-  --shadow: #0006;
-  --press: #2b2e36;
-  --spark: #ffffff;
+  --theme-blend: 1;
 }
 
 @media (prefers-reduced-motion: reduce) {

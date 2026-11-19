@@ -31,8 +31,6 @@ export const site = {
     eyebrow: '02 / Background',
     heading: 'About me',
     bio: 'I study Computer Science at X university aspiring to be a Software/AI Engineer',
-    portraitLabel: 'Placeholder for a portrait of Alex Morgan',
-    portraitCaption: 'Portrait placeholder',
     roblox: {
       heading: 'Also: Roblox development',
       intro: 'On the side, I build games in Roblox Studio. These two links are placeholders.',
@@ -61,14 +59,15 @@ export const site = {
   contact: {
     eyebrow: 'Placeholder contact details',
     intro: 'Have a project or just want to say hello? Email is the best way to reach me.',
+    emailLabel: 'Email',
   },
-  footer: { heading: 'Get in touch', note: 'Prototype · All names, links and outcomes are placeholders.' },
+  footer: { note: 'Prototype · All names, links and outcomes are placeholders.' },
 }
 
 export const ui = {
   skip: 'Skip to content',
   navigation: 'Main navigation',
-  profileLinks: 'Profile links',
+  contactLinks: 'Contact links',
   resume: 'Resume',
   darkMode: 'Dark mode',
   lightTheme: 'Light',
@@ -85,4 +84,7 @@ export const ui = {
   notFound: { title: 'Page not found', description: 'This page doesn’t exist.' },
 }
 
-export const profileLinks = site.socialLinks
+export const contactLinks = [
+  { label: site.email, href: `mailto:${site.email}`, channel: site.contact.emailLabel },
+  ...site.socialLinks,
+]
