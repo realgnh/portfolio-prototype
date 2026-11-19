@@ -14,7 +14,7 @@ test('keyboard navigation, active sections and metadata follow the route', async
   const nav = page.getByRole('navigation', { name: ui.navigation })
   await expect(nav.getByRole('link', { name: 'Home' })).toHaveAttribute('aria-current', 'page')
 
-  for (const key of ['about', 'contact'] as const) {
+  for (const key of ['work', 'contact'] as const) {
     const { title, description } = site.pages[key]
     const link = nav.getByRole('link', { name: title })
     await link.focus()
@@ -23,7 +23,6 @@ test('keyboard navigation, active sections and metadata follow the route', async
     await expect(page.getByRole('main')).toBeFocused()
     await expect(page).toHaveTitle(`${title} · ${site.name}`)
     await expect(page.locator('meta[name="description"]')).toHaveAttribute('content', description)
-    if (key === 'about') await expect(page.getByText(site.about.bio, { exact: true })).toBeVisible()
   }
   const footer = page.getByRole('contentinfo')
   await expect(footer.getByRole('link', { name: site.email })).toHaveAttribute('href', `mailto:${site.email}`)
@@ -59,7 +58,7 @@ test('every card opens a case study with results and links to the next project',
   await expect(page.getByRole('heading', { level: 1 })).toHaveText(ui.notFound.title)
 })
 
-test('home introduces the owner, lists skills and downloads both PDFs', async ({ page }) => {
+test('home introduces the owner, links to work and includes About and a résumé download', async ({ page }) => {
   await page.goto('/')
   await expect(page.getByText(site.hero.intro)).toBeVisible()
   await expect(page.getByRole('img', { name: site.about.portraitLabel })).toBeVisible()
@@ -67,17 +66,28 @@ test('home introduces the owner, lists skills and downloads both PDFs', async ({
   for (const group of site.skills.groups) {
     await expect(page.getByRole('heading', { name: group.title })).toBeVisible()
   }
-  for (const { label, href } of site.resume.downloads) {
-    const [download] = await Promise.all([
-      page.waitForEvent('download'),
-      page.getByRole('link', { name: label }).click(),
-    ])
-    expect(download.suggestedFilename()).toBe(href.slice(1))
-    expect(await download.failure()).toBeNull()
-    const response = await page.request.get(href)
-    expect(response.headers()['content-type']).toContain('application/pdf')
-    expect((await response.body()).subarray(0, 5).toString()).toBe('%PDF-')
+  await expect(page.getByRole('link', { name: site.work.browse })).toHaveAttribute('href', '/work')
+  await expect(page.getByRole('navigation').getByRole('link', { name: 'About' })).toHaveCount(0)
+  const about = page.getByRole('region', { name: site.about.heading })
+  await expect(about.getByText(site.about.bio, { exact: true })).toBeVisible()
+  for (const game of site.about.roblox.games) {
+    await expect(about.getByRole('link', { name: game.name })).toHaveAttribute('href', game.href)
   }
+  const { label, href } = site.resume.download
+  await expect(page.getByRole('link', { name: 'Download portfolio' })).toHaveCount(0)
+  const [download] = await Promise.all([
+    page.waitForEvent('download'),
+    page.getByRole('link', { name: label }).click(),
+  ])
+  expect(download.suggestedFilename()).toBe(href.slice(1))
+  expect(await download.failure()).toBeNull()
+  const response = await page.request.get(href)
+  expect(response.headers()['content-type']).toContain('application/pdf')
+  expect((await response.body()).subarray(0, 5).toString()).toBe('%PDF-')
+
+  await page.goto('/about')
+  await expect(page).toHaveURL('/#about')
+  await expect(about.getByRole('heading', { name: site.about.heading })).toBeInViewport()
 })
 
 test('uses the OS theme first and persists an explicit keyboard toggle', async ({ page }) => {

@@ -19,26 +19,28 @@ export const site = {
   navItems: [
     { label: 'Home', to: '/' },
     { label: 'Work', to: '/work' },
-    { label: 'About', to: '/about' },
     { label: 'Contact', to: '/contact' },
   ],
   pages: {
-    home: { title: 'Home', description: 'Alex Morgan’s placeholder computer science portfolio, skill stack, and downloads.' },
+    home: { title: 'Home', description: 'Alex Morgan’s placeholder computer science portfolio, skill stack, and résumé.' },
     work: { title: 'Work', description: 'Five fictional projects with example results for Alex Morgan’s portfolio.' },
-    about: { title: 'About', description: 'Placeholder biography and experience for Alex Morgan.' },
     contact: { title: 'Contact', description: 'Placeholder contact details, LinkedIn, and résumé for Alex Morgan.' },
   },
   work: { heading: 'Selected work', caption: 'Fictional projects · Example results', browse: 'See the project index' },
   about: {
-    eyebrow: 'Placeholder biography',
+    eyebrow: '02 / Background',
+    heading: 'About me',
     bio: 'I study Computer Science at X university aspiring to be a Software/AI Engineer',
     portraitLabel: 'Placeholder for a portrait of Alex Morgan',
     portraitCaption: 'Portrait placeholder',
-    experienceHeading: 'Education & experience',
-    experience: [
-      { organization: 'X university', role: 'Computer Science student', period: '20XX–Present' },
-      { organization: 'Example Lab', role: 'Student project contributor', period: '20XX' },
-    ],
+    roblox: {
+      heading: 'Also: Roblox development',
+      intro: 'On the side, I build games in Roblox Studio. These two links are placeholders.',
+      games: [
+        { name: 'Checkpoint Trail', description: 'A short obstacle course.', href: 'https://www.roblox.com/games/0000000000/Checkpoint-Trail' },
+        { name: 'Pocket Arcade', description: 'A collection of small multiplayer games.', href: 'https://www.roblox.com/games/0000000000/Pocket-Arcade' },
+      ],
+    },
   },
   skills: {
     eyebrow: '01 / Tools',
@@ -51,13 +53,10 @@ export const site = {
     ],
   },
   resume: {
-    eyebrow: '02 / Downloads',
-    heading: 'Résumé & portfolio',
-    intro: 'Take a copy of the project index or the one-page résumé. Both PDFs contain sample content.',
-    downloads: [
-      { label: 'Download portfolio', href: '/portfolio.pdf' },
-      { label: 'Download résumé', href: '/resume.pdf' },
-    ],
+    eyebrow: '03 / Download',
+    heading: 'Résumé',
+    intro: 'A one-page résumé with sample education, skills, and contact details.',
+    download: { label: 'Download résumé', href: '/resume.pdf' },
   },
   contact: {
     eyebrow: 'Placeholder contact details',
