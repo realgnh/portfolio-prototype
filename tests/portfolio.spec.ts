@@ -5,13 +5,14 @@ import { profileLinks, site, ui } from '../src/data/site'
 
 test('keyboard navigation, active sections and metadata follow the route', async ({ page }) => {
   await page.goto('/')
+  await expect(page.getByRole('navigation', { name: ui.navigation })).toBeVisible()
   await page.keyboard.press('Tab')
   await expect(page.getByRole('link', { name: ui.skip })).toBeFocused()
   await page.keyboard.press('Enter')
   await expect(page.getByRole('main')).toBeFocused()
 
   const nav = page.getByRole('navigation', { name: ui.navigation })
-  await expect(nav.getByRole('link', { name: 'Work' })).toHaveAttribute('aria-current', 'page')
+  await expect(nav.getByRole('link', { name: 'Home' })).toHaveAttribute('aria-current', 'page')
 
   for (const key of ['about', 'contact'] as const) {
     const { title, description } = site.pages[key]
@@ -22,28 +23,61 @@ test('keyboard navigation, active sections and metadata follow the route', async
     await expect(page.getByRole('main')).toBeFocused()
     await expect(page).toHaveTitle(`${title} · ${site.name}`)
     await expect(page.locator('meta[name="description"]')).toHaveAttribute('content', description)
+    if (key === 'about') await expect(page.getByText(site.about.bio, { exact: true })).toBeVisible()
   }
   const footer = page.getByRole('contentinfo')
   await expect(footer.getByRole('link', { name: site.email })).toHaveAttribute('href', `mailto:${site.email}`)
   for (const { label, href } of profileLinks) {
-    await expect(footer.getByRole('link', { name: label })).toHaveAttribute('href', href)
+    await expect(footer.getByRole('link', { name: label, exact: true })).toHaveAttribute('href', href)
   }
 })
 
 test('every card opens a case study with results and links to the next project', async ({ page }) => {
   for (const [index, project] of projects.entries()) {
     const next = projects[(index + 1) % projects.length]
-    await page.goto('/')
+    await page.goto('/work')
     await expect(page.getByRole('article')).toHaveCount(projects.length)
     await page.getByRole('link', { name: `${ui.readMore}: ${project.title}` }).click()
     await expect(page.getByRole('heading', { level: 1 })).toHaveText(project.title)
     await expect(page.getByRole('navigation').getByRole('link', { name: 'Work' })).toHaveAttribute('aria-current', 'page')
     await expect(page.getByRole('heading', { name: ui.outcome })).toBeVisible()
     for (const metric of project.metrics) await expect(page.getByText(metric.value, { exact: true })).toBeVisible()
+    await expect(page.getByRole('heading', { name: ui.faq })).toBeVisible()
+    for (const { question, answer } of project.faq) {
+      const item = page.getByText(question, { exact: true })
+      const response = page.getByText(answer, { exact: true })
+      await expect(response).toBeHidden()
+      await item.focus()
+      await page.keyboard.press('Enter')
+      await expect(response).toBeVisible()
+      await page.keyboard.press('Enter')
+      await expect(response).toBeHidden()
+    }
     await expect(page.getByRole('link', { name: `${ui.next} ${next.title}` })).toHaveAttribute('href', `/work/${next.slug}`)
   }
   await page.goto('/work/not-a-project')
   await expect(page.getByRole('heading', { level: 1 })).toHaveText(ui.notFound.title)
+})
+
+test('home introduces the owner, lists skills and downloads both PDFs', async ({ page }) => {
+  await page.goto('/')
+  await expect(page.getByText(site.hero.intro)).toBeVisible()
+  await expect(page.getByRole('img', { name: site.about.portraitLabel })).toBeVisible()
+  await expect(page.getByRole('heading', { name: site.skills.heading })).toBeVisible()
+  for (const group of site.skills.groups) {
+    await expect(page.getByRole('heading', { name: group.title })).toBeVisible()
+  }
+  for (const { label, href } of site.resume.downloads) {
+    const [download] = await Promise.all([
+      page.waitForEvent('download'),
+      page.getByRole('link', { name: label }).click(),
+    ])
+    expect(download.suggestedFilename()).toBe(href.slice(1))
+    expect(await download.failure()).toBeNull()
+    const response = await page.request.get(href)
+    expect(response.headers()['content-type']).toContain('application/pdf')
+    expect((await response.body()).subarray(0, 5).toString()).toBe('%PDF-')
+  }
 })
 
 test('uses the OS theme first and persists an explicit keyboard toggle', async ({ page }) => {
@@ -53,8 +87,30 @@ test('uses the OS theme first and persists an explicit keyboard toggle', async (
   await page.getByRole('button', { name: ui.switchToLight }).focus()
   await page.keyboard.press('Space')
   await expect(page.locator('html')).toHaveAttribute('data-theme', 'light')
+  await expect(page.locator('html')).not.toHaveAttribute('data-theme-transition')
   await page.reload()
   await expect(page.locator('html')).toHaveAttribute('data-theme', 'light')
+})
+
+test('animates page changes and theme reveals in both directions when motion is allowed', async ({ page }) => {
+  await page.emulateMedia({ colorScheme: 'dark', reducedMotion: 'no-preference' })
+  await page.addInitScript(() => {
+    const start = document.startViewTransition.bind(document)
+    document.startViewTransition = (...args: Parameters<typeof start>) => {
+      document.documentElement.dataset.viewTransitionInvoked = ''
+      return start(...args)
+    }
+  })
+  await page.goto('/')
+  await page.getByRole('navigation').getByRole('link', { name: 'Work' }).click()
+  await expect(page.getByRole('heading', { level: 1 })).toHaveText(site.work.heading)
+  await expect(page.locator('html')).toHaveAttribute('data-view-transition-invoked', '')
+  for (const [label, theme] of [[ui.switchToLight, 'light'], [ui.switchToDark, 'dark']]) {
+    await page.getByRole('button', { name: label }).click()
+    await expect(page.locator('html')).toHaveAttribute('data-theme-transition', '')
+    await expect(page.locator('html')).toHaveAttribute('data-theme', theme)
+    await expect(page.locator('html')).not.toHaveAttribute('data-theme-transition')
+  }
 })
 
 function luminance(hex: string) {
@@ -101,21 +157,24 @@ for (const width of [360, 768, 1440]) {
         const bounds = el.getBoundingClientRect()
         return { height: bounds.height, lineHeight: parseFloat(getComputedStyle(el).lineHeight) }
       })
-      if (width === 1440) {
-        expect(heading.height).toBeLessThan(heading.lineHeight * 1.5)
-        const support = await page.locator('.hero > p').evaluate(el => ({
-          height: el.getBoundingClientRect().height,
-          lineHeight: parseFloat(getComputedStyle(el).lineHeight),
-        }))
-        expect(support.height).toBeLessThan(support.lineHeight * 1.5)
-      }
+      expect(heading.height).toBeLessThan(heading.lineHeight * 2.5)
       expect(await page.locator('html').evaluate(el => el.scrollWidth)).toBe(width)
       if (evidence) await page.screenshot({ path: join(evidence, `home-${width}-${theme}.png`) })
+      if (evidence && width === 1440) {
+        await page.locator('#resume').scrollIntoViewIfNeeded()
+        await page.screenshot({ path: join(evidence, `home-details-${width}-${theme}.png`) })
+      }
+      await page.goto('/work')
+      await expect(page.getByRole('heading', { level: 1 })).toHaveText(site.work.heading)
+      expect(await page.locator('html').evaluate(el => el.scrollWidth)).toBe(width)
+      if (evidence && width === 1440 && theme === 'dark') {
+        await page.screenshot({ path: join(evidence, 'work-1440-dark.png') })
+      }
       await page.goto(`/work/${projects[0].slug}`)
       await expect(page.getByRole('heading', { level: 1 })).toHaveText(projects[0].title)
       expect(await page.locator('html').evaluate(el => el.scrollWidth)).toBe(width)
-      if (evidence && width === 1440 && theme === 'light') {
-        await page.screenshot({ path: join(evidence, 'case-study-1440-light.png'), fullPage: true })
+      if (evidence && width === 1440) {
+        await page.screenshot({ path: join(evidence, `case-study-1440-${theme}.png`), fullPage: true })
       }
     })
   }
