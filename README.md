@@ -1,6 +1,6 @@
 # Portfolio prototype
 
-A personal portfolio prototype for a computer science student, built with Vite, React, TypeScript, React Router, and plain CSS. The identity, school, skills, social and Roblox links, résumé, five projects, and metrics are placeholders. See [IDEAS.md](IDEAS.md) for directions to try when you replace them.
+A personal portfolio prototype for a computer science student, built with Vite, React, TypeScript, React Router, and plain CSS. The identity, school, skills, social links, résumé, five projects, and metrics are placeholders. See [IDEAS.md](IDEAS.md) for directions to try when you replace them.
 
 ## Run locally
 
@@ -13,13 +13,13 @@ npm run build
 npm run preview
 ```
 
-Open the URL printed by Vite. For a static deployment, publish `dist/` and rewrite non-file requests to `index.html` so direct links such as `/work/clearpath-onboarding` work.
+Open the URL printed by Vite. For a static deployment, publish `dist/` and rewrite non-file requests to `index.html` to support direct links such as `/projects/clearpath-onboarding`.
 
 ## Replace the content
 
-- **Profile:** Edit [`src/data/site.ts`](src/data/site.ts) for the name, role, hero copy, biography, school, skill stack, email, X, LinkedIn, GitHub, navigation labels, and page metadata. Social links appear in the contact list in data order, most prominent first. Replace the two game links in `site.about.roblox.games` with published Roblox experience URLs when ready.
+- **Profile:** Edit [`src/data/site.ts`](src/data/site.ts) for the name, role, hero copy, biography, school, skill stack, email, X, LinkedIn, GitHub, navigation labels, and page metadata. Social links appear in the contact list in data order, most prominent first.
 - **Résumé:** Replace [`public/resume.pdf`](public/resume.pdf) with your own PDF. If you rename it, update `site.resume.download.href`.
-- **Projects:** Add or replace one object in [`src/data/projects.ts`](src/data/projects.ts). Use a unique URL-friendly `slug`, an outcome-first `summary`, two or three `metrics` (each with a `value` and `label`), `caseStudy` copy for the problem, role, actions, and outcome, and a `faq` array of question/answer pairs. The work index, route, metadata, and next-project link come from the array. Order the array to control the reading sequence.
+- **Projects:** Add or replace one object in [`src/data/projects.ts`](src/data/projects.ts). Use a unique URL-friendly `slug`, an outcome-first `summary`, two or three `metrics` (each with a `value` and `label`), `caseStudy` copy for the problem, actions, and outcome, and a `faq` array of question/answer pairs. Add `xyz: { accomplished, measuredBy, byDoing }` for the Google XYZ statement: “Accomplished X, as measured by Y, by doing Z.” Replace the example measurements with real evidence. The Projects index, case study routes, metadata, and next-project links follow the array's order.
 - **Thumbnails:** Choose `steps`, `grid`, `index`, `relay`, or `components` for the project's `thumbnail`; an unrecognized value uses the grid illustration. They are decorative, so the card doesn't depend on them to tell its story. If you add meaningful imagery later, include equivalent alt text.
 
 ## Change fonts and colors
@@ -32,7 +32,7 @@ The theme toggle dissolves between the two rendered palettes with a continuous o
 
 ## Extension points
 
-- [`src/pages/Work.tsx`](src/pages/Work.tsx): Filter by tags before rendering the cards.
+- [`src/pages/Projects.tsx`](src/pages/Projects.tsx): Filter by tags before rendering the cards.
 - [`src/data/projects.ts`](src/data/projects.ts): Integrate a CMS or Markdown loader while keeping the project shape.
 - [`src/pages/Contact.tsx`](src/pages/Contact.tsx): Add a contact form and submit handler.
 - [`src/lib/`](src/lib/): Add custom functions and integrations here.
@@ -48,7 +48,7 @@ Playwright covers navigation, keyboard access, metadata, FAQs, the résumé down
 
 ## Assumptions
 
-- Home is the personal introduction and now contains About. The old `/about` URL redirects to `/#about`. Roblox development is presented as a side interest rather than as part of the main Work index.
-- The one-page résumé is a placeholder. Case studies are available online under Work; there is no downloadable copy of the portfolio.
+- Home is the personal introduction and contains About. The old `/about` URL redirects to `/#about`.
+- The one-page résumé is a placeholder. Case studies are available under Projects; legacy `/work` links redirect to `/projects`. There is no downloadable copy of the portfolio.
 - The framed profile and greyscale palette take cues from Perry Wang; the oversized headline takes a cue from Daniel Sun. The layout, artwork, and copy are original.
 - Contact puts email first, with placeholder social links below it. There is no backend, analytics, CMS, or form submission.

@@ -16,4 +16,3 @@
 - **Treat the portfolio as a conversation starter.** Replace the generic Contact intro with a specific invitation (“Tell me about a workflow your team keeps working around”). Keep the email link visible and the résumé one click away.
 - **Connect skills to proof.** Once you have real projects, link a few skills to a repository, demo, or specific decision in a case study. A short example of why you chose PostgreSQL is more persuasive than a long list of tool logos.
 - **Let the FAQs explain judgment calls.** For an AI project, explain the simplest non-AI baseline, how you evaluated the model, and where you’d still require human review. For a systems project, explain the bottleneck and the test that ruled out alternative causes.
-- **Keep Roblox in the margins.** Link to one or two published games and add a single detail about what you built, such as the checkpoint logic or a multiplayer round system. Save the main Work index for software and AI projects.
