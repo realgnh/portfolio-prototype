@@ -28,7 +28,7 @@ Open the URL printed by Vite. For a static deployment, publish `dist/` and rewri
 
 ## Motion
 
-The theme toggle covers the viewport with 25 staggered bands in the destination color before applying the palette. Navigation updates immediately while the new content fades in and the active pill slides into place. Reduced motion skips these effects.
+The theme toggle covers the viewport with 25 staggered bands in the destination color before applying the palette. Navigation updates immediately while the new content fades in and the active pill slides into place. When the system prefers reduced motion, the theme, route, and card reveals use brief fades, the toggle icons do not spin, and the pill and control feedback are shorter and subtler.
 
 ## Extension points
 

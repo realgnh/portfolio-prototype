@@ -36,10 +36,11 @@ export function ThemeToggle() {
     let cancelled = false
     const animations = mask.current?.getAnimations?.({ subtree: true }) ?? []
     if (!mask.current?.getAnimations) {
+      const duration = window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 140 : 420
       const timeout = window.setTimeout(() => {
         applyTheme(target)
         setTarget(null)
-      }, 420)
+      }, duration)
       return () => window.clearTimeout(timeout)
     }
     void Promise.allSettled(animations.map(animation => animation.finished)).then(() => {
@@ -63,11 +64,7 @@ export function ThemeToggle() {
       localStorage.setItem('portfolio-theme', next)
     } catch {}
 
-    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
-      applyTheme(next)
-    } else {
-      setTarget(next)
-    }
+    setTarget(next)
   }
 
   const preview = target ?? theme

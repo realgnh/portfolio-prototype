@@ -95,11 +95,12 @@ main:focus {
   from { opacity: 0.6; transform: translateY(0.3rem); }
 }
 
+@keyframes route-fade {
+  from { opacity: 0.75; }
+}
+
 @media (prefers-reduced-motion: reduce) {
   html { scroll-behavior: auto; }
 
-  *, *::before, *::after {
-    animation: none !important;
-    transition: none !important;
-  }
+  .route-frame { animation: route-fade 140ms ease-out; }
 }

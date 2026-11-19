@@ -194,6 +194,63 @@ test('tabs, the theme toggle, and the main CTA ease into and out of scaling', as
   }
 })
 
+test.describe('touch preview with reduced motion', () => {
+  test.use({ hasTouch: true, isMobile: true, reducedMotion: 'reduce' })
+
+  test('keeps theme, route, tab, and card feedback without a hover-capable pointer', async ({ page }) => {
+    await page.emulateMedia({ colorScheme: 'dark' })
+    await page.goto('/')
+    expect(await page.evaluate(() => matchMedia('(hover: none) and (prefers-reduced-motion: reduce)').matches)).toBe(true)
+    const toggle = page.getByRole('button', { name: ui.darkMode })
+    const box = await toggle.boundingBox()
+    if (!box) throw new Error('Expected a visible theme button')
+    const input = await page.context().newCDPSession(page)
+    const touchPoint = { x: box.x + box.width / 2, y: box.y + box.height / 2 }
+    await input.send('Input.dispatchTouchEvent', { type: 'touchStart', touchPoints: [touchPoint] })
+    await expect(toggle).toHaveCSS('scale', '1.02')
+    await input.send('Input.dispatchTouchEvent', { type: 'touchCancel', touchPoints: [] })
+    await expect(toggle).not.toHaveAttribute('data-touch-pressed')
+
+    const themeFrame = await toggle.evaluate(button => {
+      if (!(button instanceof HTMLButtonElement)) throw new Error('Expected a theme button')
+      button.click()
+      return new Promise<{ count: number; name: string; transform: string; opacity: number; iconRotation: string } | null>(
+        resolve => requestAnimationFrame(() => requestAnimationFrame(() => {
+          const mask = document.querySelector('.theme-mask')
+          const animations = mask?.getAnimations({ subtree: true }) ?? []
+          const band = mask?.firstElementChild
+          if (!band) {
+            resolve(null)
+            return
+          }
+          const style = getComputedStyle(band)
+          resolve({
+            count: animations.length,
+            name: style.animationName,
+            transform: style.transform,
+            opacity: Number(style.opacity),
+            iconRotation: getComputedStyle(button.querySelector('svg')!).rotate,
+          })
+        })),
+      )
+    })
+    expect(themeFrame).toEqual({
+      count: 25, name: 'theme-band-fade', transform: 'none',
+      opacity: expect.any(Number), iconRotation: '0deg',
+    })
+    expect(themeFrame?.opacity).toBeLessThan(1)
+    await expect(toggle).toHaveAttribute('aria-pressed', 'false')
+
+    await page.getByRole('link', { name: 'Work', exact: true }).tap()
+    await expect(page).toHaveURL('/work')
+    await expect(page.locator('.route-frame')).toHaveCSS('animation-name', 'route-fade')
+    await expect(page.locator('.pill-indicator')).toHaveCSS('transition-duration', '0.135s, 0.135s, 0.135s')
+    const card = page.locator('.reveal').first()
+    await card.scrollIntoViewIfNeeded()
+    await expect(card).toHaveCSS('animation-name', 'route-fade')
+  })
+})
+
 test('the project index button shimmers on hover and the mask works without the Web Animations API', async ({ page }) => {
   await page.emulateMedia({ colorScheme: 'light', reducedMotion: 'no-preference' })
   await page.addInitScript(() => Object.defineProperty(Element.prototype, 'getAnimations', { value: undefined }))

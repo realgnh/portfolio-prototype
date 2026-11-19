@@ -11,6 +11,8 @@
   --bg: var(--theme-light-bg);
   --control-motion: 200ms cubic-bezier(.22, 1, .36, 1);
   --press-motion: 180ms cubic-bezier(.22, 1, .36, 1);
+  --hover-scale: 1.02;
+  --active-scale: 1.04;
   --card: #eef0f2;
   --text: #212226;
   --text-muted: #53565e;
@@ -48,4 +50,13 @@
   --shadow: #0006;
   --press: #2b2e36;
   --spark: #ffffff;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --control-motion: 140ms ease-out;
+    --press-motion: 125ms ease-out;
+    --hover-scale: 1.01;
+    --active-scale: 1.02;
+  }
 }

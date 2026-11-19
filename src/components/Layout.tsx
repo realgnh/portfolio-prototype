@@ -1,4 +1,4 @@
-import { useLayoutEffect, useRef } from 'react'
+import { useEffect, useLayoutEffect, useRef } from 'react'
 import { Link, Outlet, useLocation, useNavigationType } from 'react-router-dom'
 import { site, ui } from '../data/site'
 import { Footer } from './Footer'
@@ -10,6 +10,33 @@ export function Layout() {
   const previousPath = useRef(pathname)
   const main = useRef<HTMLElement>(null)
   const featuredLink = site.socialLinks.find(link => link.featured)
+
+  useEffect(() => {
+    let pressed: Element | null = null
+
+    function release(event?: PointerEvent) {
+      if (event && (event.pointerType !== 'touch' || !event.isPrimary)) return
+      pressed?.removeAttribute('data-touch-pressed')
+      pressed = null
+    }
+
+    function press(event: PointerEvent) {
+      if (event.pointerType !== 'touch' || !event.isPrimary || !(event.target instanceof Element)) return
+      release()
+      pressed = event.target.closest('a, button, summary')
+      pressed?.setAttribute('data-touch-pressed', '')
+    }
+
+    document.addEventListener('pointerdown', press)
+    document.addEventListener('pointerup', release)
+    document.addEventListener('pointercancel', release)
+    return () => {
+      release()
+      document.removeEventListener('pointerdown', press)
+      document.removeEventListener('pointerup', release)
+      document.removeEventListener('pointercancel', release)
+    }
+  }, [])
 
   useLayoutEffect(() => {
     const changed = previousPath.current !== pathname

@@ -158,12 +158,12 @@
 }
 
 .theme-toggle[data-preview-theme="dark"] svg {
-  rotate: 1turn;
+  rotate: var(--theme-icon-turn, 1turn);
 }
 
 .theme-toggle[data-preview-theme="light"] .theme-sun,
 .theme-toggle[data-preview-theme="dark"] .theme-moon {
-  scale: 0;
+  scale: var(--theme-icon-hidden-scale, 0);
   opacity: 0;
 }
 
@@ -512,16 +512,12 @@
   transform: translate(2px, -2px);
 }
 
-@media (prefers-reduced-motion: no-preference) and (hover: hover) {
-  :is(.pill-nav a, .theme-toggle, .cta-button, .action, .hero-scroll, .project-faq summary, .next-project):hover {
-    scale: 1.02;
-  }
+:is(.pill-nav a, .theme-toggle, .cta-button, .action, .hero-scroll, .project-faq summary, .next-project):is(:hover, :focus-visible) {
+  scale: var(--hover-scale);
 }
 
-@media (prefers-reduced-motion: no-preference) {
-  :is(.pill-nav a, .theme-toggle, .cta-button, .action, .hero-scroll, .project-faq summary, .next-project):active {
-    scale: 1.04;
-  }
+:is(.pill-nav a, .theme-toggle, .cta-button, .action, .hero-scroll, .project-faq summary, .next-project):is(:active, [data-touch-pressed]) {
+  scale: var(--active-scale);
 }
 
 .eyebrow,
@@ -629,6 +625,47 @@
 
 @keyframes reveal-in {
   from { opacity: 0.75; transform: translateY(0.45rem); }
+}
+
+@keyframes theme-band-fade {
+  from { opacity: 0; }
+}
+
+@keyframes button-glint {
+  50% { opacity: 0.7; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .pill-indicator {
+    transition-duration: 135ms, 135ms, 135ms;
+  }
+
+  .theme-toggle {
+    --theme-icon-turn: 0turn;
+    --theme-icon-hidden-scale: 1;
+  }
+
+  .theme-toggle svg {
+    transition: opacity 140ms ease-out;
+  }
+
+  .theme-label {
+    transform: translate(-50%, 0);
+    transition: opacity 140ms ease-out;
+  }
+
+  .theme-mask > div {
+    animation: theme-band-fade 140ms ease-out both;
+  }
+
+  .cta-button:is(:hover, :focus-visible) .cta-shimmer::before {
+    background: var(--spark);
+    animation: button-glint 220ms ease-out both;
+  }
+
+  .reveal[data-revealed] {
+    animation: route-fade 140ms ease-out;
+  }
 }
 
 .inner-page {

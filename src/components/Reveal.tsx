@@ -6,7 +6,7 @@ export function Reveal({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     const target = item.current
-    if (!target || !('IntersectionObserver' in window) || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return
+    if (!target || !('IntersectionObserver' in window)) return
     const observer = new IntersectionObserver(([entry]) => {
       if (!entry.isIntersecting) return
       target.dataset.revealed = ''
