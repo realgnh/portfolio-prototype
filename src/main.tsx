@@ -1,4 +1,4 @@
-import '@fontsource/bebas-neue/latin-400.css'
+import '@fontsource/inter-tight/latin-400.css'
 import '@fontsource/newsreader/latin-400.css'
 import '@fontsource/newsreader/latin-400-italic.css'
 import '@fontsource/inter-tight/latin-600.css'

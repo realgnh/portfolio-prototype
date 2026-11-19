@@ -3,7 +3,8 @@
 }
 
 html {
-  scroll-padding-block-start: calc(5rem + env(safe-area-inset-top));
+  scroll-padding-block-start: calc(6rem + env(safe-area-inset-top));
+  scroll-behavior: smooth;
 }
 
 body {
@@ -11,8 +12,19 @@ body {
   background: var(--bg);
   color: var(--text);
   font-family: var(--font-body);
-  font-size: 1.125rem;
-  line-height: 1.45;
+  font-size: 1rem;
+  line-height: 1.55;
+}
+
+body::before {
+  position: absolute;
+  z-index: -1;
+  inset: 0 0 auto;
+  height: 54rem;
+  background: repeating-linear-gradient(90deg, transparent 0 calc(100% / 12 - 1px), var(--gridline) calc(100% / 12 - 1px) calc(100% / 12));
+  mask-image: linear-gradient(#000 35%, transparent);
+  pointer-events: none;
+  content: "";
 }
 
 h1, h2, h3, p, figure, dl, dd {
@@ -21,19 +33,20 @@ h1, h2, h3, p, figure, dl, dd {
 
 h1, h2, h3 {
   font-family: var(--font-display);
-  font-weight: 400;
-  line-height: 0.98;
-  text-transform: uppercase;
+  font-weight: 600;
+  line-height: 1.02;
+  letter-spacing: -0.04em;
 }
 
 h2 {
-  font-size: 2rem;
+  font-size: clamp(1.75rem, 4vw, 3.25rem);
 }
 
 a {
   color: inherit;
   text-decoration-thickness: 1px;
-  text-underline-offset: 0.22em;
+  text-underline-offset: 0.24em;
+  transition: color 160ms ease;
 }
 
 a:hover {
@@ -74,14 +87,66 @@ main:focus {
   overflow: hidden;
 }
 
+main {
+  view-transition-name: page;
+}
+
 ::view-transition-old(root),
 ::view-transition-new(root) {
-  animation-duration: 180ms;
+  animation: none;
+}
+
+::view-transition-old(page) {
+  animation: route-out 140ms both ease-out;
+}
+
+::view-transition-new(page) {
+  animation: route-in 280ms 35ms both cubic-bezier(.22, 1, .36, 1);
+}
+
+@supports not (view-transition-name: page) {
+  .route-frame { animation: route-in 260ms both ease-out; }
+}
+
+@keyframes route-out {
+  to { opacity: 0; }
+}
+
+@keyframes route-in {
+  from { opacity: 0; transform: translateY(0.5rem); }
+}
+
+[data-theme-transition] main {
+  view-transition-name: none;
+}
+
+[data-theme-transition]::view-transition-old(root),
+[data-theme-transition]::view-transition-new(root) {
+  mix-blend-mode: normal;
+}
+
+[data-theme-transition]::view-transition-new(root) {
+  animation: theme-reveal 470ms cubic-bezier(.22, 1, .36, 1) both;
+}
+
+[data-theme-fallback] :is(body, .hero-frame, .pill-nav, .portrait, .thumbnail) {
+  transition: background-color 250ms ease, color 250ms ease, border-color 250ms ease;
+}
+
+@keyframes theme-reveal {
+  from { clip-path: circle(0 at var(--switch-x) var(--switch-y)); }
+  to { clip-path: circle(var(--switch-radius) at var(--switch-x) var(--switch-y)); }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  *, *::before, *::after, ::view-transition-old(root), ::view-transition-new(root) {
+  html { scroll-behavior: auto; }
+
+  *, *::before, *::after {
     animation: none !important;
     transition: none !important;
+  }
+
+  ::view-transition-group(*), ::view-transition-old(*), ::view-transition-new(*) {
+    animation: none !important;
   }
 }

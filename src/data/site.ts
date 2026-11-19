@@ -12,7 +12,7 @@ export const site = {
   },
   email: 'alex@example.com',
   socialLinks: [
-    { label: 'LinkedIn', href: 'https://www.linkedin.com/in/example-profile/' },
+    { label: 'LinkedIn', href: 'https://www.linkedin.com/in/example-profile/', featured: true },
     { label: 'GitHub', href: 'https://github.com/example-profile' },
     { label: 'X', href: 'https://x.com/example_profile' },
   ],

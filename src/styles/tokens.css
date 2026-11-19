@@ -1,33 +1,45 @@
 :root {
   color-scheme: light;
-  --font-display: "Bebas Neue", "Arial Narrow", sans-serif;
-  --font-body: "Newsreader", Georgia, serif;
+  --font-display: "Inter Tight", system-ui, sans-serif;
+  --font-body: "Inter Tight", system-ui, sans-serif;
   --font-accent: "Newsreader", Georgia, serif;
   --font-ui: "Inter Tight", system-ui, sans-serif;
+  --font-meta: ui-monospace, "SFMono-Regular", Consolas, monospace;
 
-  --bg: #e6e9ec;
-  --card: #ffffff;
-  --text: #111214;
-  --text-muted: #5a6067;
-  --accent: #b92e20;
-  --rule: #c2c7cc;
-  --thumb: #eef0f2;
-  --thumb-ink: #4e5b67;
-  --nav-shadow: 0 3px 18px #11121414;
-
-  --gutter: clamp(1rem, 4vw, 3rem);
-  --shell: 60rem;
+  --bg: #f6f2eb;
+  --card: #fffaf2;
+  --text: #24221f;
+  --text-muted: #635a51;
+  --accent: #83401e;
+  --accent-lit: #9a5025;
+  --rule: #d4c9bc;
+  --frame: #b9a991;
+  --gridline: #6b452410;
+  --thumb: #eae2d5;
+  --thumb-ink: #695846;
+  --glow: #eeb46e66;
+  --inset: #ffffffa0;
+  --shadow: #46321d15;
+  --press: #e7dac9;
+  --gutter: clamp(0.875rem, 5vw, 4.25rem);
+  --shell: 69rem;
 }
 
 :root[data-theme="dark"] {
   color-scheme: dark;
-  --bg: #16181b;
-  --card: #212428;
-  --text: #f1f2f3;
-  --text-muted: #adb5bd;
-  --accent: #ff8b7a;
-  --rule: #494e55;
-  --thumb: #2b3036;
-  --thumb-ink: #b6c0ca;
-  --nav-shadow: 0 3px 18px #0004;
+  --bg: #121210;
+  --card: #1c1b18;
+  --text: #f5f0e7;
+  --text-muted: #b8afa1;
+  --accent: #f4bc88;
+  --accent-lit: #ffe0b9;
+  --rule: #3e3931;
+  --frame: #574938;
+  --gridline: #ead5ab0b;
+  --thumb: #26221d;
+  --thumb-ink: #c7ac8d;
+  --glow: #d584383a;
+  --inset: #ffe3bb19;
+  --shadow: #0006;
+  --press: #3e3428;
 }

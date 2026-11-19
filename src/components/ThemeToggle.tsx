@@ -1,4 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
+import type { MouseEvent } from 'react'
+import { flushSync } from 'react-dom'
 import { ui } from '../data/site'
 
 type Theme = 'dark' | 'light'
@@ -28,15 +30,45 @@ export function ThemeToggle() {
   const next = theme === 'dark' ? 'light' : 'dark'
   const label = next === 'light' ? ui.switchToLight : ui.switchToDark
 
-  function toggle() {
+  function toggle(event: MouseEvent<HTMLButtonElement>) {
+    const root = document.documentElement
+    if (root.hasAttribute('data-theme-transition')) return
     choseTheme.current = true
-    document.documentElement.dataset.theme = next
-    setTheme(next)
     try {
       localStorage.setItem('portfolio-theme', next)
     } catch {
       // The current theme still works when storage is unavailable.
     }
+    function applyTheme() {
+      root.dataset.theme = next
+      setTheme(next)
+    }
+
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      applyTheme()
+      return
+    }
+    if (!document.startViewTransition) {
+      root.setAttribute('data-theme-fallback', '')
+      applyTheme()
+      return
+    }
+
+    const { left, top, width, height } = event.currentTarget.getBoundingClientRect()
+    const x = left + width / 2
+    const y = top + height / 2
+    const radius = Math.hypot(Math.max(x, innerWidth - x), Math.max(y, innerHeight - y))
+    root.style.setProperty('--switch-x', `${x}px`)
+    root.style.setProperty('--switch-y', `${y}px`)
+    root.style.setProperty('--switch-radius', `${radius}px`)
+    root.setAttribute('data-theme-transition', '')
+
+    function reset() {
+      root.removeAttribute('data-theme-transition')
+      for (const name of ['--switch-x', '--switch-y', '--switch-radius']) root.style.removeProperty(name)
+    }
+    const transition = document.startViewTransition(() => flushSync(applyTheme))
+    void transition.finished.then(reset, reset)
   }
 
   return (

@@ -9,6 +9,7 @@ export function Layout() {
   const navigationType = useNavigationType()
   const previousPath = useRef(pathname)
   const main = useRef<HTMLElement>(null)
+  const featuredLink = site.socialLinks.find(link => link.featured)
 
   useLayoutEffect(() => {
     const changed = previousPath.current !== pathname
@@ -28,12 +29,12 @@ export function Layout() {
         </Link>
         <PillNav />
         <div className="masthead-links">
-          <a href={site.socialLinks[0].href}>{site.socialLinks[0].label} <span aria-hidden="true">↗</span></a>
+          {featuredLink && <a href={featuredLink.href}>{featuredLink.label} <span aria-hidden="true">↗</span></a>}
           <Link to="/#resume" viewTransition>{ui.resume} <span aria-hidden="true">↗</span></Link>
         </div>
       </header>
       <main id="main-content" ref={main} tabIndex={-1}>
-        <Outlet />
+        <div className="route-frame" key={pathname}><Outlet /></div>
       </main>
       <Footer />
     </>
