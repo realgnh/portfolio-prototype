@@ -44,10 +44,18 @@ export function Contact() {
           <p className="muted">{profile.location}</p>
         </section>
 
-        <section className="contact-card" aria-labelledby="contact-elsewhere">
+        <section className="contact-card contact-card-elsewhere" aria-labelledby="contact-elsewhere">
           <h2 id="contact-elsewhere" className="eyebrow">{copy.elsewhere}</h2>
           <ul className="social-list" aria-label="Contact links">
-            {profile.socials.map(({ label, href }) => <li key={href}><a className="arrow-link" href={href}>{label} <span aria-hidden="true">↗</span></a></li>)}
+            {profile.socials.map(({ label, href }, index) => (
+              <li key={href} data-rank={Math.min(index + 1, 3)}>
+                <a className="social-link" href={href}>
+                  <span>{label}</span>
+                  <span className="social-handle muted">{href.replace(/^https?:\/\/(www\.)?/, '').replace(/\/$/, '')}</span>
+                  <span className="social-arrow" aria-hidden="true">↗</span>
+                </a>
+              </li>
+            ))}
           </ul>
         </section>
       </div>

@@ -34,7 +34,7 @@ Everything you'd normally change is text in **`src/content/`**. You rarely need 
 | Hero, bubbles (and their wandering paths), About, experience rows, project cards, Skills, Hobbies | `src/styles/home.css` |
 | Projects, project detail, Experience, Résumé, Contact pages | `src/styles/pages.css` |
 | Page transition, light/dark transition, the animations switch | `src/styles/base.css` |
-| Where each skill bubble floats, its path, speed and tilt | `spots` at the top of `src/components/sections/SkillBubbles.tsx` |
+| Where each skill bubble floats, its path and speed | `spots` at the top of `src/components/sections/SkillBubbles.tsx` |
 | Loading-screen length and bar segments (the cube's hop/roll speed is `hop`/`roll` in `layout.css`) | `DURATION` / `SEGMENTS` at the top of `src/components/layout/LoadingScreen.tsx` |
 | Quick search actions | `items` in `src/components/layout/CommandMenu.tsx` |
 | Order of sections on Home | `src/pages/Home.tsx` |

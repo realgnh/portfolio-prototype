@@ -104,7 +104,8 @@ test('the loading screen plays on a fresh load but not when changing pages', asy
   const loader = page.getByRole('progressbar', { name: sections.loader.title })
   await expect(loader).toBeVisible()
   await expect(loader).toContainText(sections.loader.title)
-  await expect(loader.locator('.loader-block svg')).toBeVisible()
+  expect(await loader.locator('.loader-logos svg').count()).toBeGreaterThan(3)
+  await expect(loader.locator('.loader-block')).toBeVisible()
   await expect(loader).toBeHidden({ timeout: 4000 })
   await mainNav(page).getByRole('link', { name: pages.projects.label }).click()
   await expect(page.getByRole('heading', { level: 1 })).toHaveText(pages.projects.title)
@@ -202,6 +203,7 @@ test('every project card opens a detail page with results, questions and neighbo
     await expect(page.getByRole('region', { name: sections.project.summary })).toContainText(`${accomplished}, as measured by ${measuredBy}, by ${byDoing}.`)
     for (const metric of project.metrics) await expect(page.getByText(metric.value, { exact: true })).toBeVisible()
     for (const tool of project.tools) await expect(page.locator('.facts').getByText(tool, { exact: true })).toBeVisible()
+    await expect(page.locator('.facts').getByText('Role', { exact: true })).toHaveCount(0)
     for (const { question, answer } of project.faq) {
       await expect(page.getByText(answer, { exact: true })).toBeHidden()
       await page.getByText(question, { exact: true }).click()
@@ -265,9 +267,10 @@ test('Contact shows the local time in Cairo and the social links', async ({ page
   await expect(clock).toContainText(hourMinute.split(' ')[0])
   const first = await clock.textContent()
   await expect(clock).not.toHaveText(first!, { timeout: 2500 })
-  for (const { label, href } of profile.socials) {
-    await expect(page.getByRole('list', { name: 'Contact links' }).getByRole('link', { name: label })).toHaveAttribute('href', href)
-  }
+  const links = page.getByRole('list', { name: 'Contact links' }).getByRole('link')
+  for (const [index, { label, href }] of profile.socials.entries()) await expect(links.nth(index)).toHaveAttribute('href', href)
+  const sizes = await links.evaluateAll(els => els.map(el => parseFloat(getComputedStyle(el).fontSize)))
+  for (let i = 1; i < sizes.length; i++) expect(sizes[i], 'less important links are smaller').toBeLessThan(sizes[i - 1])
 })
 
 test('the résumé lists experience with logos, skills and a PDF download', async ({ page }) => {

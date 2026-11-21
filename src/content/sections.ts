@@ -11,7 +11,7 @@ export const sections = {
   projects: { heading: 'Selected projects', intro: 'Things I’ve built, and what changed because of them.', all: 'See all projects', pageIntro: 'Everything I’ve built so far. Filter by area.', allFilter: 'All' },
   currently: { heading: 'Currently working on' },
   contactBand: { heading: 'Let’s build something.', text: 'Open to internships and interesting projects.' },
-  project: { back: 'All projects', problem: 'Problem', approach: 'Approach', result: 'Result', summary: 'In one sentence', faq: 'Questions', previous: 'Previous', next: 'Next', tools: 'Built with', role: 'Role', year: 'Year' },
+  project: { back: 'All projects', problem: 'Problem', approach: 'Approach', result: 'Result', summary: 'In one sentence', faq: 'Questions', previous: 'Previous', next: 'Next', tools: 'Built with', year: 'Year' },
   resume: { heading: 'Résumé', intro: 'Education, experience, selected projects and skills.', education: 'Education', experience: 'Experience', skills: 'Skills', projects: 'Selected projects', projectSlugs: ['clearpath-onboarding', 'signal-dashboard', 'index-library'] },
   contact: { heading: 'Contact', email: 'Email', copy: 'Copy email', localTime: 'My local time', elsewhere: 'Elsewhere' },
   placeholders: { project: 'Add screenshot', projectMedia: 'Add screenshot or video', photo: 'Add photo' },

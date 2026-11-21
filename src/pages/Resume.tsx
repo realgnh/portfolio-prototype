@@ -28,7 +28,7 @@ export function Resume() {
 
       <section className="resume-section" aria-labelledby="resume-education">
         <h2 id="resume-education">{copy.education}</h2>
-        <ul className="plain-list">
+        <ul className="plain-list education-list">
           {profile.education.map(({ program, school, start, end, expected }) => (
             <li key={program}><h3>{program}</h3><p className="muted">{school} · {formatRange(start, end)}{expected ? ' (expected)' : ''}</p></li>
           ))}

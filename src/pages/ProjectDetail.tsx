@@ -36,7 +36,6 @@ export function ProjectDetail() {
       <ProjectMedia project={project} tone={tone} />
 
       <dl className="facts">
-        <div><dt>{copy.role}</dt><dd>{project.role}</dd></div>
         <div><dt>{copy.year}</dt><dd>{project.year}</dd></div>
         <div>
           <dt>{copy.tools}</dt>

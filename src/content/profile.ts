@@ -49,6 +49,7 @@ export const profile = {
   timeZone: 'Africa/Cairo',
   location: 'Cairo',
 
+  /** Most important first: on the Contact page the first link is the biggest, then each gets smaller. */
   socials: [
     { label: 'LinkedIn', href: 'https://www.linkedin.com/in/example-profile/' },
     { label: 'GitHub', href: 'https://github.com/example-profile' },

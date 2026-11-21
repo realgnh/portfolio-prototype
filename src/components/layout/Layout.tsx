@@ -16,13 +16,16 @@ export function Layout() {
   const main = useRef<HTMLElement>(null)
   const [menuOpen, setMenuOpen] = useState(false)
   const focusBeforeMenu = useRef<HTMLElement | null>(null)
+  const menuIsOpen = useRef(false)
 
   // Remember what had focus before Quick search opened, and put it back when it closes.
   function openMenu() {
     focusBeforeMenu.current = document.activeElement as HTMLElement | null
+    menuIsOpen.current = true
     setMenuOpen(true)
   }
   function closeMenu() {
+    menuIsOpen.current = false
     setMenuOpen(false)
     requestAnimationFrame(() => focusBeforeMenu.current?.focus())
   }
@@ -39,7 +42,7 @@ export function Layout() {
     function onKey(event: KeyboardEvent) {
       if ((event.metaKey || event.ctrlKey) && event.key.toLowerCase() === 'k') {
         event.preventDefault()
-        if (document.querySelector('.command-menu')) closeMenu()
+        if (menuIsOpen.current) closeMenu()
         else openMenu()
       }
     }
