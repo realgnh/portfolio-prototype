@@ -21,6 +21,29 @@ export const profile = {
 
   intro: 'CS student at X university, building software and learning how to make AI systems people can trust.',
 
+  /** The bold "About me" section on Home. */
+  about: {
+    statement: 'I build software that’s useful, measurable and a little bit fun.',
+    paragraphs: [
+      'I’m a computer science student at X university working toward a career as a Software / AI Engineer. I like projects where I can see the result: a faster workflow, a clearer interface, a model I can actually explain.',
+      'Outside of class I animate and build games on Roblox, which taught me to ship, take feedback from real players and keep iterating.',
+    ],
+    facts: [
+      { label: 'Based in', value: 'Cairo' },
+      { label: 'Studying', value: 'B.Sc. Computer Science' },
+      { label: 'Focus', value: 'Software & applied AI' },
+      { label: 'Also', value: 'Roblox dev & animator' },
+    ],
+    /** Your photo: put the file in public/images/ and write its name, e.g. 'me.jpg'. */
+    photo: undefined as string | undefined,
+  },
+
+  /** One-liners shown in the About section. Quick to update. Set a value to '' to hide it. */
+  now: {
+    playing: 'Placeholder game name',
+    learning: 'Docker & deploying FastAPI',
+  },
+
   email: 'alex@example.com',
   /** IANA time zone used for the local time on the Contact page. */
   timeZone: 'Africa/Cairo',
@@ -34,9 +57,10 @@ export const profile = {
 
   /** Replace public/resume.pdf with your own file. */
   resume: { href: '/resume.pdf', label: 'Download résumé' },
-  education: [{ program: 'B.Sc. Computer Science', school: 'X university', period: 'Expected 20XX' }],
+  /** `start` / `end` are 'YYYY-MM'. Set `expected: true` while you're still studying. */
+  education: [{ program: 'B.Sc. Computer Science', school: 'X university', start: '2024-09', end: '2028-06', expected: true }],
 
-  /** Short "Currently" list on Home. Keep it to three lines. */
+  /** "Currently working on…" cards on Home. Keep it to three. */
   currently: [
     { label: 'Building', text: 'A small PyTorch text classifier with a written error analysis.' },
     { label: 'Reading', text: 'How teams evaluate retrieval-augmented generation against keyword search.' },

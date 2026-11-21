@@ -1,7 +1,8 @@
+import type { SimpleIcon } from 'simple-icons'
 import type { Skill } from '../../content/skills'
 
 /** Renders a skill's brand logo, a database glyph, or its initials as a fallback. */
-export function BrandIcon({ skill }: { skill: Skill }) {
+export function BrandIcon({ skill }: { skill: Pick<Skill, 'name'> & { icon?: SimpleIcon | 'database' } }) {
   const { icon, name } = skill
   if (icon === 'database') {
     return (
@@ -11,8 +12,10 @@ export function BrandIcon({ skill }: { skill: Skill }) {
     )
   }
   if (icon) {
+    // Very dark brand colours (e.g. Roblox's black) follow the text colour so they show in dark mode.
+    const dark = parseInt(icon.hex.slice(0, 2), 16) + parseInt(icon.hex.slice(2, 4), 16) + parseInt(icon.hex.slice(4, 6), 16) < 120
     return (
-      <svg aria-hidden="true" viewBox="0 0 24 24" style={{ color: `#${icon.hex}` }} className="brand-logo">
+      <svg aria-hidden="true" viewBox="0 0 24 24" style={{ color: dark ? 'var(--text)' : `#${icon.hex}` }} className="brand-logo">
         <path d={icon.path} fill="currentColor" />
       </svg>
     )

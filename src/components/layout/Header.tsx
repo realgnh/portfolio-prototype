@@ -3,18 +3,22 @@ import { Link, useLocation } from 'react-router-dom'
 import { navItems } from '../../content/navigation'
 import { profile } from '../../content/profile'
 import { sections } from '../../content/sections'
+import { MotionToggle } from './MotionToggle'
 import { ThemeToggle } from './ThemeToggle'
 
 function isActive(to: string, pathname: string) {
-  if (to.includes('#')) return false
   return to === '/' ? pathname === '/' : pathname.startsWith(to)
 }
 
-/** Top bar: monogram, pill navigation, quick-menu button and theme toggle. */
-export function Header({ onOpenMenu }: { onOpenMenu: () => void }) {
+/**
+ * Top bar. Three equal columns keep the pill navigation exactly centred:
+ * monogram on the left, navigation in the middle, buttons on the right.
+ */
+export function Header({ onOpenSearch }: { onOpenSearch: () => void }) {
   const { pathname } = useLocation()
   const [open, setOpen] = useState(false)
   const isMac = typeof navigator !== 'undefined' && /Mac|iPhone|iPad/.test(navigator.platform)
+  const shortcut = isMac ? '⌘K' : 'Ctrl+K'
 
   useEffect(() => setOpen(false), [pathname])
 
@@ -30,10 +34,11 @@ export function Header({ onOpenMenu }: { onOpenMenu: () => void }) {
         </nav>
 
         <div className="header-actions">
-          <button type="button" className="icon-button kbd-button" onClick={onOpenMenu} aria-label={sections.commandMenu.label} aria-keyshortcuts={isMac ? 'Meta+K' : 'Control+K'}>
+          <button type="button" className="search-button" onClick={onOpenSearch} aria-keyshortcuts={isMac ? 'Meta+K' : 'Control+K'} title={`${sections.commandMenu.button} (${shortcut})`}>
             <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><circle cx="11" cy="11" r="6.5" /><path d="m20 20-4-4" /></svg>
-            <kbd aria-hidden="true">{isMac ? '⌘' : 'Ctrl'} K</kbd>
+            <span className="search-label">{sections.commandMenu.button}</span>
           </button>
+          <MotionToggle />
           <ThemeToggle />
           <button type="button" className="icon-button menu-button" aria-expanded={open} aria-label="Menu" onClick={() => setOpen(value => !value)}>
             <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">

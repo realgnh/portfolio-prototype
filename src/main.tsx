@@ -16,6 +16,7 @@ import { createRoot } from 'react-dom/client'
 import { createBrowserRouter, Navigate, RouterProvider, useLocation, useParams } from 'react-router-dom'
 import { Layout } from './components/layout/Layout'
 import { Contact } from './pages/Contact'
+import { Experience } from './pages/Experience'
 import { Home } from './pages/Home'
 import { NotFound } from './pages/NotFound'
 import { ProjectDetail } from './pages/ProjectDetail'
@@ -38,11 +39,11 @@ const router = createBrowserRouter([
       { index: true, element: <Home /> },
       { path: 'projects', element: <Projects /> },
       { path: 'projects/:slug', element: <ProjectDetail /> },
+      { path: 'experience', element: <Experience /> },
       { path: 'resume', element: <Resume /> },
       { path: 'contact', element: <Contact /> },
       { path: 'work/:slug?', element: <LegacyProjectsRedirect /> },
       { path: 'about', element: <Navigate to="/" replace /> },
-      { path: 'experience', element: <Navigate to="/#experience" replace /> },
       { path: '*', element: <NotFound /> },
     ],
   },

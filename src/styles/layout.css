@@ -1,6 +1,8 @@
 /* LAYOUT — header with pill navigation, footer, quick menu (⌘K) and toasts. */
 .site-header { position: sticky; z-index: 20; top: 0; padding-block: 0.9rem; }
-.header-inner { display: flex; align-items: center; justify-content: space-between; gap: 1rem; }
+/* Three equal-width columns keep the pill navigation centred on the page. */
+.header-inner { display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; gap: 1rem; }
+.header-inner > .monogram { justify-self: start; }
 
 .monogram { font-size: 1.35rem; font-weight: 800; letter-spacing: -0.05em; text-decoration: none; }
 .monogram span { color: var(--accent); }
@@ -17,16 +19,24 @@
 .pill-nav a:hover { color: var(--text); background: var(--bg); }
 .pill-nav a[aria-current="page"] { background: var(--button); color: var(--button-text); }
 
-.header-actions { display: flex; align-items: center; gap: 0.5rem; }
+.header-actions { display: flex; align-items: center; justify-content: flex-end; gap: 0.5rem; }
 .header-actions .icon-button { background: color-mix(in srgb, var(--surface) 82%, transparent); backdrop-filter: blur(12px); }
-.kbd-button { width: auto; grid-auto-flow: column; gap: 0.4rem; padding-inline: 0.75rem; }
-.kbd-button kbd { font: 600 0.75rem var(--font-sans); color: var(--text-muted); }
+.search-button {
+  display: inline-flex; align-items: center; gap: 0.45rem; height: 2.5rem; padding-inline: 0.85rem;
+  border: 1px solid var(--line); border-radius: 999px; cursor: pointer;
+  background: color-mix(in srgb, var(--surface) 82%, transparent); backdrop-filter: blur(12px);
+  font-size: 0.875rem; font-weight: 600; color: var(--text-muted);
+  transition: border-color 200ms, color 200ms, transform 200ms var(--ease);
+}
+.search-button:hover { border-color: var(--text); color: var(--text); transform: translateY(-1px); }
+.search-button svg { width: 1rem; height: 1rem; }
 .menu-button { display: none; }
 
 @media (max-width: 52rem) {
+  .header-inner { grid-template-columns: auto 1fr; }
   .menu-button { display: inline-grid; }
-  .kbd-button { width: 2.5rem; padding: 0; }
-  .kbd-button kbd { display: none; }
+  .search-button { width: 2.5rem; padding: 0; justify-content: center; }
+  .search-label { display: none; }
   .pill-nav {
     position: absolute; top: calc(100% - 0.25rem); right: var(--gutter); left: var(--gutter);
     flex-direction: column; padding: 0.5rem; border-radius: var(--radius);
@@ -76,6 +86,63 @@
 @keyframes pop-in { from { opacity: 0; transform: translateY(-8px) scale(0.98); } }
 @keyframes toast-in { from { opacity: 0; transform: translateY(10px); } }
 
-@media (prefers-reduced-motion: reduce) {
-  .command-backdrop, .command-menu, .toast { animation: none; }
+
+/* Thin colourful bar that sweeps across the top on every page change (RouteProgress.tsx). */
+.route-progress {
+  position: fixed; z-index: 45; top: 0; left: 0; height: 3px; width: 100%;
+  background: linear-gradient(90deg, var(--tone-lilac-ink), var(--accent), var(--tone-mint-ink), var(--tone-peach-ink));
+  transform-origin: left; animation: route-sweep 650ms var(--ease) forwards;
 }
+@keyframes route-sweep {
+  0% { transform: scaleX(0); opacity: 1; }
+  70% { transform: scaleX(1); opacity: 1; }
+  100% { transform: scaleX(1); opacity: 0; }
+}
+
+/* Loading screen (LoadingScreen.tsx): a block hops along a segmented, game-style bar. */
+:root[data-loading] { overflow: hidden; }
+.loader {
+  position: fixed; z-index: 100; inset: 0; display: grid; place-items: center; padding: var(--gutter);
+  background:
+    radial-gradient(circle at 20% 25%, var(--tone-lilac), transparent 40%),
+    radial-gradient(circle at 80% 75%, var(--tone-peach), transparent 40%),
+    radial-gradient(circle at 75% 20%, var(--tone-mint), transparent 35%),
+    var(--bg);
+  transition: opacity 450ms ease, visibility 450ms;
+}
+.loader[data-leaving="true"] { opacity: 0; visibility: hidden; }
+.loader[data-leaving="true"] .loader-card { transform: scale(1.04); }
+.loader-card { display: grid; gap: 1.1rem; width: min(100%, 28rem); transition: transform 450ms var(--ease); }
+.loader-title { font-size: clamp(1.6rem, 6vw, 2.4rem); font-weight: 800; letter-spacing: -0.04em; text-align: center; }
+.loader-track { position: relative; padding-top: 3.1rem; margin-inline: 1.3rem; }
+.loader-runner { position: absolute; top: 0; width: 2.6rem; translate: -50% 0; }
+.loader-block {
+  display: grid; place-items: center; width: 2.6rem; height: 2.6rem; padding: 0.5rem;
+  border: 2px solid var(--text); border-radius: 0.7rem; background: var(--surface);
+  box-shadow: 0 3px 0 var(--text);
+  transform-origin: 50% 100%; animation: hop 520ms cubic-bezier(.3, 0, .4, 1) infinite;
+}
+.loader-shadow {
+  width: 2rem; height: 0.35rem; margin: 0.3rem auto 0; border-radius: 50%;
+  background: color-mix(in srgb, var(--text) 18%, transparent); animation: hop-shadow 520ms cubic-bezier(.3, 0, .4, 1) infinite;
+}
+@keyframes hop {
+  0%   { transform: translateY(0) scale(1.15, 0.85) rotate(0deg); }
+  15%  { transform: translateY(-6px) scale(0.92, 1.1); }
+  50%  { transform: translateY(-26px) scale(1, 1) rotate(-8deg); }
+  85%  { transform: translateY(-4px) scale(0.95, 1.06) rotate(0deg); }
+  100% { transform: translateY(0) scale(1.15, 0.85); }
+}
+@keyframes hop-shadow { 50% { transform: scaleX(0.55); opacity: 0.5; } }
+.loader-bar {
+  display: grid; grid-template-columns: repeat(20, 1fr); gap: 3px; height: 1.15rem; padding: 3px;
+  border: 2px solid var(--text); border-radius: 0.55rem; background: var(--surface); box-shadow: 0 3px 0 var(--text);
+}
+.loader-bar span { border-radius: 2px; background: color-mix(in srgb, var(--text) 8%, transparent); transition: background-color 150ms; }
+.loader-bar span[data-on="true"]:nth-child(4n+1) { background: var(--tone-lilac-ink); }
+.loader-bar span[data-on="true"]:nth-child(4n+2) { background: var(--accent); }
+.loader-bar span[data-on="true"]:nth-child(4n+3) { background: var(--tone-mint-ink); }
+.loader-bar span[data-on="true"]:nth-child(4n+4) { background: var(--tone-peach-ink); }
+.loader-meta { display: flex; justify-content: space-between; gap: 1rem; font-size: 0.875rem; font-weight: 600; }
+.loader-tip { color: var(--text-muted); }
+.loader-percent { font-variant-numeric: tabular-nums; }

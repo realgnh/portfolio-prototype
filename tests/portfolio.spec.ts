@@ -1,6 +1,8 @@
 import { expect, test } from '@playwright/test'
 import { join } from 'node:path'
 import { experience } from '../src/content/experience'
+import { hobbies } from '../src/content/hobbies'
+import { formatDuration, formatRange } from '../src/lib/dates'
 import { navItems, pages } from '../src/content/navigation'
 import { profile } from '../src/content/profile'
 import { projects } from '../src/content/projects'
@@ -8,6 +10,11 @@ import { sections } from '../src/content/sections'
 import { skillAreas, skills } from '../src/content/skills'
 
 const mainNav = (page: import('@playwright/test').Page) => page.getByRole('navigation', { name: 'Main navigation' })
+
+// The loading screen has its own test; every other test skips it.
+test.beforeEach(async ({ context }, info) => {
+  if (!info.title.includes('loading screen')) await context.addInitScript(() => localStorage.setItem('portfolio-skip-loader', '1'))
+})
 
 test('keyboard navigation, active page and metadata follow the route', async ({ page }) => {
   await page.goto('/')
@@ -17,7 +24,7 @@ test('keyboard navigation, active page and metadata follow the route', async ({ 
   await expect(page.getByRole('main')).toBeFocused()
   await expect(mainNav(page).getByRole('link', { name: pages.home.label })).toHaveAttribute('aria-current', 'page')
 
-  for (const key of ['projects', 'resume', 'contact'] as const) {
+  for (const key of ['projects', 'experience', 'resume', 'contact'] as const) {
     const { label, title, description } = pages[key]
     const link = mainNav(page).getByRole('link', { name: label })
     await link.focus()
@@ -29,8 +36,8 @@ test('keyboard navigation, active page and metadata follow the route', async ({ 
   }
 
   await mainNav(page).getByRole('link', { name: pages.experience.label }).click()
-  await expect(page).toHaveURL('/#experience')
-  await expect(page.getByRole('heading', { name: sections.experience.heading, level: 2 })).toBeInViewport()
+  await expect(page).toHaveURL('/experience')
+  await expect(page.getByRole('heading', { level: 1 })).toHaveText(pages.experience.title)
   expect(navItems.map(item => item.label)).not.toContain('Experiments')
 })
 
@@ -47,6 +54,7 @@ test('hero shows the name, roles, a plain status chip and both buttons', async (
   const resume = hero.getByRole('link', { name: sections.hero.secondary })
   await expect(resume).toHaveAttribute('href', profile.resume.href)
   await expect(resume).toHaveAttribute('download', '')
+  await expect(hero.getByRole('link', { name: sections.hero.scrollCue })).toHaveAttribute('href', '#experience')
   await hero.getByRole('link', { name: sections.hero.primary }).click()
   await expect(page).toHaveURL('/contact')
 })
@@ -71,18 +79,88 @@ test('skill bubbles show brand logos and name the tool on hover or focus', async
   await expect(bubbles.nth(1).locator('.bubble-tip')).toHaveCSS('opacity', '1')
 })
 
-test('bubbles drift with motion allowed and stay still with reduced motion', async ({ page }) => {
-  await page.emulateMedia({ reducedMotion: 'no-preference' })
-  await page.goto('/')
-  await expect(page.locator('.bubble-inner').first()).toHaveCSS('animation-name', 'drift')
+test('animations are on by default, even when the OS asks for less motion, and can be switched off', async ({ page }) => {
   await page.emulateMedia({ reducedMotion: 'reduce' })
-  await expect(page.locator('.bubble-inner').first()).toHaveCSS('animation-name', 'none')
+  await page.goto('/')
+  await expect(page.locator('html')).toHaveAttribute('data-motion', 'on')
+  const float = page.locator('.bubble-float').first()
+  await expect(float).toHaveCSS('animation-name', /wander-[123]/)
+  const names = await page.locator('.bubble-float').evaluateAll(els => els.map(el => getComputedStyle(el).animationDuration))
+  expect(new Set(names).size).toBeGreaterThan(3)
+  await expect(page.locator('.route-frame')).toHaveCSS('animation-name', 'page-in')
+
+  const toggle = page.getByRole('button', { name: sections.motion.label })
+  await expect(toggle).toHaveAttribute('aria-pressed', 'true')
+  await toggle.click()
+  await expect(page.locator('html')).toHaveAttribute('data-motion', 'off')
+  await expect(float).toHaveCSS('animation-duration', '0.001s')
+  await page.reload()
+  await expect(page.locator('html')).toHaveAttribute('data-motion', 'off')
+  await expect(page.getByRole('button', { name: sections.motion.label })).toHaveAttribute('aria-pressed', 'false')
+})
+
+test('the loading screen plays on a fresh load but not when changing pages', async ({ page }) => {
+  await page.goto('/')
+  const loader = page.getByRole('progressbar', { name: sections.loader.title })
+  await expect(loader).toBeVisible()
+  await expect(loader).toContainText(sections.loader.title)
+  await expect(loader.locator('.loader-block svg')).toBeVisible()
+  await expect(loader).toBeHidden({ timeout: 4000 })
+  await mainNav(page).getByRole('link', { name: pages.projects.label }).click()
+  await expect(page.getByRole('heading', { level: 1 })).toHaveText(pages.projects.title)
+  await expect(loader).toHaveCount(0)
+  await expect(page.locator('.route-progress')).toHaveCount(1)
+})
+
+test('About, Skills, Hobbies and Currently sections are on Home', async ({ page }) => {
+  await page.goto('/')
+  const about = page.locator('#about')
+  await expect(about.getByText(profile.about.statement)).toBeVisible()
+  for (const { value } of profile.about.facts) await expect(about.getByText(value, { exact: true })).toBeVisible()
+  await expect(about.getByText(profile.now.learning)).toBeVisible()
+  await expect(about.getByRole('img', { name: `Photo of ${profile.name} (placeholder)` })).toBeVisible()
+
+  const skillsRegion = page.getByRole('region', { name: sections.skills.heading, exact: true })
+  for (const skill of skills) await expect(skillsRegion.getByText(skill.name, { exact: true })).toBeVisible()
+  expect(skills.map(skill => skill.name)).toContain('Luau')
+
+  const hobbyRegion = page.getByRole('region', { name: sections.hobbies.heading })
+  for (const { title } of hobbies) await expect(hobbyRegion.getByRole('heading', { name: title })).toBeVisible()
+  await expect(hobbyRegion).toContainText('Roblox')
+
+  const currently = page.getByRole('heading', { name: sections.currently.heading })
+  await expect(currently).toBeVisible()
+  await expect(currently.locator('.dots span')).toHaveCount(3)
+})
+
+test('dates show month ranges and inclusive durations', () => {
+  expect(formatRange('2026-04', '2026-06')).toBe('April 2026 – June 2026')
+  expect(formatDuration('2026-04', '2026-06')).toBe('3 months')
+  expect(formatDuration('2026-06', '2026-06')).toBe('1 month')
+  expect(formatDuration('2025-01', '2026-02')).toBe('1 year 2 months')
+  expect(formatDuration('2024-01', '2025-12')).toBe('2 years')
+  expect(formatRange('2025-10', 'present')).toBe('October 2025 – Present')
+})
+
+test('Home shows recent experience and links to the full Experience page', async ({ page }) => {
+  await page.goto('/')
+  const section = page.getByRole('region', { name: sections.experience.heading, exact: true })
+  await expect(section.getByRole('listitem')).toHaveCount(sections.experience.homeCount)
+  await section.getByRole('link', { name: sections.experience.all }).click()
+  await expect(page).toHaveURL('/experience')
+  for (const { role, company, start, end, highlights } of experience) {
+    const item = page.getByRole('listitem').filter({ has: page.getByRole('heading', { name: role }) })
+    await expect(item).toContainText(formatRange(start, end))
+    await expect(item).toContainText(formatDuration(start, end))
+    await expect(item.getByRole('img', { name: `${company} logo (placeholder)` })).toBeVisible()
+    for (const line of highlights) await expect(item).toContainText(line)
+  }
 })
 
 test('experience and projects show placeholders until pictures are added', async ({ page }) => {
   await page.goto('/')
-  const section = page.getByRole('region', { name: sections.experience.heading })
-  for (const { company, role } of experience) {
+  const section = page.getByRole('region', { name: sections.experience.heading, exact: true })
+  for (const { company, role } of experience.slice(0, sections.experience.homeCount)) {
     await expect(section.getByRole('heading', { name: role })).toBeVisible()
     await expect(section.getByRole('img', { name: `${company} logo (placeholder)` })).toBeVisible()
   }
@@ -135,9 +213,10 @@ test('every project card opens a detail page with results, questions and neighbo
   await expect(page.getByRole('heading', { level: 1 })).toHaveText(sections.notFound.title)
 })
 
-test('the quick menu opens with Ctrl+K, finds a project and closes with Escape', async ({ page }) => {
+test('Quick search opens with Ctrl+K, finds a project, runs actions and closes with Escape', async ({ page }) => {
   await page.goto('/')
-  const opener = page.getByRole('button', { name: sections.commandMenu.label })
+  const opener = page.getByRole('button', { name: sections.commandMenu.button })
+  await expect(opener).toHaveText(sections.commandMenu.button)
   await opener.focus()
   await page.keyboard.press('Control+k')
   const dialog = page.getByRole('dialog', { name: sections.commandMenu.label })
@@ -157,6 +236,14 @@ test('the quick menu opens with Ctrl+K, finds a project and closes with Escape',
   await page.keyboard.press('Control+k')
   await page.keyboard.type('zzzz')
   await expect(dialog.getByText(sections.commandMenu.empty)).toBeVisible()
+  await page.keyboard.press('Escape')
+
+  const before = await page.locator('html').getAttribute('data-theme')
+  await page.keyboard.press('Control+k')
+  await page.keyboard.type('light / dark')
+  await expect(dialog.getByRole('option')).toHaveCount(1)
+  await page.keyboard.press('Enter')
+  await expect(page.locator('html')).not.toHaveAttribute('data-theme', before!)
 })
 
 test('copying the email shows a toast and fills the clipboard', async ({ page, context }) => {
@@ -169,9 +256,13 @@ test('copying the email shows a toast and fills the clipboard', async ({ page, c
 
 test('Contact shows the local time in Cairo and the social links', async ({ page }) => {
   await page.goto('/contact')
-  const expected = await page.evaluate(zone => new Intl.DateTimeFormat('en-US', { hour: 'numeric', minute: '2-digit', timeZone: zone }).format(new Date()), profile.timeZone)
   expect(profile.timeZone).toBe('Africa/Cairo')
-  await expect(page.getByRole('region', { name: sections.contact.localTime })).toContainText(expected)
+  const clock = page.getByRole('region', { name: sections.contact.localTime }).locator('time')
+  await expect(clock).toHaveText(/^\d{1,2}:\d{2}:\d{2}\s?(AM|PM)$/)
+  const hourMinute = await page.evaluate(zone => new Intl.DateTimeFormat('en-US', { hour: 'numeric', minute: '2-digit', timeZone: zone }).format(new Date()), profile.timeZone)
+  await expect(clock).toContainText(hourMinute.split(' ')[0])
+  const first = await clock.textContent()
+  await expect(clock).not.toHaveText(first!, { timeout: 2500 })
   for (const { label, href } of profile.socials) {
     await expect(page.getByRole('list', { name: 'Contact links' }).getByRole('link', { name: label })).toHaveAttribute('href', href)
   }
@@ -180,6 +271,8 @@ test('Contact shows the local time in Cairo and the social links', async ({ page
 test('the résumé lists experience with logos, skills and a PDF download', async ({ page }) => {
   await page.goto('/resume')
   await expect(page.getByRole('heading', { level: 1 })).toHaveText(sections.resume.heading)
+  expect(await page.getByRole('main').getByRole('heading', { level: 2 }).allTextContents())
+    .toEqual([sections.resume.education, sections.resume.experience, sections.resume.projects, sections.resume.skills])
   for (const { role, company } of experience) {
     const region = page.getByRole('region', { name: sections.resume.experience })
     await expect(region.getByRole('heading', { name: role })).toBeVisible()
@@ -198,15 +291,13 @@ test('the résumé lists experience with logos, skills and a PDF download', asyn
 test('old URLs redirect', async ({ page }) => {
   await page.goto(`/work/${projects[0].slug}?from=bookmark`)
   await expect(page).toHaveURL(`/projects/${projects[0].slug}?from=bookmark`)
-  await page.goto('/experience')
-  await expect(page).toHaveURL('/#experience')
 })
 
 test('uses the OS theme first and remembers an explicit choice', async ({ page }) => {
   await page.emulateMedia({ colorScheme: 'dark' })
   await page.goto('/')
   await expect(page.locator('html')).toHaveAttribute('data-theme', 'dark')
-  const toggle = page.getByRole('button', { name: sections.theme.label })
+  const toggle = page.getByRole('button', { name: sections.theme.label, exact: true })
   await expect(toggle).toHaveAttribute('aria-pressed', 'true')
   await toggle.click()
   await expect(page.locator('html')).toHaveAttribute('data-theme', 'light')
@@ -226,7 +317,7 @@ for (const theme of ['light', 'dark'] as const) {
   test(`${theme} theme text meets WCAG AA, including on every pastel tone`, async ({ page }) => {
     await page.emulateMedia({ colorScheme: theme })
     await page.goto('/')
-    const tones = ['butter', 'peach', 'mint', 'lilac', 'sky']
+    const tones = ['butter', 'peach', 'mint', 'lilac', 'sky', 'rose']
     const names = ['text', 'text-muted', 'accent', 'bg', 'surface', 'accent-soft', ...tones.flatMap(tone => [`tone-${tone}`, `tone-${tone}-ink`])]
     const palette = await page.locator('html').evaluate((element, list) => {
       const ctx = document.createElement('canvas').getContext('2d')!
@@ -254,7 +345,7 @@ for (const width of [360, 768, 1440]) {
       await page.setViewportSize({ width, height: 900 })
       await page.emulateMedia({ colorScheme: theme })
       const evidence = process.env.PORTFOLIO_SCREENSHOTS
-      for (const path of ['/', '/projects', `/projects/${projects[0].slug}`, '/resume', '/contact']) {
+      for (const path of ['/', '/projects', `/projects/${projects[0].slug}`, '/experience', '/resume', '/contact']) {
         await page.goto(path)
         await expect(page.getByRole('heading', { level: 1 })).toBeVisible()
         await page.evaluate(() => document.fonts.ready)

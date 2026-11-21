@@ -3,18 +3,22 @@ import { useNavigate } from 'react-router-dom'
 import { navItems } from '../../content/navigation'
 import { projects } from '../../content/projects'
 import { sections } from '../../content/sections'
+import { profile } from '../../content/profile'
+import { toggleMotion, toggleTheme } from '../../lib/preferences'
 import { useCopyEmail } from '../../lib/useCopyEmail'
 
 type Item = { id: string; group: string; label: string; run: () => void }
 
-/** Ctrl/⌘+K quick menu: jump to a page or project, or copy the email address. */
-export function CommandMenu({ open, onClose }: { open: boolean; onClose: () => void }) {
+/**
+ * Quick search (Ctrl/⌘+K): jump to a page or project, or run an action like copying the email.
+ * Rendered only while open (see Layout.tsx), so it starts empty every time. Add actions to `items`.
+ */
+export function CommandMenu({ onClose }: { onClose: () => void }) {
   const navigate = useNavigate()
   const copyEmail = useCopyEmail()
   const [query, setQuery] = useState('')
   const [active, setActive] = useState(0)
   const input = useRef<HTMLInputElement>(null)
-  const returnFocus = useRef<HTMLElement | null>(null)
   const listId = useId()
   const copy = sections.commandMenu
 
@@ -22,20 +26,17 @@ export function CommandMenu({ open, onClose }: { open: boolean; onClose: () => v
     ...navItems.map(({ to, label }) => ({ id: `page-${to}`, group: copy.pages, label, run: () => navigate(to) })),
     ...projects.map(({ slug, title }) => ({ id: `project-${slug}`, group: copy.projects, label: title, run: () => navigate(`/projects/${slug}`) })),
     { id: 'copy-email', group: copy.actions, label: copy.copyEmail, run: () => void copyEmail() },
+    { id: 'download-resume', group: copy.actions, label: copy.downloadResume, run: () => {
+      const link = Object.assign(document.createElement('a'), { href: profile.resume.href, download: '' })
+      link.click()
+    } },
+    { id: 'toggle-theme', group: copy.actions, label: copy.toggleTheme, run: () => toggleTheme() },
+    { id: 'toggle-motion', group: copy.actions, label: copy.toggleMotion, run: toggleMotion },
   ], [navigate, copyEmail, copy])
 
   const results = items.filter(item => item.label.toLowerCase().includes(query.trim().toLowerCase()))
 
-  useEffect(() => {
-    if (!open) return
-    returnFocus.current = document.activeElement as HTMLElement | null
-    setQuery('')
-    setActive(0)
-    input.current?.focus()
-    return () => returnFocus.current?.focus()
-  }, [open])
-
-  if (!open) return null
+  useEffect(() => input.current?.focus(), [])
 
   function choose(item: Item | undefined) {
     if (!item) return
@@ -55,6 +56,7 @@ export function CommandMenu({ open, onClose }: { open: boolean; onClose: () => v
       <div className="command-menu" role="dialog" aria-modal="true" aria-label={copy.label} onMouseDown={event => event.stopPropagation()} onKeyDown={onKeyDown}>
         <input
           ref={input}
+          autoFocus
           type="text"
           role="combobox"
           aria-expanded="true"

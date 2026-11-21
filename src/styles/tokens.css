@@ -23,6 +23,7 @@
   --tone-mint: #d9f4e4;    --tone-mint-ink: #0d633a;
   --tone-lilac: #ebe6ff;   --tone-lilac-ink: #4a2ea6;
   --tone-sky: #dcefff;     --tone-sky-ink: #0b4f8c;
+  --tone-rose: #ffe2ec;    --tone-rose-ink: #9a1a49;
 
   --radius: 1.25rem;
   --gutter: clamp(1rem, 5vw, 3rem);
@@ -48,4 +49,5 @@
   --tone-mint: #14301f;    --tone-mint-ink: #9de2bb;
   --tone-lilac: #29233f;   --tone-lilac-ink: #cfc2ff;
   --tone-sky: #13293d;     --tone-sky-ink: #a9d3ff;
+  --tone-rose: #3a1a27;    --tone-rose-ink: #ffb9d0;
 }

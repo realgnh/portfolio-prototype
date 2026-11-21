@@ -21,7 +21,7 @@ See **[EDITING.md](EDITING.md)** for a table of exactly which file to edit for e
 
 ## Design
 
-Minimal and vibrant: an off-white page, a large Plus Jakarta Sans headline, pastel chips whose colour matches a skill area, floating brand-logo bubbles that drift and lean toward the cursor (still with reduced motion), and one dark call to action. Includes a dark theme, a Ctrl/⌘+K quick menu, copy-email toasts, picture placeholders for projects and company logos, and a local-time card on Contact. Brand logos come from [simple-icons](https://simpleicons.org) (CC0); the brands remain their owners' trademarks.
+Minimal and vibrant: an off-white page, a large Plus Jakarta Sans headline, pastel colours that match each skill area, and one dark call to action. Brand-logo skill bubbles wander slowly with a slight tilt and lean toward the cursor. Includes a game-style loading screen, page and light/dark transitions, an animations on/off switch, Quick search (Ctrl/⌘+K), copy-email toasts, picture and video placeholders, an Experience page with automatic date ranges and durations, and a ticking Cairo clock on Contact. Brand logos come from [simple-icons](https://simpleicons.org) (CC0); the brands remain their owners' trademarks. Ideas on standby are in [IDEAS.md](IDEAS.md).
 
 ## Checks
 
@@ -30,7 +30,7 @@ npx playwright install chromium
 npm test
 ```
 
-Playwright covers navigation and metadata, the hero buttons, skill bubbles (logos, names, reduced motion), picture placeholders, the project filter, project pages, the quick menu, copy email, the Contact clock, the résumé download, theme persistence, WCAG AA contrast (including every pastel tone), and 360/768/1440px layouts. Set `CHROME_BIN` to use an existing Chromium executable instead. Set `PORTFOLIO_SCREENSHOTS` to an output directory to save the responsive screenshots.
+Playwright covers navigation and metadata, the hero, skill bubbles, the animations switch, the loading screen, About/Skills/Hobbies/Currently, date ranges and durations, the Experience page, placeholders, the project filter, project pages, Quick search, copy email, the Contact clock, the résumé order and download, theme persistence, WCAG AA contrast (including every pastel tone), and 360/768/1440px layouts. Set `CHROME_BIN` to use an existing Chromium executable instead. Set `PORTFOLIO_SCREENSHOTS` to an output directory to save the responsive screenshots.
 
 ## Assumptions
 

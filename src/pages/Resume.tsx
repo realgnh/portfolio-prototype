@@ -8,6 +8,7 @@ import { profile } from '../content/profile'
 import { projects } from '../content/projects'
 import { sections } from '../content/sections'
 import { skillAreas, skills } from '../content/skills'
+import { formatRange } from '../lib/dates'
 import type { Area } from '../content/skills'
 
 export function Resume() {
@@ -25,16 +26,28 @@ export function Resume() {
         <Button href={profile.resume.href} download>{profile.resume.label} <span aria-hidden="true">↓</span></Button>
       </header>
 
+      <section className="resume-section" aria-labelledby="resume-education">
+        <h2 id="resume-education">{copy.education}</h2>
+        <ul className="plain-list">
+          {profile.education.map(({ program, school, start, end, expected }) => (
+            <li key={program}><h3>{program}</h3><p className="muted">{school} · {formatRange(start, end)}{expected ? ' (expected)' : ''}</p></li>
+          ))}
+        </ul>
+      </section>
+
       <section className="resume-section" aria-labelledby="resume-experience">
         <h2 id="resume-experience">{copy.experience}</h2>
         <ExperienceList />
       </section>
 
-      <section className="resume-section" aria-labelledby="resume-education">
-        <h2 id="resume-education">{copy.education}</h2>
+      <section className="resume-section" aria-labelledby="resume-projects">
+        <h2 id="resume-projects">{copy.projects}</h2>
         <ul className="plain-list">
-          {profile.education.map(({ program, school, period }) => (
-            <li key={program}><h3>{program}</h3><p className="muted">{school} · {period}</p></li>
+          {selected.map(project => (
+            <li key={project.slug}>
+              <h3><Link className="arrow-link" to={`/projects/${project.slug}`}>{project.title} <span aria-hidden="true">↗</span></Link></h3>
+              <p className="muted">{project.summary}</p>
+            </li>
           ))}
         </ul>
       </section>
@@ -53,18 +66,6 @@ export function Resume() {
             </div>
           ))}
         </dl>
-      </section>
-
-      <section className="resume-section" aria-labelledby="resume-projects">
-        <h2 id="resume-projects">{copy.projects}</h2>
-        <ul className="plain-list">
-          {selected.map(project => (
-            <li key={project.slug}>
-              <h3><Link className="arrow-link" to={`/projects/${project.slug}`}>{project.title} <span aria-hidden="true">↗</span></Link></h3>
-              <p className="muted">{project.summary}</p>
-            </li>
-          ))}
-        </ul>
       </section>
     </article>
   )

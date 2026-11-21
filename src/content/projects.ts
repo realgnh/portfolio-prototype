@@ -7,6 +7,8 @@ import type { Area } from './skills'
  * - `area`: picks the pastel colour (see `skillAreas` in skills.ts).
  * - `image`: a screenshot file name in public/images/projects/, e.g. 'clearpath.png'.
  *   Leave it undefined to show a placeholder tile.
+ * - `video`: a short looping clip in public/videos/projects/, e.g. 'clearpath.mp4' (MP4/WebM,
+ *   muted, under ~10 s). It plays on the project's own page; cards keep the still `image`.
  * - `tools`: skill names from skills.ts that this project used.
  * - `featured`: the first `featuredCount` projects (in profile.ts) appear on Home.
  *
@@ -23,7 +25,9 @@ export type Project = {
   tools: string[]
   image?: string
   imageAlt?: string
-  links?: { label: string; href: string }[]
+  video?: string
+  /** ON STANDBY: Live demo / GitHub buttons. Not shown yet — will be wired up once real projects are added. */
+  links?: { demo?: string; github?: string }
   metrics: { value: string; label: string }[]
   xyz: { accomplished: string; measuredBy: string; byDoing: string }
   caseStudy: { problem: string; actions: string[]; outcome: string }

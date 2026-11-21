@@ -3,7 +3,8 @@ import type { Tone } from '../../content/skills'
 type Props = {
   /** File name inside public/images/<folder>/. Leave undefined for a placeholder. */
   src?: string
-  folder: 'projects' | 'companies'
+  /** 'root' means public/images/ itself (used for your photo). */
+  folder: 'projects' | 'companies' | 'root'
   alt: string
   /** Text shown on the placeholder, e.g. "Add screenshot" or a company's initials. */
   label: string
@@ -20,7 +21,7 @@ export function ImageSlot({ src, folder, alt, label, tone = 'sky', shape = 'wide
   if (src) {
     return (
       <div className={`image-slot image-slot-${shape}`} data-tone={tone}>
-        <img src={`/images/${folder}/${src}`} alt={alt} loading="lazy" />
+        <img src={folder === 'root' ? `/images/${src}` : `/images/${folder}/${src}`} alt={alt} loading="lazy" />
       </div>
     )
   }

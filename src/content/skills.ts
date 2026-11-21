@@ -1,4 +1,4 @@
-import { siDocker, siFastapi, siGit, siPostgresql, siPython, siPytorch, siReact, siTypescript } from 'simple-icons'
+import { siDocker, siFastapi, siGit, siLuau, siPostgresql, siPython, siPytorch, siReact, siTypescript } from 'simple-icons'
 import type { SimpleIcon } from 'simple-icons'
 
 /**
@@ -15,10 +15,11 @@ export const skillAreas = {
 } as const
 
 export type Area = keyof typeof skillAreas
-export type Tone = (typeof skillAreas)[Area]['tone']
+/** Every pastel colour available (see src/styles/tokens.css). */
+export type Tone = 'butter' | 'peach' | 'mint' | 'lilac' | 'sky' | 'rose'
 
 /**
- * SKILLS — shown as floating logo bubbles on Home and as a list on the résumé.
+ * SKILLS — shown as floating logo bubbles and the Skills section on Home, and on the résumé.
  *
  * - `icon`: a brand logo from the simple-icons package (https://simpleicons.org).
  *   To add one, import it above by its "si" name, e.g. `siJavascript`.
@@ -30,6 +31,7 @@ export const skills: Skill[] = [
   { name: 'Python', area: 'languages', icon: siPython },
   { name: 'TypeScript', area: 'languages', icon: siTypescript },
   { name: 'SQL', area: 'languages', icon: 'database' },
+  { name: 'Luau', area: 'languages', icon: siLuau },
   { name: 'React', area: 'frontend', icon: siReact },
   { name: 'FastAPI', area: 'backend', icon: siFastapi },
   { name: 'PostgreSQL', area: 'backend', icon: siPostgresql },

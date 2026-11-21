@@ -80,6 +80,5 @@
   .skill-table > div { grid-template-columns: 1fr; }
   .filter-count { width: 100%; margin-left: 0; }
 }
-@media (prefers-reduced-motion: reduce) {
-  .pager a:hover { transform: none; }
-}
+
+.project-media video { width: 100%; height: 100%; object-fit: cover; }

@@ -1,18 +1,24 @@
-# Ideas for the finished portfolio
+# Ideas
 
-## Next refinements
+## On standby (agreed, build once real projects are added)
 
-- **Design — reserve steel blue for wayfinding.** Use it for section numbers and link affordances, and keep the main copy grey so the accent has a job.
-- **Design — feature one project above the fold.** Give your strongest project one clear outcome and a meaningful thumbnail rather than making every project compete with the profile.
-- **Design — make diagrams a recurring visual detail.** Use a consistent grid and arrow style across architecture, workflow, and evaluation diagrams.
-- **Functionality — add copy email alongside the mail link.** Give people who use webmail a one-click option and show an accessible confirmation.
-- **Functionality — link skills to evidence.** Put a small case-study or demo link beside the two or three skills you want visitors to remember.
-- **Functionality — surface the next step for every project.** Give each case study one real demo, repository, or short recorded walkthrough once available.
+- **Live demo and GitHub buttons on each project.** The data field is already reserved: `links: { demo, github }` in `src/content/projects.ts`. Nothing renders it yet. When ready, show two buttons under the project title on `src/pages/ProjectDetail.tsx` and small icons on `src/components/sections/ProjectCard.tsx`.
 
-- **Write the homepage like a results index.** Choose three to five projects with different kinds of evidence: faster workflows, greater confidence, or fewer errors. When a number isn't available, use an observed outcome and say how you validated it rather than estimating.
-- **Use a different visual for each result.** A cropped before/after flow can show the work behind an onboarding improvement; a tiny information hierarchy diagram might do more than a screenshot for a navigation case study. Use the same square crop to keep the list cohesive.
-- **Put a constraint next to the outcome.** In each case study, call out a real trade-off: what you kept, what you intentionally didn't build, and how you decided. This shows judgment without adding a wall of process screenshots.
-- **Make the hero line specific to your interests.** Keep it short enough for two lines. Pair it with one sentence about a topic you’re studying or the kind of problem you like to solve.
-- **Treat the portfolio as a conversation starter.** Replace the generic Contact intro with a specific invitation (“Tell me about a workflow your team keeps working around”). Keep the email link visible and the résumé one click away.
-- **Connect skills to proof.** Once you have real projects, link a few skills to a repository, demo, or specific decision in a case study. A short example of why you chose PostgreSQL is more persuasive than a long list of tool logos.
-- **Let the FAQs explain judgment calls.** For an AI project, explain the simplest non-AI baseline, how you evaluated the model, and where you’d still require human review. For a systems project, explain the bottleneck and the test that ruled out alternative causes.
+## Suggestions in the spirit of Quick search (Ctrl/⌘+K)
+
+- **Keyboard shortcuts + a `?` cheat sheet.** `G` then `P` → Projects, `G` then `E` → Experience, `T` → toggle theme, `?` opens an overlay listing them all.
+- **Hidden Roblox easter egg.** Typing the Konami code (↑↑↓↓←→←→BA) drops a little animated R6-style character that waves, or switches the loading block into a Roblox brick.
+- **"Copy link" on every section heading.** Hovering a heading shows a 🔗 that copies a direct link (e.g. `/#skills`) with a toast.
+- **Quick search learns more commands.** "Email Alex about an internship" (opens a pre-filled email), "Open GitHub", "Show me AI projects" (opens Projects filtered to AI).
+- **Reading-progress ring on project pages.** A small circle in the header fills as you scroll a case study, with an estimated reading time.
+- **Spotlight cursor on project cards.** A soft pastel glow follows the cursor inside each card.
+- **Visitor time greeting.** "Good evening 👋" based on the visitor's own clock, next to your Cairo time on Contact ("it's 3 hours later for me").
+- **Résumé print view.** `/resume` prints as a clean one-page PDF with Ctrl+P, so the PDF never drifts out of date.
+- **Sound toggle.** Very quiet UI clicks and a level-up chime when the loading bar finishes, off by default.
+- **Project "changelog" timeline.** Each project page shows dated milestones (v0.1 prototype → user test → launch).
+
+## Content tips
+
+- Lead with three to five real projects with different kinds of evidence. When there is no number, describe the observed outcome and how you checked it.
+- Keep the About statement to one line you'd actually say out loud.
+- Update "Now learning" and "Currently working on…" every few weeks; it's the cheapest way to make the site feel alive.

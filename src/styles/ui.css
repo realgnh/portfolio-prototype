@@ -6,6 +6,7 @@
 [data-tone="mint"]   { --tone: var(--tone-mint);   --tone-ink: var(--tone-mint-ink); }
 [data-tone="lilac"]  { --tone: var(--tone-lilac);  --tone-ink: var(--tone-lilac-ink); }
 [data-tone="sky"]    { --tone: var(--tone-sky);    --tone-ink: var(--tone-sky-ink); }
+[data-tone="rose"]   { --tone: var(--tone-rose);   --tone-ink: var(--tone-rose-ink); }
 
 .button {
   display: inline-flex; align-items: center; justify-content: center; gap: 0.5rem;
@@ -71,6 +72,3 @@ mark { padding: 0 0.2em; border-radius: 0.3em; background: var(--accent-soft); c
 .brand-initials { display: grid; place-items: center; font-weight: 800; font-size: 0.85rem; }
 :root[data-theme="dark"] .brand-logo { filter: brightness(1.25) saturate(0.9); }
 
-@media (prefers-reduced-motion: reduce) {
-  .button, .button:hover, .icon-button:hover { transform: none; }
-}

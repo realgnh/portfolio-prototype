@@ -7,7 +7,7 @@ import { sections } from '../content/sections'
 import { useCopyEmail } from '../lib/useCopyEmail'
 
 function formatTime(date: Date) {
-  return new Intl.DateTimeFormat('en-US', { hour: 'numeric', minute: '2-digit', timeZone: profile.timeZone }).format(date)
+  return new Intl.DateTimeFormat('en-US', { hour: 'numeric', minute: '2-digit', second: '2-digit', timeZone: profile.timeZone }).format(date)
 }
 
 export function Contact() {
@@ -16,7 +16,7 @@ export function Contact() {
   const [now, setNow] = useState(() => new Date())
 
   useEffect(() => {
-    const timer = window.setInterval(() => setNow(new Date()), 15_000)
+    const timer = window.setInterval(() => setNow(new Date()), 1000)
     return () => window.clearInterval(timer)
   }, [])
 

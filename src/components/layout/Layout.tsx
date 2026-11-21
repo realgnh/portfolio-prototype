@@ -5,14 +5,27 @@ import { ToastProvider } from '../../lib/toast'
 import { CommandMenu } from './CommandMenu'
 import { Footer } from './Footer'
 import { Header } from './Header'
+import { LoadingScreen } from './LoadingScreen'
+import { RouteProgress } from './RouteProgress'
 
-/** The frame around every page: header, main content, footer, quick menu and toasts. */
+/** The frame around every page: loading screen, header, main content, footer, quick search and toasts. */
 export function Layout() {
   const { pathname, hash } = useLocation()
   const navigationType = useNavigationType()
   const previousPath = useRef(pathname)
   const main = useRef<HTMLElement>(null)
   const [menuOpen, setMenuOpen] = useState(false)
+  const focusBeforeMenu = useRef<HTMLElement | null>(null)
+
+  // Remember what had focus before Quick search opened, and put it back when it closes.
+  function openMenu() {
+    focusBeforeMenu.current = document.activeElement as HTMLElement | null
+    setMenuOpen(true)
+  }
+  function closeMenu() {
+    setMenuOpen(false)
+    requestAnimationFrame(() => focusBeforeMenu.current?.focus())
+  }
 
   useLayoutEffect(() => {
     const changed = previousPath.current !== pathname
@@ -26,7 +39,8 @@ export function Layout() {
     function onKey(event: KeyboardEvent) {
       if ((event.metaKey || event.ctrlKey) && event.key.toLowerCase() === 'k') {
         event.preventDefault()
-        setMenuOpen(open => !open)
+        if (document.querySelector('.command-menu')) closeMenu()
+        else openMenu()
       }
     }
     window.addEventListener('keydown', onKey)
@@ -35,13 +49,15 @@ export function Layout() {
 
   return (
     <ToastProvider>
+      <LoadingScreen />
+      <RouteProgress />
       <a className="skip-link" href="#main-content">{sections.skip}</a>
-      <Header onOpenMenu={() => setMenuOpen(true)} />
+      <Header onOpenSearch={openMenu} />
       <main id="main-content" ref={main} tabIndex={-1}>
         <div className="route-frame" key={pathname}><Outlet /></div>
       </main>
       <Footer />
-      <CommandMenu open={menuOpen} onClose={() => setMenuOpen(false)} />
+      {menuOpen && <CommandMenu onClose={closeMenu} />}
     </ToastProvider>
   )
 }

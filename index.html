@@ -12,6 +12,9 @@
           theme = matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
         }
         document.documentElement.dataset.theme = theme;
+        let motion;
+        try { motion = localStorage.getItem('portfolio-motion'); } catch {}
+        document.documentElement.dataset.motion = motion === 'off' ? 'off' : 'on';
       })();
     </script>
   </head>

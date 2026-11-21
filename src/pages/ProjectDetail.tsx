@@ -1,7 +1,7 @@
 import { Link, useParams } from 'react-router-dom'
 import { BrandIcon } from '../components/ui/BrandIcon'
 import { Chip } from '../components/ui/Chip'
-import { ImageSlot } from '../components/ui/ImageSlot'
+import { ProjectMedia } from '../components/sections/ProjectMedia'
 import { Metadata } from '../components/ui/Metadata'
 import { projects } from '../content/projects'
 import { sections } from '../content/sections'
@@ -33,7 +33,7 @@ export function ProjectDetail() {
         <p className="lede muted">{project.summary}</p>
       </header>
 
-      <ImageSlot src={project.image} folder="projects" alt={project.imageAlt ?? `${project.title} screenshot`} label={sections.placeholders.project} tone={tone} />
+      <ProjectMedia project={project} tone={tone} />
 
       <dl className="facts">
         <div><dt>{copy.role}</dt><dd>{project.role}</dd></div>

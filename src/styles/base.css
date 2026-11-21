@@ -1,4 +1,4 @@
-/* BASE — page defaults, typography and the shared .shell container. */
+/* BASE — page defaults, typography, the .shell container, page/theme transitions and the animations switch. */
 * { box-sizing: border-box; }
 
 html { scroll-behavior: smooth; scroll-padding-top: 6rem; }
@@ -17,7 +17,7 @@ ul, ol { padding: 0; list-style: none; }
 h1, h2, h3 { font-weight: 800; letter-spacing: -0.035em; line-height: 1.05; }
 h2 { font-size: clamp(1.75rem, 4vw, 2.5rem); }
 h3 { font-size: 1.25rem; letter-spacing: -0.02em; }
-img { display: block; max-width: 100%; }
+img, video { display: block; max-width: 100%; }
 a { color: inherit; text-underline-offset: 0.2em; }
 button { font: inherit; color: inherit; }
 :focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; border-radius: 6px; }
@@ -33,15 +33,28 @@ main:focus { outline: none; }
 }
 .skip-link:not(:focus) { clip-path: inset(50%); width: 1px; height: 1px; overflow: hidden; }
 
-.route-frame { animation: route-in 320ms var(--ease); }
-@keyframes route-in { from { opacity: 0; transform: translateY(6px); } }
+/* Page transition: each new page fades up out of a soft blur. */
+.route-frame { animation: page-in 520ms var(--ease) both; }
+@keyframes page-in {
+  from { opacity: 0; transform: translateY(14px) scale(0.995); filter: blur(6px); }
+  to { opacity: 1; transform: none; filter: none; }
+}
 
-::view-transition-old(root) { animation: theme-fade 350ms ease both; }
-::view-transition-new(root) { animation: none; }
-@keyframes theme-fade { to { opacity: 0; } }
+/* Theme switch: the new theme spreads out in a circle from the toggle button (lib/preferences.ts). */
+::view-transition-old(root), ::view-transition-new(root) { animation: none; mix-blend-mode: normal; }
+:root[data-theme-switch]::view-transition-new(root) { animation: theme-reveal 700ms cubic-bezier(.65, 0, .35, 1) both; }
+@keyframes theme-reveal {
+  from { clip-path: circle(0 at var(--reveal-x, 50%) var(--reveal-y, 0)); }
+  to { clip-path: circle(150vmax at var(--reveal-x, 50%) var(--reveal-y, 0)); }
+}
 
-@media (prefers-reduced-motion: reduce) {
-  html { scroll-behavior: auto; }
-  .route-frame { animation: none; }
-  ::view-transition-old(root) { animation-duration: 1ms; }
+/* Animations switch (header sparkle button): data-motion="off" stops every animation and transition. */
+:root[data-motion="off"] { scroll-behavior: auto; }
+:root[data-motion="off"] *,
+:root[data-motion="off"] *::before,
+:root[data-motion="off"] *::after {
+  animation-duration: 1ms !important;
+  animation-iteration-count: 1 !important;
+  animation-delay: 0s !important;
+  transition-duration: 1ms !important;
 }

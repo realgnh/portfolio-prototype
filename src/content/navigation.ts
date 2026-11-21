@@ -5,7 +5,7 @@
 export const pages = {
   home: { to: '/', label: 'Home', title: 'Home', description: 'Alex Morgan, CS student building software and applied AI. Projects, experience and contact.' },
   projects: { to: '/projects', label: 'Projects', title: 'Projects', description: 'Projects by Alex Morgan with example results.' },
-  experience: { to: '/#experience', label: 'Experience', title: 'Experience', description: '' },
+  experience: { to: '/experience', label: 'Experience', title: 'Experience', description: 'Alex Morgan’s internships, research and work experience.' },
   resume: { to: '/resume', label: 'Résumé', title: 'Résumé', description: 'Alex Morgan’s education, experience, skills and downloadable résumé.' },
   contact: { to: '/contact', label: 'Contact', title: 'Contact', description: 'Get in touch with Alex Morgan by email or social links.' },
 }

@@ -5,7 +5,7 @@ import { Button } from '../ui/Button'
 import { Chip } from '../ui/Chip'
 import { SkillBubbles } from './SkillBubbles'
 
-/** Top of Home: status, big name, role chips, intro and the two buttons, with floating skill bubbles. */
+/** Top of Home: status, big name, role chips, intro, buttons and a cue to scroll; skill bubbles float around it. */
 export function Hero() {
   return (
     <section className="hero shell" aria-labelledby="hero-title">
@@ -22,6 +22,9 @@ export function Hero() {
           <Button variant="outline" href={profile.resume.href} download>{sections.hero.secondary} <span aria-hidden="true">↓</span></Button>
         </div>
       </div>
+      <a className="scroll-cue" href="#experience">
+        {sections.hero.scrollCue} <span className="scroll-cue-arrow" aria-hidden="true">↓</span>
+      </a>
     </section>
   )
 }
