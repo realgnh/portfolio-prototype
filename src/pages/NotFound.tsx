@@ -1,17 +1,16 @@
-import { Link } from 'react-router-dom'
-import { Metadata } from '../components/Metadata'
-import { ui } from '../data/site'
+import { Button } from '../components/ui/Button'
+import { Metadata } from '../components/ui/Metadata'
+import { sections } from '../content/sections'
 
 export function NotFound() {
   return (
     <section className="page shell">
-      <Metadata {...ui.notFound} />
-      <header className="sheet-head">
-        <p className="label">Sheet 404</p>
-        <h1>{ui.notFound.title}</h1>
-        <p className="lede">{ui.notFound.description}</p>
+      <Metadata title={sections.notFound.title} description={sections.notFound.description} />
+      <header className="page-header">
+        <h1>{sections.notFound.title}</h1>
+        <p className="muted">{sections.notFound.description}</p>
       </header>
-      <Link className="text-link label" to="/projects">{ui.allProjects} <span aria-hidden="true">→</span></Link>
+      <div><Button to="/projects">{sections.project.back} <span aria-hidden="true">→</span></Button></div>
     </section>
   )
 }

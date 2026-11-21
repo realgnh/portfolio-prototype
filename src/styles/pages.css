@@ -1,0 +1,85 @@
+/* PAGES — Projects list, project detail, Résumé and Contact. */
+.page { display: grid; gap: clamp(1.75rem, 4vw, 2.5rem); padding-top: clamp(1.5rem, 5vw, 3rem); }
+.page-header { display: grid; gap: 0.85rem; max-width: 46rem; }
+.page-header h1 { font-size: clamp(2.75rem, 8vw, 4.75rem); letter-spacing: -0.05em; }
+.page-header-split { display: flex; flex-wrap: wrap; align-items: end; justify-content: space-between; gap: 1.5rem; max-width: none; }
+.page-header-split > div { display: grid; gap: 0.75rem; }
+.lede { font-size: 1.15rem; }
+
+.filter-row { display: flex; flex-wrap: wrap; align-items: center; gap: 0.5rem; }
+.filter {
+  padding: 0.45rem 0.95rem; border: 1px solid var(--line); border-radius: 999px; background: var(--surface);
+  font-size: 0.875rem; font-weight: 600; cursor: pointer; transition: background-color 200ms, border-color 200ms;
+}
+.filter:hover { border-color: var(--text); }
+.filter[aria-pressed="true"] { border-color: var(--button); background: var(--button); color: var(--button-text); }
+.filter[data-tone][aria-pressed="true"] { border-color: var(--tone-ink); background: var(--tone); color: var(--tone-ink); }
+.filter-count { margin-left: auto; font-size: 0.875rem; }
+
+.project-page .back-link { justify-self: start; }
+.project-page > .image-slot { aspect-ratio: 2 / 1; border-radius: var(--radius); }
+.facts { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 12rem), 1fr)); gap: 1rem 2rem; padding-block: 1.25rem; border-block: 1px solid var(--line); }
+.facts > div:last-child { grid-column: span 2; }
+.facts dt, .skill-table dt { margin-bottom: 0.35rem; font-size: 0.8rem; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; color: var(--text-muted); }
+.facts dd { font-weight: 600; }
+.tool-list { display: flex; flex-wrap: wrap; gap: 0.5rem; }
+.tool { display: inline-flex; align-items: center; gap: 0.45rem; padding: 0.3rem 0.75rem 0.3rem 0.35rem; border: 1px solid var(--line); border-radius: 999px; background: var(--surface); font-size: 0.875rem; font-weight: 600; }
+.tool-icon { display: grid; width: 1.35rem; height: 1.35rem; padding: 0.15rem; color: var(--text-muted); }
+
+.metrics { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 14rem), 1fr)); gap: 1rem; }
+.metrics > div { display: grid; gap: 0.25rem; padding: 1.5rem; border-radius: var(--radius); background: var(--tone); color: var(--tone-ink); }
+.metrics dd { font-size: clamp(2.5rem, 7vw, 3.75rem); font-weight: 800; letter-spacing: -0.05em; line-height: 1; }
+.metrics dt { font-weight: 600; }
+
+.summary-card { display: grid; gap: 0.6rem; padding: 1.5rem; border: 1px solid var(--line); border-radius: var(--radius); background: var(--surface); }
+.summary-card h2, .story h2, .faq h2, .resume-section > h2 { font-size: 1.25rem; letter-spacing: -0.02em; }
+.summary-card p { font-size: clamp(1.15rem, 2.5vw, 1.4rem); font-weight: 500; line-height: 1.45; }
+
+.story { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 17rem), 1fr)); gap: 2rem; }
+.story section { display: grid; align-content: start; gap: 0.6rem; }
+.steps { display: grid; gap: 0.6rem; counter-reset: step; }
+.steps li { display: grid; grid-template-columns: 1.75rem 1fr; counter-increment: step; }
+.steps li::before { display: grid; place-items: center; width: 1.35rem; height: 1.35rem; margin-top: 0.15rem; border-radius: 999px; background: var(--accent-soft); color: var(--accent); font-size: 0.75rem; font-weight: 800; content: counter(step); }
+
+.faq { display: grid; gap: 0.25rem; }
+.faq h2 { margin-bottom: 0.5rem; }
+.faq details { border-bottom: 1px solid var(--line); }
+.faq summary { display: flex; justify-content: space-between; gap: 1rem; padding-block: 1rem; font-weight: 700; list-style: none; cursor: pointer; }
+.faq summary::-webkit-details-marker { display: none; }
+.faq summary::after { display: grid; place-items: center; flex: none; width: 1.6rem; height: 1.6rem; border-radius: 999px; background: var(--bg); content: "+"; transition: rotate 200ms var(--ease); }
+.faq details[open] summary::after { rotate: 45deg; }
+.faq details p { max-width: 60ch; padding-bottom: 1rem; }
+
+.pager { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1rem; }
+.pager a { display: grid; gap: 0.25rem; padding: 1.25rem; border: 1px solid var(--line); border-radius: var(--radius); background: var(--surface); text-decoration: none; transition: transform 200ms var(--ease), box-shadow 200ms; }
+.pager a:hover { transform: translateY(-2px); box-shadow: var(--shadow); }
+.pager a[rel="next"] { text-align: right; }
+.pager strong { font-size: 1.15rem; letter-spacing: -0.02em; }
+
+.resume-section { display: grid; gap: 1rem; }
+.plain-list { display: grid; gap: 1.25rem; }
+.plain-list h3 { font-size: 1.15rem; }
+.skill-table { display: grid; gap: 1rem; }
+.skill-table > div { display: grid; grid-template-columns: 10rem 1fr; gap: 0.5rem 1rem; align-items: center; }
+
+.contact-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1rem; }
+.contact-card { display: grid; align-content: start; gap: 0.75rem; padding: 1.5rem; border: 1px solid var(--line); border-radius: var(--radius); background: var(--tone, var(--surface)); }
+.contact-card[data-tone] .eyebrow, .contact-card[data-tone] .muted { color: var(--tone-ink); }
+.contact-card[data-tone] { border-color: transparent; color: var(--tone-ink); }
+.contact-card-main { grid-column: 1 / -1; }
+.contact-email { font-size: clamp(1.6rem, 5vw, 2.75rem); font-weight: 800; letter-spacing: -0.04em; overflow-wrap: anywhere; text-decoration: none; }
+.contact-email:hover { color: var(--accent); }
+.local-time { font-size: 2.5rem; font-weight: 800; letter-spacing: -0.04em; line-height: 1; }
+.social-list { display: grid; gap: 0.5rem; }
+
+@media (max-width: 36rem) {
+  .contact-grid { grid-template-columns: 1fr; }
+  .facts > div:last-child { grid-column: auto; }
+  .pager { grid-template-columns: 1fr; }
+  .pager a[rel="next"] { text-align: left; }
+  .skill-table > div { grid-template-columns: 1fr; }
+  .filter-count { width: 100%; margin-left: 0; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .pager a:hover { transform: none; }
+}

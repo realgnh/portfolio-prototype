@@ -1,26 +1,56 @@
-import { CopyEmail } from '../components/CopyEmail'
-import { Metadata } from '../components/Metadata'
-import { contactLinks, site, ui } from '../data/site'
+import { useEffect, useState } from 'react'
+import { Button } from '../components/ui/Button'
+import { Metadata } from '../components/ui/Metadata'
+import { pages } from '../content/navigation'
+import { profile } from '../content/profile'
+import { sections } from '../content/sections'
+import { useCopyEmail } from '../lib/useCopyEmail'
+
+function formatTime(date: Date) {
+  return new Intl.DateTimeFormat('en-US', { hour: 'numeric', minute: '2-digit', timeZone: profile.timeZone }).format(date)
+}
 
 export function Contact() {
-  // EXTENSION POINT: Add a contact form and submit handler here.
+  const copy = sections.contact
+  const copyEmail = useCopyEmail()
+  const [now, setNow] = useState(() => new Date())
+
+  useEffect(() => {
+    const timer = window.setInterval(() => setNow(new Date()), 15_000)
+    return () => window.clearInterval(timer)
+  }, [])
+
   return (
     <article className="page shell">
-      <Metadata {...site.pages.contact} />
-      <header className="sheet-head">
-        <p className="label">{site.contact.eyebrow}</p>
-        <h1>{site.contact.heading}</h1>
-        <p className="lede">{site.contact.intro}</p>
+      <Metadata title={pages.contact.title} description={pages.contact.description} />
+      <header className="page-header">
+        <h1>{copy.heading}</h1>
+        <p className="lede muted">{profile.contactIntro}</p>
       </header>
-      <ul className="contact-list" aria-label={ui.contactLinks}>
-        {contactLinks.map(link => (
-          <li key={link.href}>
-            <span className="label">{'channel' in link ? link.channel : link.label}</span>
-            <a href={link.href}>{'channel' in link ? link.label : link.href.replace(/^https:\/\/(www\.)?/, '').replace(/\/$/, '')} <span aria-hidden="true">↗</span></a>
-            {'channel' in link && <CopyEmail />}
-          </li>
-        ))}
-      </ul>
+
+      <div className="contact-grid">
+        <section className="contact-card contact-card-main" aria-labelledby="contact-email">
+          <h2 id="contact-email" className="eyebrow">{copy.email}</h2>
+          <a className="contact-email" href={`mailto:${profile.email}`}>{profile.email}</a>
+          <div className="button-row">
+            <button type="button" className="button button-primary" onClick={copyEmail}>{copy.copy}</button>
+            <Button variant="outline" href={profile.resume.href} download>{profile.resume.label} <span aria-hidden="true">↓</span></Button>
+          </div>
+        </section>
+
+        <section className="contact-card" data-tone="sky" aria-labelledby="contact-time">
+          <h2 id="contact-time" className="eyebrow">{copy.localTime}</h2>
+          <p className="local-time"><time dateTime={now.toISOString()}>{formatTime(now)}</time></p>
+          <p className="muted">{profile.location}</p>
+        </section>
+
+        <section className="contact-card" aria-labelledby="contact-elsewhere">
+          <h2 id="contact-elsewhere" className="eyebrow">{copy.elsewhere}</h2>
+          <ul className="social-list" aria-label="Contact links">
+            {profile.socials.map(({ label, href }) => <li key={href}><a className="arrow-link" href={href}>{label} <span aria-hidden="true">↗</span></a></li>)}
+          </ul>
+        </section>
+      </div>
     </article>
   )
 }

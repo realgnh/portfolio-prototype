@@ -1,21 +1,28 @@
-import '@fontsource/newsreader/latin-400.css'
-import '@fontsource/ibm-plex-mono/latin-400.css'
-import '@fontsource/ibm-plex-mono/latin-600.css'
+// Fonts: only the weights the design uses.
+import '@fontsource/plus-jakarta-sans/latin-400.css'
+import '@fontsource/plus-jakarta-sans/latin-500.css'
+import '@fontsource/plus-jakarta-sans/latin-700.css'
+import '@fontsource/plus-jakarta-sans/latin-800.css'
+// Styles: tokens first (colours, fonts), then base, then each area.
 import './styles/tokens.css'
 import './styles/base.css'
-import './styles/components.css'
+import './styles/ui.css'
+import './styles/layout.css'
+import './styles/home.css'
+import './styles/pages.css'
 
 import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
 import { createBrowserRouter, Navigate, RouterProvider, useLocation, useParams } from 'react-router-dom'
-import { Layout } from './components/Layout'
-import { CaseStudy } from './pages/CaseStudy'
+import { Layout } from './components/layout/Layout'
 import { Contact } from './pages/Contact'
 import { Home } from './pages/Home'
 import { NotFound } from './pages/NotFound'
+import { ProjectDetail } from './pages/ProjectDetail'
 import { Projects } from './pages/Projects'
 import { Resume } from './pages/Resume'
 
+/** Keeps old /work and /work/:slug links working. */
 function LegacyProjectsRedirect() {
   const { slug } = useParams()
   const { search, hash } = useLocation()
@@ -23,17 +30,19 @@ function LegacyProjectsRedirect() {
   return <Navigate to={{ pathname, search, hash }} replace />
 }
 
+// ROUTES: add a page by creating it in src/pages and adding a line here (and in content/navigation.ts).
 const router = createBrowserRouter([
   {
     element: <Layout />,
     children: [
       { index: true, element: <Home /> },
       { path: 'projects', element: <Projects /> },
-      { path: 'projects/:slug', element: <CaseStudy /> },
-      { path: 'work/:slug?', element: <LegacyProjectsRedirect /> },
-      { path: 'about', element: <Navigate to="/#about" replace /> },
+      { path: 'projects/:slug', element: <ProjectDetail /> },
       { path: 'resume', element: <Resume /> },
       { path: 'contact', element: <Contact /> },
+      { path: 'work/:slug?', element: <LegacyProjectsRedirect /> },
+      { path: 'about', element: <Navigate to="/" replace /> },
+      { path: 'experience', element: <Navigate to="/#experience" replace /> },
       { path: '*', element: <NotFound /> },
     ],
   },

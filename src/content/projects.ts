@@ -1,37 +1,46 @@
+import type { Area } from './skills'
+
+/**
+ * PROJECTS — one object per project, shown in this order everywhere.
+ *
+ * - `slug`: the URL, e.g. /projects/clearpath-onboarding. Keep it unique and lowercase.
+ * - `area`: picks the pastel colour (see `skillAreas` in skills.ts).
+ * - `image`: a screenshot file name in public/images/projects/, e.g. 'clearpath.png'.
+ *   Leave it undefined to show a placeholder tile.
+ * - `tools`: skill names from skills.ts that this project used.
+ * - `featured`: the first `featuredCount` projects (in profile.ts) appear on Home.
+ *
+ * PLACEHOLDERS: every project, date, role and number below is fictional.
+ */
 export type Project = {
   slug: string
+  area: Area
   title: string
   summary: string
   year: string
   role: string
-  tags?: string[]
-  /** One-sentence bet the project tested. Shown on experiment cards. */
-  hypothesis: string
-  /** One-sentence summary of what was built or changed. */
-  method: string
-  /** Skills from `site.skills` this project is evidence for. */
+  tags: string[]
   tools: string[]
-  thumbnail: string
+  image?: string
+  imageAlt?: string
+  links?: { label: string; href: string }[]
   metrics: { value: string; label: string }[]
   xyz: { accomplished: string; measuredBy: string; byDoing: string }
   caseStudy: { problem: string; actions: string[]; outcome: string }
   faq: { question: string; answer: string }[]
 }
 
-// PLACEHOLDERS: All projects, dates, roles, and reported outcomes are fictional.
-// EXTENSION POINT: Replace this array with a CMS or Markdown loader.
 export const projects: Project[] = [
   {
     slug: 'clearpath-onboarding',
+    area: 'frontend',
+    // image: 'clearpath-onboarding.png',
     title: 'Clearpath Onboarding',
     summary: 'Raised signup completion by 36% by replacing a sprawling setup flow with three clear steps.',
     year: '2025',
     role: 'Full-stack contributor',
     tags: ['Onboarding', 'TypeScript'],
-    hypothesis: 'Fewer steps will improve signup completion.',
-    method: 'Reduced seven screens to three required steps.',
     tools: ['TypeScript', 'React', 'PostgreSQL'],
-    thumbnail: 'steps',
     metrics: [{ value: '+36%', label: 'Signup completion' }, { value: '−20%', label: 'Time to first value' }],
     xyz: {
       accomplished: 'Improved onboarding',
@@ -54,15 +63,14 @@ export const projects: Project[] = [
   },
   {
     slug: 'signal-dashboard',
+    area: 'frontend',
+    // image: 'signal-dashboard.png',
     title: 'Signal Dashboard',
     summary: 'Cut weekly reporting time by 42% by bringing operational alerts and sources into one view.',
     year: '2024',
     role: 'Frontend contributor',
     tags: ['Dashboards', 'Data visualization'],
-    hypothesis: 'A single view will speed up weekly reporting.',
-    method: 'Collected alerts and their sources in one dashboard.',
     tools: ['TypeScript', 'React', 'SQL'],
-    thumbnail: 'grid',
     metrics: [{ value: '−42%', label: 'Reporting time' }, { value: '+18%', label: 'Issues caught early' }],
     xyz: {
       accomplished: 'Made weekly reporting faster',
@@ -85,15 +93,14 @@ export const projects: Project[] = [
   },
   {
     slug: 'index-library',
+    area: 'backend',
+    // image: 'index-library.png',
     title: 'Index Library',
     summary: 'Improved first-search success by 28% with clearer categories and a more useful results page.',
     year: '2024',
     role: 'Search prototype developer',
     tags: ['Search', 'Information architecture'],
-    hypothesis: 'Plain-language categories will help people find things on the first try.',
-    method: 'Rebuilt categories from real search queries and validated them with a tree test.',
     tools: ['Python', 'FastAPI', 'PostgreSQL'],
-    thumbnail: 'index',
     metrics: [{ value: '+28%', label: 'First-search success' }, { value: '−31%', label: 'Repeat searches' }],
     xyz: {
       accomplished: 'Made library resources easier to find',
@@ -116,15 +123,14 @@ export const projects: Project[] = [
   },
   {
     slug: 'relay-handoffs',
+    area: 'backend',
+    // image: 'relay-handoffs.png',
     title: 'Relay Handoffs',
     summary: 'Reduced missed handoffs by 24% by showing who owned each request and what needed to happen next.',
     year: '2023',
     role: 'Full-stack contributor',
     tags: ['Workflow', 'State modeling'],
-    hypothesis: 'A named owner and next action will stop requests falling through.',
-    method: 'Added an explicit owner and next-action field to every pending request.',
     tools: ['Python', 'FastAPI', 'PostgreSQL', 'Docker'],
-    thumbnail: 'relay',
     metrics: [{ value: '−24%', label: 'Missed handoffs' }, { value: '−16%', label: 'Resolution time' }],
     xyz: {
       accomplished: 'Improved request handoffs',
@@ -147,15 +153,14 @@ export const projects: Project[] = [
   },
   {
     slug: 'common-components',
+    area: 'frontend',
+    // image: 'common-components.png',
     title: 'Common Components',
     summary: 'Halved the time needed to prototype recurring screens by making reliable patterns easier to find.',
     year: '2023',
     role: 'Frontend contributor',
     tags: ['Components', 'Documentation'],
-    hypothesis: 'A documented component library will make recurring screens faster to build.',
-    method: 'Audited recurring screens and documented the most-used patterns.',
     tools: ['TypeScript', 'React', 'Git'],
-    thumbnail: 'components',
     metrics: [{ value: '−50%', label: 'Prototyping time' }, { value: '+32%', label: 'Component reuse' }],
     xyz: {
       accomplished: 'Made recurring screens faster to prototype',

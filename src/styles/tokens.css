@@ -1,39 +1,51 @@
 /*
- * Field-notes palette: navy ink on cream drafting paper (light, "Paper"),
- * inverted to cream ink on blueprint navy (dark, "Blueprint").
- * Each mixed color lists the light endpoint first and the dark endpoint second.
+ * DESIGN TOKENS — colours, fonts and spacing for the whole site.
+ * Light theme first; the dark theme overrides the same names below.
+ * Pastel "tones" match the skill areas in src/content/skills.ts.
  */
 :root {
   color-scheme: light;
-  --font-display: "Newsreader", "Times New Roman", Georgia, serif;
-  --font-mono: "IBM Plex Mono", ui-monospace, "SFMono-Regular", Consolas, monospace;
+  --font-sans: "Plus Jakarta Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
 
-  --theme-blend: 0;
-  --theme-weight: calc(var(--theme-blend) * 100%);
-  --control-motion: 180ms cubic-bezier(.22, 1, .36, 1);
+  --bg: #fbfbf9;
+  --surface: #ffffff;
+  --text: #121315;
+  --text-muted: #5b5f66;
+  --line: #e8e8e3;
+  --accent: #2350f0;
+  --accent-soft: #e6ecff;
+  --button: #121315;
+  --button-text: #ffffff;
+  --shadow: 0 1px 2px #1213150d, 0 8px 24px #1213150f;
 
-  --bg: color-mix(in oklab, #f5f0e1, #0f2440 var(--theme-weight));
-  --card: color-mix(in oklab, #f7f3e6, #132c4d var(--theme-weight));
-  --text: color-mix(in oklab, #1c4373, #ece5cf var(--theme-weight));
-  --text-muted: color-mix(in oklab, #4a6386, #b4c0cf var(--theme-weight));
-  --accent: color-mix(in oklab, #1c4373, #f2d58a var(--theme-weight));
-  --rule: color-mix(in oklab, #1c4373, #ece5cf var(--theme-weight));
-  --rule-soft: color-mix(in oklab, #1c437399, #ece5cf73 var(--theme-weight));
-  --gridline: color-mix(in oklab, #1c437314, #ece5cf12 var(--theme-weight));
-  --gridline-major: color-mix(in oklab, #1c437321, #ece5cf1f var(--theme-weight));
-  --highlight: color-mix(in oklab, #d8e2ec, #29507f var(--theme-weight));
-  --hover: color-mix(in oklab, #ebe5d2, #19365c var(--theme-weight));
+  --tone-butter: #fff1bd;  --tone-butter-ink: #6d4c00;
+  --tone-peach: #ffe6d4;   --tone-peach-ink: #8a3a0a;
+  --tone-mint: #d9f4e4;    --tone-mint-ink: #0d633a;
+  --tone-lilac: #ebe6ff;   --tone-lilac-ink: #4a2ea6;
+  --tone-sky: #dcefff;     --tone-sky-ink: #0b4f8c;
 
-  --grid: 22px;
-  --gutter: clamp(1rem, 5vw, 4rem);
-  --shell: 66rem;
+  --radius: 1.25rem;
+  --gutter: clamp(1rem, 5vw, 3rem);
+  --shell: 68rem;
+  --ease: cubic-bezier(.22, 1, .36, 1);
 }
 
 :root[data-theme="dark"] {
   color-scheme: dark;
-  --theme-blend: 1;
-}
+  --bg: #0e0f11;
+  --surface: #17181b;
+  --text: #f3f3f0;
+  --text-muted: #a5a9b1;
+  --line: #2a2c31;
+  --accent: #8aa4ff;
+  --accent-soft: #1d2647;
+  --button: #f3f3f0;
+  --button-text: #121315;
+  --shadow: 0 1px 2px #0006, 0 8px 24px #0005;
 
-@media (prefers-reduced-motion: reduce) {
-  :root { --control-motion: 120ms ease-out; }
+  --tone-butter: #342c12;  --tone-butter-ink: #f2d77c;
+  --tone-peach: #3a2418;   --tone-peach-ink: #ffc8a2;
+  --tone-mint: #14301f;    --tone-mint-ink: #9de2bb;
+  --tone-lilac: #29233f;   --tone-lilac-ink: #cfc2ff;
+  --tone-sky: #13293d;     --tone-sky-ink: #a9d3ff;
 }
