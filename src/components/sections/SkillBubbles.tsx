@@ -7,20 +7,21 @@ import { BrandIcon } from '../ui/BrandIcon'
 /**
  * Where each bubble sits around the hero (% of width/height), how strongly it leans
  * toward the cursor (depth), which wandering path it follows (1–3) and how long one
- * loop takes (seconds). Different paths and speeds keep the motion from looking robotic.
+ * loop takes (seconds), plus a resting tilt in degrees. Different paths, speeds and tilts
+ * keep the motion from looking robotic. Spots sit near the edges so they never cover the text.
  * Add a spot if you add a skill; extra skills reuse spots from the start.
  */
 const spots = [
-  { x: 8, y: 24, depth: 18, path: 1, speed: 19 },
-  { x: 21, y: 9, depth: 10, path: 2, speed: 23 },
-  { x: 4, y: 58, depth: 14, path: 3, speed: 21 },
-  { x: 91, y: 22, depth: 16, path: 2, speed: 18 },
-  { x: 77, y: 8, depth: 9, path: 3, speed: 25 },
-  { x: 95, y: 56, depth: 12, path: 1, speed: 22 },
-  { x: 85, y: 85, depth: 20, path: 3, speed: 20 },
-  { x: 15, y: 86, depth: 15, path: 2, speed: 24 },
-  { x: 68, y: 94, depth: 8, path: 1, speed: 26 },
-  { x: 32, y: 95, depth: 11, path: 3, speed: 21 },
+  { x: 6, y: 17, depth: 18, path: 1, speed: 19, tilt: -6 },
+  { x: 23, y: 5, depth: 10, path: 2, speed: 23, tilt: 5 },
+  { x: 3, y: 50, depth: 14, path: 3, speed: 21, tilt: 8 },
+  { x: 11, y: 83, depth: 16, path: 2, speed: 24, tilt: -4 },
+  { x: 33, y: 97, depth: 9, path: 1, speed: 26, tilt: 6 },
+  { x: 93, y: 15, depth: 16, path: 2, speed: 18, tilt: 7 },
+  { x: 76, y: 4, depth: 9, path: 3, speed: 25, tilt: -5 },
+  { x: 97, y: 47, depth: 12, path: 1, speed: 22, tilt: -8 },
+  { x: 89, y: 81, depth: 20, path: 3, speed: 20, tilt: 4 },
+  { x: 67, y: 97, depth: 11, path: 1, speed: 21, tilt: -6 },
 ]
 
 /** Brand-logo bubbles that wander slowly, tilt a little and lean toward the cursor. Hover or focus shows the name. */
@@ -44,7 +45,13 @@ export function SkillBubbles() {
       })
     }
     hero.addEventListener('pointermove', onMove)
-    return () => { hero.removeEventListener('pointermove', onMove); cancelAnimationFrame(frame) }
+    // Pause the wandering while the hero is off-screen.
+    const observer = new IntersectionObserver(([entry]) => {
+      if (entry.isIntersecting) delete element.dataset.paused
+      else element.dataset.paused = ''
+    })
+    observer.observe(hero)
+    return () => { hero.removeEventListener('pointermove', onMove); cancelAnimationFrame(frame); observer.disconnect() }
   }, [])
 
   return (
@@ -61,7 +68,7 @@ export function SkillBubbles() {
             aria-label={skill.name}
             style={{
               '--x': `${spot.x}%`, '--y': `${spot.y}%`, '--depth': `${spot.depth}px`,
-              '--speed': `${spot.speed}s`, '--delay': `${index * -2.7}s`, '--enter': `${index * 70}ms`,
+              '--speed': `${spot.speed}s`, '--tilt': `${spot.tilt}deg`, '--delay': `${index * -2.7}s`, '--enter': `${index * 70}ms`,
             } as React.CSSProperties}
           >
             <span className="bubble-float">

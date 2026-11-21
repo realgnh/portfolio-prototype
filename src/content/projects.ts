@@ -164,7 +164,7 @@ export const projects: Project[] = [
     year: '2023',
     role: 'Frontend contributor',
     tags: ['Components', 'Documentation'],
-    tools: ['TypeScript', 'React', 'Git'],
+    tools: ['TypeScript', 'React'],
     metrics: [{ value: '−50%', label: 'Prototyping time' }, { value: '+32%', label: 'Component reuse' }],
     xyz: {
       accomplished: 'Made recurring screens faster to prototype',

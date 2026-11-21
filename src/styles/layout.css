@@ -30,6 +30,12 @@
 }
 .search-button:hover { border-color: var(--text); color: var(--text); transform: translateY(-1px); }
 .search-button svg { width: 1rem; height: 1rem; }
+.search-label { white-space: nowrap; }
+/* Medium screens: icon only, so the centred navigation has room. */
+@media (max-width: 72rem) {
+  .search-button { width: 2.5rem; padding: 0; justify-content: center; }
+  .search-label { display: none; }
+}
 .menu-button { display: none; }
 
 @media (max-width: 52rem) {
@@ -110,39 +116,54 @@
     var(--bg);
   transition: opacity 450ms ease, visibility 450ms;
 }
-.loader[data-leaving="true"] { opacity: 0; visibility: hidden; }
+.loader[data-leaving="true"] { opacity: 0; visibility: hidden; transition-duration: 500ms; }
 .loader[data-leaving="true"] .loader-card { transform: scale(1.04); }
 .loader-card { display: grid; gap: 1.1rem; width: min(100%, 28rem); transition: transform 450ms var(--ease); }
 .loader-title { font-size: clamp(1.6rem, 6vw, 2.4rem); font-weight: 800; letter-spacing: -0.04em; text-align: center; }
 .loader-track { position: relative; padding-top: 3.1rem; margin-inline: 1.3rem; }
-.loader-runner { position: absolute; top: 0; width: 2.6rem; translate: -50% 0; }
+/* The runner spans the whole track and slides by --p percent (set every frame by LoadingScreen.tsx). */
+.loader-runner {
+  position: absolute; top: 0; left: 0; width: 100%; height: 3.1rem; pointer-events: none;
+  transform: translateX(calc(var(--p, 0) * 1%)); will-change: transform;
+}
+/* .loader-hop does the small jump (up and down); .loader-block rolls a quarter turn per hop.
+   A cube looks the same after 90°, so the loop is seamless. Keep both durations equal. */
+.loader-hop {
+  position: absolute; bottom: 0.3rem; left: 0; width: 2.5rem; height: 2.5rem; translate: -50% 0;
+  transform-origin: 50% 100%; will-change: transform;
+  animation: hop 720ms infinite;
+}
 .loader-block {
-  display: grid; place-items: center; width: 2.6rem; height: 2.6rem; padding: 0.5rem;
-  border: 2px solid var(--text); border-radius: 0.7rem; background: var(--surface);
-  box-shadow: 0 3px 0 var(--text);
-  transform-origin: 50% 100%; animation: hop 520ms cubic-bezier(.3, 0, .4, 1) infinite;
+  display: grid; place-items: center; width: 100%; height: 100%; padding: 0.45rem;
+  border: 2px solid var(--text); border-radius: 0.65rem; background: var(--surface);
+  will-change: transform; animation: roll 720ms cubic-bezier(.45, 0, .25, 1) infinite;
 }
 .loader-shadow {
-  width: 2rem; height: 0.35rem; margin: 0.3rem auto 0; border-radius: 50%;
-  background: color-mix(in srgb, var(--text) 18%, transparent); animation: hop-shadow 520ms cubic-bezier(.3, 0, .4, 1) infinite;
+  position: absolute; bottom: 0; left: 0; width: 1.9rem; height: 0.3rem; translate: -50% 0;
+  border-radius: 50%; background: color-mix(in srgb, var(--text) 16%, transparent);
+  animation: hop-shadow 720ms infinite;
 }
 @keyframes hop {
-  0%   { transform: translateY(0) scale(1.15, 0.85) rotate(0deg); }
-  15%  { transform: translateY(-6px) scale(0.92, 1.1); }
-  50%  { transform: translateY(-26px) scale(1, 1) rotate(-8deg); }
-  85%  { transform: translateY(-4px) scale(0.95, 1.06) rotate(0deg); }
-  100% { transform: translateY(0) scale(1.15, 0.85); }
+  0%   { transform: translateY(0) scale(1.08, 0.92); animation-timing-function: cubic-bezier(.2, .6, .35, 1); }
+  12%  { transform: translateY(-2px) scale(0.97, 1.03); animation-timing-function: cubic-bezier(.2, .6, .35, 1); }
+  50%  { transform: translateY(-13px) scale(1, 1); animation-timing-function: cubic-bezier(.6, 0, .8, .4); }
+  92%  { transform: translateY(0) scale(1.04, 0.96); animation-timing-function: ease-out; }
+  100% { transform: translateY(0) scale(1.08, 0.92); }
 }
-@keyframes hop-shadow { 50% { transform: scaleX(0.55); opacity: 0.5; } }
+@keyframes roll { from { transform: rotate(0deg); } to { transform: rotate(90deg); } }
+@keyframes hop-shadow {
+  0%, 100% { transform: scaleX(1); opacity: 0.9; }
+  50% { transform: scaleX(0.7); opacity: 0.45; }
+}
 .loader-bar {
-  display: grid; grid-template-columns: repeat(20, 1fr); gap: 3px; height: 1.15rem; padding: 3px;
+  display: grid; grid-template-columns: repeat(20, 1fr); gap: 3px; height: 1.15rem; padding: 3px; margin-top: 0.6rem;
   border: 2px solid var(--text); border-radius: 0.55rem; background: var(--surface); box-shadow: 0 3px 0 var(--text);
 }
-.loader-bar span { border-radius: 2px; background: color-mix(in srgb, var(--text) 8%, transparent); transition: background-color 150ms; }
-.loader-bar span[data-on="true"]:nth-child(4n+1) { background: var(--tone-lilac-ink); }
-.loader-bar span[data-on="true"]:nth-child(4n+2) { background: var(--accent); }
-.loader-bar span[data-on="true"]:nth-child(4n+3) { background: var(--tone-mint-ink); }
-.loader-bar span[data-on="true"]:nth-child(4n+4) { background: var(--tone-peach-ink); }
+.loader-bar span { border-radius: 2px; background: color-mix(in srgb, var(--text) 8%, transparent); transition: background-color 200ms; }
+.loader-bar span[data-on]:nth-child(4n+1) { background: var(--tone-lilac-ink); }
+.loader-bar span[data-on]:nth-child(4n+2) { background: var(--accent); }
+.loader-bar span[data-on]:nth-child(4n+3) { background: var(--tone-mint-ink); }
+.loader-bar span[data-on]:nth-child(4n+4) { background: var(--tone-peach-ink); }
 .loader-meta { display: flex; justify-content: space-between; gap: 1rem; font-size: 0.875rem; font-weight: 600; }
 .loader-tip { color: var(--text-muted); }
 .loader-percent { font-variant-numeric: tabular-nums; }

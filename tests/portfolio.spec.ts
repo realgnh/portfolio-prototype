@@ -122,7 +122,8 @@ test('About, Skills, Hobbies and Currently sections are on Home', async ({ page 
 
   const skillsRegion = page.getByRole('region', { name: sections.skills.heading, exact: true })
   for (const skill of skills) await expect(skillsRegion.getByText(skill.name, { exact: true })).toBeVisible()
-  expect(skills.map(skill => skill.name)).toContain('Luau')
+  expect(skills.map(skill => skill.name)).toEqual(expect.arrayContaining(['Luau', 'Java']))
+  expect(skills.map(skill => skill.name)).not.toContain('Git')
 
   const hobbyRegion = page.getByRole('region', { name: sections.hobbies.heading })
   for (const { title } of hobbies) await expect(hobbyRegion.getByRole('heading', { name: title })).toBeVisible()
@@ -217,6 +218,7 @@ test('Quick search opens with Ctrl+K, finds a project, runs actions and closes w
   await page.goto('/')
   const opener = page.getByRole('button', { name: sections.commandMenu.button })
   await expect(opener).toHaveText(sections.commandMenu.button)
+  await expect(opener.locator('.search-label')).toBeVisible()
   await opener.focus()
   await page.keyboard.press('Control+k')
   const dialog = page.getByRole('dialog', { name: sections.commandMenu.label })

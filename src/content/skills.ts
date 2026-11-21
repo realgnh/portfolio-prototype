@@ -1,4 +1,4 @@
-import { siDocker, siFastapi, siGit, siLuau, siPostgresql, siPython, siPytorch, siReact, siTypescript } from 'simple-icons'
+import { siDocker, siFastapi, siLuau, siOpenjdk, siPostgresql, siPython, siPytorch, siReact, siTypescript } from 'simple-icons'
 import type { SimpleIcon } from 'simple-icons'
 
 /**
@@ -32,11 +32,12 @@ export const skills: Skill[] = [
   { name: 'TypeScript', area: 'languages', icon: siTypescript },
   { name: 'SQL', area: 'languages', icon: 'database' },
   { name: 'Luau', area: 'languages', icon: siLuau },
+  // simple-icons no longer ships Oracle's Java cup, so Java uses the OpenJDK logo.
+  { name: 'Java', area: 'languages', icon: siOpenjdk },
   { name: 'React', area: 'frontend', icon: siReact },
   { name: 'FastAPI', area: 'backend', icon: siFastapi },
   { name: 'PostgreSQL', area: 'backend', icon: siPostgresql },
   { name: 'PyTorch', area: 'ai', icon: siPytorch },
-  { name: 'Git', area: 'tools', icon: siGit },
   { name: 'Docker', area: 'tools', icon: siDocker },
 ]
 
