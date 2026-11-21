@@ -1,13 +1,21 @@
 // PLACEHOLDER: Replace the identity, biography, experience, contact info, and links below.
 export const site = {
   name: 'Alex Morgan',
+  initials: 'AM',
   role: 'CS student',
-  tagline: { before: 'From classwork', accent: 'software', after: '.' },
+  masthead: 'Field notes',
   hero: {
-    tab: 'Profile',
-    status: 'CS portfolio',
-    secondLine: 'to useful ',
-    intro: 'I’m Alex, a computer science student exploring software engineering and applied AI. This is where I keep notes on what I build.',
+    sheet: 'Sheet 01.00',
+    title: 'Researcher',
+    intro: 'CS student at X university, aspiring Software/AI Engineer. This notebook tracks what I build, why I build it, and whether it works.',
+    figure: {
+      caption: 'Fig. A — Iteration sequence (schematic)',
+      steps: [
+        { label: '01 / Observe', to: '#log' },
+        { label: '02 / Build', to: '#register' },
+        { label: '03 / Measure', to: '/projects' },
+      ],
+    },
   },
   email: 'alex@example.com',
   socialLinks: [
@@ -16,27 +24,29 @@ export const site = {
     { label: 'X', href: 'https://x.com/example_profile' },
   ],
   navItems: [
-    { label: 'Home', to: '/' },
-    { label: 'Projects', to: '/projects' },
+    { label: 'Profile', to: '/' },
+    { label: 'Experiments', to: '/projects' },
     { label: 'Resume', to: '/resume' },
     { label: 'Contact', to: '/contact' },
   ],
   pages: {
-    home: { title: 'Home', description: 'Alex Morgan’s placeholder computer science portfolio, skill stack, and résumé.' },
-    projects: { title: 'Projects', description: 'Five fictional projects with example results for Alex Morgan’s portfolio.' },
-    resume: { title: 'Resume', description: 'Alex Morgan’s sample education, experience, skills, selected projects, and downloadable résumé.' },
+    home: { title: 'Profile', description: 'Alex Morgan’s placeholder computer science portfolio: experiments, instruments, and a lab log.' },
+    projects: { title: 'Experiments', description: 'Five fictional experiments with example results for Alex Morgan’s portfolio.' },
+    resume: { title: 'Resume', description: 'Alex Morgan’s sample education, experience, skills, selected experiments, and downloadable résumé.' },
     contact: { title: 'Contact', description: 'Placeholder contact details, LinkedIn, and résumé for Alex Morgan.' },
   },
-  projects: { heading: 'Projects', caption: 'Fictional projects · Example results', browse: 'See the project index' },
-  about: {
-    eyebrow: '02 / Background',
-    heading: 'About me',
-    bio: 'I study Computer Science at X university aspiring to be a Software/AI Engineer',
+  projects: {
+    register: 'Experiment register',
+    caption: 'Example data',
+    featuredCount: 2,
+    browse: 'Open the full register',
+    filterLabel: 'Filter experiments by topic',
+    allLabel: 'All',
   },
   skills: {
-    eyebrow: '01 / Tools',
-    heading: 'Skill stack',
-    intro: 'A working list of tools for software, data, and AI.',
+    eyebrow: 'Instruments',
+    caption: 'Each tool links to the experiments that used it',
+    noEvidence: 'No record yet',
     groups: [
       { title: 'Languages', tools: ['Python', 'TypeScript', 'SQL'] },
       { title: 'Web & data', tools: ['React', 'FastAPI', 'PostgreSQL'] },
@@ -44,12 +54,20 @@ export const site = {
       { title: 'AI / ML', tools: ['PyTorch'] },
     ],
   },
+  // PLACEHOLDER: Short, dated notes on what you're reading, building, or shipping. Newest first.
+  log: {
+    eyebrow: 'Lab log',
+    caption: 'Recent entries',
+    entries: [
+      { date: 'Nov 20XX', kind: 'Reading', note: 'Comparing retrieval-augmented generation against a plain keyword baseline on course notes.' },
+      { date: 'Oct 20XX', kind: 'Building', note: 'A small PyTorch text classifier with a written error analysis, not just an accuracy number.' },
+      { date: 'Sep 20XX', kind: 'Shipped', note: 'Published the Clearpath Onboarding write-up with its hypothesis, method, and result.' },
+    ],
+  },
   resume: {
-    homeEyebrow: '03 / Career',
-    eyebrow: 'Sample résumé',
+    eyebrow: 'Sheet 03.00 / Résumé',
     heading: 'Résumé',
-    intro: 'Education, experience, and selected projects in software and applied AI.',
-    viewLabel: 'View résumé',
+    intro: 'Education, experience, and selected experiments in software and applied AI.',
     download: { label: 'Download résumé', href: '/resume.pdf' },
     education: [{ program: 'Computer Science', school: 'X university', period: 'Expected 20XX' }],
     experience: [
@@ -63,11 +81,12 @@ export const site = {
     projectSlugs: ['clearpath-onboarding', 'signal-dashboard', 'index-library'],
   },
   contact: {
-    eyebrow: 'Placeholder contact details',
-    intro: 'Have a project or just want to say hello? Email is the best way to reach me.',
+    eyebrow: 'Sheet 04.00 / Correspondence',
+    heading: 'Contact',
+    intro: 'Tell me about a workflow your team keeps working around, or a model you don’t quite trust yet. Email is the fastest way to reach me.',
     emailLabel: 'Email',
   },
-  footer: { note: 'Prototype · All names, links and outcomes are placeholders.' },
+  footer: { label: 'Correspondence', note: 'Prototype · All names, links and outcomes are placeholders.' },
 }
 
 export const ui = {
@@ -76,20 +95,34 @@ export const ui = {
   contactLinks: 'Contact links',
   resume: 'Resume',
   darkMode: 'Dark mode',
-  lightTheme: 'Light',
-  darkTheme: 'Dark',
-  allProjects: 'All projects',
-  projectXyz: 'Google XYZ · Example result',
-  problem: 'Problem',
-  actions: 'What I did',
-  outcome: 'Outcome',
-  next: 'Next project',
+  lightTheme: 'Paper',
+  darkTheme: 'Blueprint',
+  copyEmail: 'Copy email',
+  copied: 'Copied',
+  copyFailed: 'Press Ctrl+C to copy',
+  allProjects: 'All experiments',
+  experiment: 'Experiment',
+  records: 'records',
+  hypothesis: 'Hypothesis',
+  method: 'Method',
+  result: 'Result',
+  projectXyz: 'Summary (Google XYZ)',
+  context: 'Context',
+  procedure: 'Procedure',
+  readouts: 'Readouts',
+  instruments: 'Instruments',
+  faq: 'Open questions',
+  previous: 'Previous record',
+  next: 'Next record',
   caseStudy: 'Fictional case study',
-  faq: 'Project FAQ',
-  notFound: { title: 'Page not found', description: 'This page doesn’t exist.' },
+  notFound: { title: 'Record not found', description: 'This sheet isn’t in the notebook.' },
 }
 
 export const contactLinks = [
   { label: site.email, href: `mailto:${site.email}`, channel: site.contact.emailLabel },
   ...site.socialLinks,
 ]
+
+export function recordNumber(index: number) {
+  return String(index + 1).padStart(2, '0')
+}

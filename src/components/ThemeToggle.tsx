@@ -42,7 +42,7 @@ export function ThemeToggle() {
     const next = theme === 'dark' ? 'light' : 'dark'
     const from = blend.current
     const to = next === 'dark' ? 1 : 0
-    const duration = window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 200 : 780
+    const duration = window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 200 : 600
     let started: number | undefined
 
     choseTheme.current = true
@@ -90,20 +90,20 @@ export function ThemeToggle() {
 
   return (
     <button
-      className="theme-toggle"
+      className="theme-toggle label"
       type="button"
       onClick={toggle}
       aria-label={ui.darkMode}
       aria-pressed={theme === 'dark'}
     >
-      <svg className="theme-sun" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
+      <svg className="theme-sun" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round">
         <circle cx="12" cy="12" r="4" />
         <path d="M12 2v2m0 16v2M2 12h2m16 0h2M5 5l1.5 1.5m11 11L19 19M5 19l1.5-1.5m11-11L19 5" />
       </svg>
-      <svg className="theme-moon" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
-        <path d="M20.8 15.2A9 9 0 0 1 8.8 3.2a9.1 9.1 0 1 0 12 12Z" />
+      <svg className="theme-moon" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinejoin="round">
+        <path d="M3 3h18v18H3zM3 9h18M9 3v18M15 3v18M3 15h18" />
       </svg>
-      <span className="theme-label" aria-hidden="true">{theme === 'dark' ? ui.lightTheme : ui.darkTheme}</span>
+      <span aria-hidden="true">{theme === 'dark' ? ui.lightTheme : ui.darkTheme}</span>
     </button>
   )
 }

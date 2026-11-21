@@ -3,67 +3,74 @@
 }
 
 html {
-  scroll-padding-block-start: calc(6rem + env(safe-area-inset-top));
+  scroll-padding-block-start: 2rem;
   scroll-behavior: smooth;
 }
 
 body {
   margin: 0;
-  isolation: isolate;
-  background: var(--bg);
+  min-height: 100vh;
+  background-color: var(--bg);
+  background-image:
+    linear-gradient(var(--gridline-major) 1px, transparent 1px),
+    linear-gradient(90deg, var(--gridline-major) 1px, transparent 1px),
+    linear-gradient(var(--gridline) 1px, transparent 1px),
+    linear-gradient(90deg, var(--gridline) 1px, transparent 1px);
+  background-size:
+    calc(var(--grid) * 5) calc(var(--grid) * 5),
+    calc(var(--grid) * 5) calc(var(--grid) * 5),
+    var(--grid) var(--grid),
+    var(--grid) var(--grid);
+  background-position: -1px -1px;
   color: var(--text);
-  font-family: var(--font-body);
-  font-size: 1rem;
-  line-height: 1.55;
+  font-family: var(--font-mono);
+  font-size: 0.9375rem;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
 }
 
-body::before {
-  position: absolute;
-  z-index: -1;
-  inset: 0 0 auto;
-  height: clamp(36rem, 78vw, 58rem);
-  background:
-    radial-gradient(ellipse 83% 62% at 50% 0%, var(--sky-halo), transparent),
-    repeating-linear-gradient(90deg, transparent 0 calc(100% / 12 - 1px), var(--gridline) calc(100% / 12 - 1px) calc(100% / 12));
-  mask-image: linear-gradient(#000 35%, transparent);
-  opacity: var(--top-glow-opacity, 1);
-  pointer-events: none;
-  content: "";
-}
-
-h1, h2, h3, p, figure, dl, dd {
+h1, h2, h3, p, figure, dl, dd, ol, ul {
   margin: 0;
 }
 
-h1, h2, h3 {
-  font-family: var(--font-display);
-  font-weight: 600;
-  line-height: 1.02;
-  letter-spacing: -0.04em;
+ol, ul {
+  padding: 0;
+  list-style: none;
 }
 
-h2 {
-  font-size: clamp(1.75rem, 4vw, 3.25rem);
+h1, h3 {
+  font-family: var(--font-display);
+  font-weight: 400;
+  letter-spacing: -0.045em;
+  line-height: 1;
+}
+
+h1 {
+  font-size: clamp(3.25rem, 10vw, 6.5rem);
+  letter-spacing: -0.06em;
 }
 
 a {
   color: inherit;
   text-decoration-thickness: 1px;
-  text-underline-offset: 0.24em;
-  transition: color 160ms ease;
-}
-
-a:hover {
-  color: var(--accent);
+  text-underline-offset: 0.22em;
 }
 
 button {
   font: inherit;
+  color: inherit;
+}
+
+mark {
+  padding: 0.05em 0.35em;
+  background: var(--highlight);
+  color: inherit;
+  font-weight: 600;
 }
 
 :focus-visible {
   outline: 2px solid var(--accent);
-  outline-offset: 4px;
+  outline-offset: 3px;
 }
 
 main:focus {
@@ -75,13 +82,23 @@ main:focus {
   margin-inline: auto;
 }
 
+/* Small-caps mono label used for every eyebrow, field name, and nav item. */
+.label {
+  font-family: var(--font-mono);
+  font-size: 0.6875rem;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  line-height: 1.5;
+  text-transform: uppercase;
+}
+
 .skip-link {
   position: fixed;
   z-index: 3;
-  inset: calc(0.5rem + env(safe-area-inset-top)) auto auto var(--gutter);
+  inset: 0.5rem auto auto var(--gutter);
   padding: 0.5rem 0.75rem;
+  border: 1px solid var(--rule);
   background: var(--card);
-  font: 600 0.9rem var(--font-ui);
 }
 
 .skip-link:not(:focus) {
@@ -92,15 +109,15 @@ main:focus {
 }
 
 .route-frame {
-  animation: route-in 225ms cubic-bezier(.22, 1, .36, 1);
+  animation: route-in 260ms cubic-bezier(.22, 1, .36, 1);
 }
 
 @keyframes route-in {
-  from { opacity: 0.6; transform: translateY(0.3rem); }
+  from { opacity: 0; transform: translateY(0.4rem); }
 }
 
 @keyframes route-fade {
-  from { opacity: 0.75; }
+  from { opacity: 0.6; }
 }
 
 ::view-transition {
@@ -119,7 +136,7 @@ main:focus {
 
 ::view-transition-old(root) {
   z-index: 1;
-  animation: theme-dissolve 780ms cubic-bezier(.42, 0, .58, 1) both;
+  animation: theme-dissolve 600ms cubic-bezier(.42, 0, .58, 1) both;
 }
 
 @keyframes theme-dissolve {
@@ -128,8 +145,6 @@ main:focus {
 
 @media (prefers-reduced-motion: reduce) {
   html { scroll-behavior: auto; }
-
-  .route-frame { animation: route-fade 140ms ease-out; }
-
+  .route-frame { animation: route-fade 120ms ease-out; }
   ::view-transition-old(root) { animation-duration: 200ms; }
 }

@@ -4,13 +4,14 @@ import { ui } from '../data/site'
 
 export function NotFound() {
   return (
-    <section className="inner-page shell">
+    <section className="page shell">
       <Metadata {...ui.notFound} />
-      <header className="page-heading">
+      <header className="sheet-head">
+        <p className="label">Sheet 404</p>
         <h1>{ui.notFound.title}</h1>
         <p className="lede">{ui.notFound.description}</p>
       </header>
-      <Link className="action" to="/projects">{ui.allProjects}</Link>
+      <Link className="text-link label" to="/projects">{ui.allProjects} <span aria-hidden="true">→</span></Link>
     </section>
   )
 }
