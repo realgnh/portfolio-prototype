@@ -1,0 +1,58 @@
+/*
+ * SCROLL RULER (ScrollRuler.tsx) — the timeline across the top of every page.
+ * A dark strip with frame ticks, a ◆ keyframe + label per section, an orange fill
+ * and an orange playhead that follows the middle of the screen.
+ */
+:root { --ruler-height: 30px; }
+
+.ruler {
+  --progress: 0;
+  position: fixed; z-index: 25; top: 0; left: 0; right: 0; height: var(--ruler-height);
+  background: var(--band); color: var(--band-text);
+  box-shadow: 0 1px 0 var(--band-line);
+}
+.ruler-ticks {
+  position: absolute; inset: 0; pointer-events: none;
+  background:
+    repeating-linear-gradient(90deg, var(--band-muted) 0 1px, transparent 1px 12px) bottom / 100% 5px no-repeat,
+    repeating-linear-gradient(90deg, var(--band-text) 0 1px, transparent 1px 120px) bottom / 100% 10px no-repeat;
+  opacity: 0.45;
+}
+.ruler-fill {
+  position: absolute; left: 0; bottom: 0; height: 3px; width: 100%; pointer-events: none;
+  background: var(--accent-fill); transform-origin: left; transform: scaleX(var(--progress));
+}
+.ruler-playhead {
+  position: absolute; top: 0; bottom: 0; left: 0; width: 100%; pointer-events: none;
+  transform: translateX(calc(var(--progress) * 100%));
+}
+.ruler-playhead::before { /* the line */
+  position: absolute; top: 0; bottom: 0; left: -1px; width: 2px; background: var(--accent-fill); content: "";
+}
+.ruler-playhead::after { /* the handle */
+  position: absolute; top: 0; left: -7px; width: 14px; height: 9px; background: var(--accent-fill);
+  clip-path: polygon(0 0, 100% 0, 100% 45%, 50% 100%, 0 45%); content: "";
+}
+
+.ruler-key {
+  position: absolute; top: 0; bottom: 0; display: flex; align-items: center; gap: 0.4rem;
+  padding: 0 0.35rem; border: 0; background: none; color: var(--band-muted);
+  translate: -0.75rem 0; cursor: pointer; transition: color 200ms;
+}
+.ruler-diamond {
+  width: 9px; height: 9px; flex: none; rotate: 45deg; border: 1.5px solid currentColor; background: var(--band);
+  transition: background-color 200ms, border-color 200ms, scale 250ms var(--ease);
+}
+.ruler-key-label { font: 500 0.66rem var(--font-mono); letter-spacing: 0.08em; text-transform: uppercase; white-space: nowrap; }
+.ruler-key[data-passed] { color: var(--band-text); }
+.ruler-key[data-passed] .ruler-diamond { background: var(--band-text); }
+.ruler-key[data-active] { color: var(--accent-fill); }
+.ruler-key[data-active] .ruler-diamond { background: var(--accent-fill); border-color: var(--accent-fill); scale: 1.3; }
+.ruler-key:hover, .ruler-key:focus-visible { color: var(--band-text); }
+.ruler-key:hover .ruler-diamond { scale: 1.3; }
+
+/* Phones: diamonds only; the current section's name shows. */
+@media (max-width: 48rem) {
+  .ruler-key-label { display: none; }
+  .ruler-key[data-active] .ruler-key-label { display: inline; }
+}
