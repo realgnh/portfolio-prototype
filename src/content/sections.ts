@@ -41,6 +41,8 @@ export const sections = {
     recentRepos: 'Recently updated repositories',
     recentActivity: 'Contribution activity',
     noCalendar: 'The contribution chart couldn’t be loaded right now.',
+    yearPicker: 'Choose a year',
+    lastYear: 'Last year',
     privateNote: 'Private repositories count toward the chart but aren’t listed.',
     updated: 'updated',
     noRepos: 'No public repositories yet.',
@@ -48,6 +50,9 @@ export const sections = {
   },
   chat: {
     title: 'Ask my portfolio',
+    /** The launcher button shrinks to `short` when you scroll; `rest` slides away. */
+    short: 'Ask',
+    rest: ' my portfolio',
     subtitle: 'about Abdalla',
     greeting: 'Hi! Ask me anything about Abdalla. I answer from his content, so no hallucinations (I checked).',
     placeholder: 'Ask a question…',

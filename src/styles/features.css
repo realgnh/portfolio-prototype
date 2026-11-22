@@ -11,13 +11,13 @@ kbd {
   display: flex; align-items: center; gap: 0.6rem;
 }
 .chat-launcher {
-  display: inline-flex; align-items: center; gap: 0.55rem; min-height: 3.4rem; padding: 0.9rem 1.45rem; border: 0; border-radius: 999px;
+  display: inline-flex; align-items: center; gap: 0; min-height: 3.4rem; padding: 0.9rem 1.45rem; border: 0; border-radius: 999px;
   background: var(--button); color: var(--button-text); font-weight: 700; font-size: 1.02rem; cursor: pointer;
-  box-shadow: 0 12px 34px #00000033; transition: transform 250ms var(--ease), padding 300ms var(--ease);
+  box-shadow: 0 12px 34px #00000033, 0 0 0 1px #ffffff2e; transition: transform 250ms var(--ease), padding 300ms var(--ease);
 }
 .chat-launcher:hover { transform: translateY(-2px); }
-.chat-launcher-label { overflow: hidden; max-width: 13rem; white-space: nowrap; transition: max-width 300ms var(--ease), opacity 200ms; }
-.chat-launcher[data-compact="true"] { gap: 0; padding: 0.9rem 1.15rem; }
+.chat-launcher-label { overflow: hidden; max-width: 13rem; white-space: pre; transition: max-width 300ms var(--ease), opacity 200ms; }
+.chat-launcher[data-compact="true"] { gap: 0; padding: 0.9rem 1.3rem; }
 .chat-launcher[data-compact="true"] .chat-launcher-label { max-width: 0; opacity: 0; }
 .shortcuts-button {
   display: inline-flex; align-items: center; justify-content: center; gap: 0.45rem; height: 3.4rem; padding: 0 1.05rem 0 0.95rem; border: 1.5px solid var(--text); border-radius: 999px;
@@ -103,6 +103,22 @@ kbd {
 .github-skeleton > div { height: 10rem; border-radius: var(--radius); background: linear-gradient(90deg, var(--surface), var(--bg), var(--surface)); background-size: 200% 100%; animation: shimmer 1.4s linear infinite; }
 @keyframes shimmer { to { background-position: -200% 0; } }
 @media (max-width: 60rem) { .github-layout { grid-template-columns: 1fr; } }
+
+/* Year picker beside the contribution chart (ContributionYears.tsx). */
+.calendar-years { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 1.5rem; align-items: start; }
+.calendar-years-chart { min-width: 0; transition: opacity 200ms; }
+.calendar-years-chart[aria-busy="true"] { opacity: 0.4; }
+.year-picker { display: grid; gap: 0.25rem; }
+.year-picker button {
+  padding: 0.45rem 0.9rem; border: 0; border-radius: 0.5rem; background: none; color: var(--text-muted);
+  font: 500 0.85rem var(--font-mono); text-align: left; cursor: pointer; transition: background-color 200ms, color 200ms;
+}
+.year-picker button:hover { background: var(--sunken); color: var(--text); }
+.year-picker button[aria-pressed="true"] { background: var(--text); color: var(--bg); }
+@media (max-width: 44rem) {
+  .calendar-years { grid-template-columns: 1fr; }
+  .year-picker { display: flex; flex-wrap: wrap; order: -1; }
+}
 
 /* Contribution chart (ContributionCalendar.tsx). */
 .calendar { position: relative; display: grid; gap: 0.75rem; margin: 0; }

@@ -32,8 +32,8 @@ export function ContributionYears({ login, joinedYear, initial }: { login: strin
       <div className="calendar-years-chart" aria-busy={loading}>
         {data ? <ContributionCalendar data={data} /> : <p className="muted">{sections.github.noCalendar}</p>}
       </div>
-      <div className="year-picker" role="group" aria-label="Choose a year">
-        <button type="button" aria-pressed={choice === 'last'} onClick={() => choose('last')}>Last year</button>
+      <div className="year-picker" role="group" aria-label={sections.github.yearPicker}>
+        <button type="button" aria-pressed={choice === 'last'} onClick={() => choose('last')}>{sections.github.lastYear}</button>
         {years.map(year => (
           <button key={year} type="button" aria-pressed={choice === year} onClick={() => choose(year)}>{year}</button>
         ))}
