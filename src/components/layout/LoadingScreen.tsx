@@ -1,9 +1,10 @@
-import { useEffect, useRef, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import { sections } from '../../content/sections'
 import { skills } from '../../content/skills'
 import { motionAllowed } from '../../lib/preferences'
 import { LOADED_EVENT } from '../../lib/reveal'
 import { brickModeOn } from '../../lib/easterEgg'
+import { useJumpGame } from '../../lib/useJumpGame'
 import { BrandIcon } from '../ui/BrandIcon'
 
 /** How long the loading screen stays up on a first visit or refresh (milliseconds). */
@@ -30,6 +31,9 @@ function shouldShow() {
  *   - hops and rolls (`hop`, `roll`),
  *   - and swaps logos by sliding a strip of icons one step per hop (`logos`).
  * JavaScript only updates the percentage text, bar segments and tip, and never re-renders React.
+ *
+ * Mini-game: press Space / ↑ or tap to make the cube leap over blocks (lib/useJumpGame.ts).
+ * Nothing changes unless the visitor plays; the screen still ends on time.
  */
 export function LoadingScreen() {
   const [visible, setVisible] = useState(shouldShow)
@@ -39,6 +43,16 @@ export function LoadingScreen() {
   const tip = useRef<HTMLSpanElement>(null)
   const bar = useRef<HTMLDivElement>(null)
   const icons = useRef(skills.filter(skill => skill.icon)).current
+  const track = useRef<HTMLDivElement>(null)
+  const lane = useRef<HTMLDivElement>(null)
+  const started = useRef(performance.now())
+
+  // Where the cube is along the bar (same easing as its CSS slide), for the game's collisions.
+  const cubeAt = useCallback(() => {
+    const t = Math.min((performance.now() - started.current) / duration, 1)
+    return t < 0.5 ? 2 * t * t : 1 - (-2 * t + 2) ** 2 / 2
+  }, [duration])
+  const game = useJumpGame({ mode: 'loader', track, lane, cubeAt, active: visible })
 
   useEffect(() => {
     if (!visible) return
@@ -46,7 +60,7 @@ export function LoadingScreen() {
     html.dataset.loading = ''
     const animated = duration === DURATION
     const tips = sections.loader.tips
-    const started = performance.now()
+    const startedAt = started.current
     let frame = 0
     let lastFilled = -1
     let lastTip = -1
@@ -67,7 +81,7 @@ export function LoadingScreen() {
     }
 
     function tick(now: number) {
-      const t = Math.min((now - started) / duration, 1)
+      const t = Math.min((now - startedAt) / duration, 1)
       // Ease in and out (matches the cube's CSS easing) so the bar never rushes or stalls.
       const eased = t < 0.5 ? 2 * t * t : 1 - (-2 * t + 2) ** 2 / 2
       render(Math.round(eased * 100))
@@ -89,11 +103,14 @@ export function LoadingScreen() {
       className="loader"
       data-brick={brickModeOn() || undefined}
       style={{ '--run': `${duration}ms`, '--hop': `${HOP}ms`, '--logos': icons.length } as React.CSSProperties}
-      role="progressbar" aria-label={sections.loader.title} aria-valuemin={0} aria-valuemax={100} aria-valuenow={0}>
+      role="progressbar" aria-label={sections.loader.title} aria-valuemin={0} aria-valuemax={100} aria-valuenow={0}
+      onPointerDown={game.jump}>
       <div className="loader-card">
         <p className="loader-title">{sections.loader.title}<span className="dots" aria-hidden="true"><span>.</span><span>.</span><span>.</span></span></p>
-        <div className="loader-track">
+        <div ref={track} className="loader-track">
+          <div ref={lane} className="jump-lane" aria-hidden="true" />
           <div className="loader-runner">
+            <div className={`loader-leap${game.jumping ? ' is-leaping' : ''}`}>
             <div className="loader-hop">
               <div className="loader-block">
                 <div className="loader-logos-window">
@@ -102,6 +119,7 @@ export function LoadingScreen() {
                   </div>
                 </div>
               </div>
+            </div>
             </div>
             <div className="loader-shadow" />
           </div>
@@ -113,6 +131,9 @@ export function LoadingScreen() {
           <span ref={tip} className="loader-tip">{sections.loader.tips[0]}</span>
           <span ref={percent} className="loader-percent">0%</span>
         </div>
+        <p className="jump-hint" aria-hidden="true">
+          {game.playing ? <>Cleared <strong>{game.score}</strong> · best {game.best}</> : sections.loader.gameHint}
+        </p>
       </div>
     </div>
   )

@@ -21,7 +21,8 @@ export const sections = {
   motion: { label: 'Animations', on: 'Animations on', off: 'Animations off' },
   loader: {
     title: 'Loading portfolio',
-    tips: ['Spawning projects…', 'Rigging animations…', 'Compiling coffee…', 'Tip: press Ctrl+K for quick search', 'Placing skill bubbles…'],
+    tips: ['Resolving dependencies…', 'Warming the cache…', 'Reticulating splines…', 'Tip: Ctrl+K. Faster than O(n) scrolling.'],
+    gameHint: 'Press Space or tap to jump',
   },
   github: {
     heading: 'On GitHub',
