@@ -15,7 +15,9 @@ body {
 
 h1, h2, h3, p, ul, ol, dl, dd, figure { margin: 0; }
 ul, ol { padding: 0; list-style: none; }
-h1, h2, h3 { font-weight: 800; letter-spacing: -0.035em; line-height: 1.05; }
+h1, h2, h3 { font-family: var(--font-display); font-weight: 800; letter-spacing: -0.03em; line-height: 1.05; }
+/* Big display text outside headings uses the heading font too. */
+.display { font-family: var(--font-display); }
 h2 { font-size: clamp(1.75rem, 4vw, 2.5rem); }
 h3 { font-size: 1.25rem; letter-spacing: -0.02em; }
 img, video { display: block; max-width: 100%; }

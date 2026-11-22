@@ -4,7 +4,7 @@
 .header-inner { display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; gap: 1rem; }
 .header-inner > .monogram { justify-self: start; }
 
-.monogram { font-size: 1.35rem; font-weight: 800; letter-spacing: -0.05em; text-decoration: none; }
+.monogram { font-family: var(--font-display); font-size: 1.4rem; font-weight: 800; letter-spacing: -0.05em; text-decoration: none; }
 .monogram span { color: var(--accent); }
 
 .pill-nav {
@@ -110,7 +110,7 @@
 :root[data-loading] { overflow: hidden; }
 /* While loading, skip the heavier page-entrance work underneath so the cube stays smooth. */
 :root[data-loading] .route-frame { animation: none; }
-:root[data-loading] .bubble-float, :root[data-loading] .bubble-inner, :root[data-loading] .bubble-inner::before { animation-play-state: paused; }
+:root[data-loading] .bubble-float, :root[data-loading] .bubble-inner, :root[data-loading] .sparks, :root[data-loading] .sparks i { animation-play-state: paused; }
 .loader {
   position: fixed; z-index: 100; inset: 0; display: grid; place-items: center; padding: var(--gutter);
   background:
@@ -123,7 +123,7 @@
 .loader[data-leaving="true"] { opacity: 0; visibility: hidden; transition-duration: 500ms; }
 .loader[data-leaving="true"] .loader-card { transform: scale(1.04); }
 .loader-card { display: grid; gap: 1.1rem; width: min(100%, 28rem); transition: transform 450ms var(--ease); }
-.loader-title { font-size: clamp(1.6rem, 6vw, 2.4rem); font-weight: 800; letter-spacing: -0.04em; text-align: center; }
+.loader-title { font-family: var(--font-display); font-size: clamp(1.6rem, 6vw, 2.4rem); font-weight: 800; letter-spacing: -0.04em; text-align: center; }
 .loader-track { position: relative; padding-top: 3.1rem; margin-inline: 1.3rem; }
 /* The runner spans the whole track and slides across it once (easeInOutQuad, like the percentage). */
 .loader-runner {

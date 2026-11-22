@@ -1,9 +1,11 @@
+import { Suspense } from 'react'
 import { Link, useParams } from 'react-router-dom'
 import { BrandIcon } from '../components/ui/BrandIcon'
 import { Chip } from '../components/ui/Chip'
 import { ProjectMedia } from '../components/sections/ProjectMedia'
 import { Metadata } from '../components/ui/Metadata'
 import { projects } from '../content/projects'
+import { demos } from '../demos'
 import { sections } from '../content/sections'
 import { skills, toneOf } from '../content/skills'
 import { NotFound } from './NotFound'
@@ -18,6 +20,7 @@ export function ProjectDetail() {
   const tone = toneOf(project.area)
   const copy = sections.project
   const { accomplished, measuredBy, byDoing } = project.xyz
+  const Demo = demos[project.slug]
   const tools = project.tools.map(name => skills.find(skill => skill.name === name) ?? { name, area: project.area })
 
   return (
@@ -53,6 +56,14 @@ export function ProjectDetail() {
           ))}
         </dl>
       </section>
+
+      {Demo && (
+        <section className="demo-section" aria-labelledby="demo-title">
+          <h2 id="demo-title">{copy.demo}</h2>
+          <p className="muted">{copy.demoIntro}</p>
+          <Suspense fallback={<div className="demo demo-loading" aria-busy="true" />}><Demo /></Suspense>
+        </section>
+      )}
 
       <section className="summary-card" aria-labelledby="summary-title">
         <h2 id="summary-title">{copy.summary}</h2>

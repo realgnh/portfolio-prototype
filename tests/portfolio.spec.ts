@@ -1,4 +1,5 @@
 import { expect, test } from '@playwright/test'
+import { readdirSync, readFileSync } from 'node:fs'
 import { join } from 'node:path'
 import { experience } from '../src/content/experience'
 import { hobbies } from '../src/content/hobbies'
@@ -6,11 +7,21 @@ import { formatDuration, formatMonth, formatRange } from '../src/lib/dates'
 import { differenceFrom, greetingFor } from '../src/lib/timeGreeting'
 import { easterEgg } from '../src/content/easterEggs'
 import { milestones } from '../src/content/milestones'
+import { shortcuts } from '../src/content/shortcuts'
+import { localAnswer } from '../src/lib/localAnswer'
 import { navItems, pages } from '../src/content/navigation'
 import { profile } from '../src/content/profile'
 import { projects } from '../src/content/projects'
 import { sections } from '../src/content/sections'
 import { skillAreas, skills } from '../src/content/skills'
+
+// Notes are loaded by Vite at build time, so the tests read the Markdown files directly (newest first).
+const notesDir = new URL('../src/content/notes/', import.meta.url).pathname
+const notes = readdirSync(notesDir).filter(file => file.endsWith('.md') && file !== 'README.md').map(file => {
+  const raw = readFileSync(notesDir + file, 'utf8')
+  const field = (name: string) => raw.match(new RegExp(`^${name}:\\s*(.+)$`, 'm'))?.[1].trim() ?? ''
+  return { slug: file.replace(/\.md$/, ''), title: field('title'), date: field('date') }
+}).sort((a, b) => b.date.localeCompare(a.date))
 
 const mainNav = (page: import('@playwright/test').Page) => page.getByRole('navigation', { name: 'Main navigation' })
 
@@ -100,7 +111,8 @@ test('bubbles pop when clicked or pressed with Enter, and can pop again', async 
   await bubble.focus()
   await page.keyboard.press('Enter')
   await expect(burst).toHaveAttribute('data-pop', '')
-  expect(await burst.evaluate(el => getComputedStyle(el, '::before').animationName)).toBe('firework')
+  await expect(burst.locator('.sparks i').first()).toHaveCSS('animation-name', 'spark-shoot')
+  await expect(burst.locator('.sparks')).toHaveCSS('animation-name', 'spark-fall')
   await expect(page.locator('.bubble-inner').first()).toHaveCSS('animation-name', 'bubble-pop')
 })
 
@@ -277,6 +289,119 @@ test('bubbles stay below the header, the logo scrolls Home back to the top, and 
     await expect(page.locator(`link[href="${href}"]`)).toHaveCount(1)
     expect((await page.request.get(href)).ok()).toBe(true)
   }
+})
+
+test('headings use Bricolage Grotesque and text uses Inter', async ({ page }) => {
+  await page.goto('/')
+  await expect(page.getByRole('heading', { level: 1 })).toHaveCSS('font-family', /Bricolage Grotesque/)
+  await expect(page.locator('body')).toHaveCSS('font-family', /^"?Inter/)
+  expect(await page.evaluate(() => document.fonts.check('800 40px "Bricolage Grotesque"'))).toBe(true)
+})
+
+test('About is short and the Skills section has no card backgrounds', async ({ page }) => {
+  await page.goto('/')
+  const about = page.locator('#about')
+  await expect(about.getByRole('heading', { name: sections.about.heading })).toBeVisible()
+  await expect(about.getByText('About me', { exact: true })).toHaveCount(0)
+  await expect(about.locator('.about-body > p')).toHaveCount(2)
+  const backgrounds = await page.locator('.skill-group').evaluateAll(els => els.map(el => getComputedStyle(el).backgroundColor))
+  for (const background of backgrounds) expect(background).toBe('rgba(0, 0, 0, 0)')
+})
+
+test('keyboard shortcuts navigate, toggle and show the ? cheat sheet', async ({ page }) => {
+  await page.goto('/')
+  await page.locator('body').click({ position: { x: 5, y: 300 } })
+  await page.keyboard.press('?')
+  const help = page.getByRole('dialog', { name: sections.shortcuts.title })
+  await expect(help).toBeVisible()
+  for (const { label } of shortcuts) await expect(help.getByText(label, { exact: true })).toBeVisible()
+  await page.keyboard.press('Escape')
+  await expect(help).toBeHidden()
+
+  await page.keyboard.press('g')
+  await page.keyboard.press('p')
+  await expect(page).toHaveURL('/projects')
+  await page.keyboard.press('g')
+  await page.keyboard.press('n')
+  await expect(page).toHaveURL('/notes')
+  const theme = await page.locator('html').getAttribute('data-theme')
+  await page.keyboard.press('t')
+  await expect(page.locator('html')).not.toHaveAttribute('data-theme', theme!)
+  await page.keyboard.press('/')
+  await expect(page.getByRole('dialog', { name: sections.commandMenu.label })).toBeVisible()
+  // Shortcuts don't fire while typing.
+  await page.keyboard.type('gp')
+  await expect(page).toHaveURL('/notes')
+})
+
+test('Ask my portfolio answers with the AI when available and offline otherwise', async ({ page }) => {
+  await page.goto('/')
+  await page.getByRole('button', { name: sections.chat.title }).click()
+  const chat = page.getByRole('dialog', { name: sections.chat.title })
+  await expect(chat).toBeVisible()
+  // No /api/ask in local development → offline answer from the site's own content.
+  await chat.getByRole('button', { name: sections.chat.suggestions[0] }).click()
+  await expect(chat.locator('li[data-role="assistant"]').last()).toContainText(projects[0].title)
+  await expect(chat.getByRole('link', { name: sections.chat.open })).toHaveAttribute('href', '/projects')
+
+  await page.route('**/api/ask', route => route.fulfill({ json: { answer: 'Alex builds software and applied AI projects.' } }))
+  await chat.getByRole('textbox').fill('Summarise Alex')
+  await chat.getByRole('button', { name: sections.chat.send }).click()
+  await expect(chat.locator('li[data-role="assistant"]').last()).toHaveText('Alex builds software and applied AI projects.')
+  await page.keyboard.press('Escape')
+  await expect(chat).toBeHidden()
+  await page.keyboard.press('a')
+  await expect(chat).toBeVisible()
+})
+
+test('offline answers pick the right topic', () => {
+  expect(localAnswer('What has Alex built?').link).toBe('/projects')
+  expect(localAnswer('What is the tech stack?').link).toBe('/#skills')
+  expect(localAnswer('How can I contact Alex?').link).toBe('/contact')
+  expect(localAnswer('Any internships?').link).toBe('/experience')
+  expect(localAnswer('Does Alex do Roblox?').link).toBe('/#hobbies')
+})
+
+test('the GitHub panel looks the account up by its permanent ID', async ({ page }) => {
+  const requested: string[] = []
+  await page.route('https://api.github.com/**', route => {
+    const url = route.request().url()
+    requested.push(url)
+    if (url.includes(`/user/${profile.github.id}`)) return route.fulfill({ json: { login: 'renamed-user', name: null, avatar_url: 'https://avatars.githubusercontent.com/u/1?v=4', html_url: 'https://github.com/renamed-user', public_repos: 3, followers: 2 } })
+    if (url.includes('/repos')) return route.fulfill({ json: [{ name: 'cool-repo', description: 'A repo', language: 'TypeScript', stargazers_count: 5, html_url: 'https://github.com/renamed-user/cool-repo', pushed_at: new Date().toISOString(), fork: false }] })
+    return route.fulfill({ json: [{ type: 'PushEvent', repo: { name: 'renamed-user/cool-repo' }, created_at: new Date().toISOString(), payload: { size: 2 } }] })
+  })
+  await page.route('https://avatars.githubusercontent.com/**', route => route.fulfill({ status: 204 }))
+  await page.goto('/')
+  const panel = page.getByRole('region', { name: sections.github.heading })
+  await panel.scrollIntoViewIfNeeded()
+  await expect(panel).toContainText('renamed-user')
+  await expect(panel.getByRole('link', { name: 'cool-repo' })).toHaveAttribute('href', 'https://github.com/renamed-user/cool-repo')
+  await expect(panel).toContainText('Pushed 2 commits to cool-repo')
+  await expect(panel.getByRole('link', { name: sections.github.profile })).toHaveAttribute('href', 'https://github.com/renamed-user')
+  expect(requested[0]).toContain(`/user/${profile.github.id}`)
+})
+
+test('Notes list Markdown files and render them', async ({ page }) => {
+  expect(notes.length).toBeGreaterThan(0)
+  await page.goto('/notes')
+  for (const note of notes) await expect(page.getByText(note.title, { exact: true })).toBeVisible()
+  await page.getByText(notes[0].title, { exact: true }).click()
+  await expect(page).toHaveURL(`/notes/${notes[0].slug}`)
+  await expect(page.getByRole('heading', { level: 1 })).toHaveText(notes[0].title)
+  await expect(page.locator('.prose h2').first()).toBeVisible()
+  await page.goto('/notes/missing-note')
+  await expect(page.getByRole('heading', { level: 1 })).toHaveText(sections.notFound.title)
+})
+
+test('the Clearpath project has a working interactive demo', async ({ page }) => {
+  await page.goto(`/projects/${projects[0].slug}`)
+  const demo = page.getByRole('region', { name: sections.project.demo })
+  await demo.getByRole('button', { name: /After/ }).click()
+  for (let i = 0; i < 2; i++) await demo.getByRole('button', { name: /Continue/ }).click()
+  await demo.getByRole('button', { name: /Finish/ }).click()
+  await expect(demo.getByRole('status')).toContainText('Done in')
+  await expect(demo.locator('.demo-results')).toContainText(/After: 3 steps\s*\d+\.\ds/)
 })
 
 test('visitor greeting and time difference', () => {
@@ -483,7 +608,7 @@ for (const width of [360, 768, 1440]) {
       await page.setViewportSize({ width, height: 900 })
       await page.emulateMedia({ colorScheme: theme })
       const evidence = process.env.PORTFOLIO_SCREENSHOTS
-      for (const path of ['/', '/projects', `/projects/${projects[0].slug}`, '/experience', '/resume', '/contact']) {
+      for (const path of ['/', '/projects', `/projects/${projects[0].slug}`, '/experience', '/notes', `/notes/${notes[0].slug}`, '/resume', '/contact']) {
         await page.goto(path)
         await expect(page.getByRole('heading', { level: 1 })).toBeVisible()
         await page.evaluate(() => document.fonts.ready)

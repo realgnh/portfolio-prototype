@@ -1,8 +1,10 @@
-// Fonts: only the weights the design uses.
-import '@fontsource/plus-jakarta-sans/latin-400.css'
-import '@fontsource/plus-jakarta-sans/latin-500.css'
-import '@fontsource/plus-jakarta-sans/latin-700.css'
-import '@fontsource/plus-jakarta-sans/latin-800.css'
+// Fonts (only the weights the design uses): Bricolage Grotesque for headings, Inter for text.
+import '@fontsource/bricolage-grotesque/latin-600.css'
+import '@fontsource/bricolage-grotesque/latin-800.css'
+import '@fontsource/inter/latin-400.css'
+import '@fontsource/inter/latin-500.css'
+import '@fontsource/inter/latin-600.css'
+import '@fontsource/inter/latin-700.css'
 // Styles: tokens first (colours, fonts), then base, then each area.
 import './styles/tokens.css'
 import './styles/base.css'
@@ -10,6 +12,7 @@ import './styles/ui.css'
 import './styles/layout.css'
 import './styles/home.css'
 import './styles/pages.css'
+import './styles/features.css'
 
 import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
@@ -18,6 +21,8 @@ import { Layout } from './components/layout/Layout'
 import { Contact } from './pages/Contact'
 import { Experience } from './pages/Experience'
 import { Home } from './pages/Home'
+import { Note } from './pages/Note'
+import { Notes } from './pages/Notes'
 import { NotFound } from './pages/NotFound'
 import { ProjectDetail } from './pages/ProjectDetail'
 import { Projects } from './pages/Projects'
@@ -40,6 +45,8 @@ const router = createBrowserRouter([
       { path: 'projects', element: <Projects /> },
       { path: 'projects/:slug', element: <ProjectDetail /> },
       { path: 'experience', element: <Experience /> },
+      { path: 'notes', element: <Notes /> },
+      { path: 'notes/:slug', element: <Note /> },
       { path: 'resume', element: <Resume /> },
       { path: 'contact', element: <Contact /> },
       { path: 'work/:slug?', element: <LegacyProjectsRedirect /> },

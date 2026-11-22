@@ -2,19 +2,19 @@ import { profile } from '../../content/profile'
 import { sections } from '../../content/sections'
 import { ImageSlot } from '../ui/ImageSlot'
 
-/** Bold "About me": a big statement, a photo slot, two short paragraphs, quick facts and the Now playing / learning line. */
+/** Short About: photo slot, one bold line, one paragraph, quick facts and the Now playing / learning line. */
 export function About() {
   const { about, now } = profile
   return (
     <section id="about" className="section shell about" aria-labelledby="about-title">
-      <p className="eyebrow" id="about-title">{sections.about.heading}</p>
-      <p className="about-statement">{about.statement}</p>
       <div className="about-grid">
         <div className="about-photo">
           <ImageSlot src={about.photo} folder="root" alt={`Photo of ${profile.name}`} label={sections.placeholders.photo} tone="lilac" shape="square" />
         </div>
         <div className="about-body">
-          {about.paragraphs.map(text => <p key={text}>{text}</p>)}
+          <h2 id="about-title" className="eyebrow">{sections.about.heading}</h2>
+          <p className="about-statement">{about.statement}</p>
+          <p>{about.paragraph}</p>
           <dl className="about-facts">
             {about.facts.map(({ label, value }) => <div key={label}><dt>{label}</dt><dd>{value}</dd></div>)}
           </dl>

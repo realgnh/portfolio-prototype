@@ -21,18 +21,14 @@ export const profile = {
 
   intro: 'CS student at X university, building software and learning how to make AI systems people can trust.',
 
-  /** The bold "About me" section on Home. */
+  /** The "About" section on Home: one bold line, one short paragraph and a few quick facts. */
   about: {
-    statement: 'I build software that’s useful, measurable and a little bit fun.',
-    paragraphs: [
-      'I’m a computer science student at X university working toward a career as a Software / AI Engineer. I like projects where I can see the result: a faster workflow, a clearer interface, a model I can actually explain.',
-      'Outside of class I animate and build games on Roblox, which taught me to ship, take feedback from real players and keep iterating.',
-    ],
+    statement: 'I like building things I can measure.',
+    paragraph: 'CS student at X university, heading toward Software / AI Engineering. I care about results you can see: a faster workflow, a clearer interface, a model I can explain. Off the clock I animate and build games on Roblox, which taught me to ship and listen to players.',
     facts: [
       { label: 'Based in', value: 'Cairo' },
-      { label: 'Studying', value: 'B.Sc. Computer Science' },
+      { label: 'Studying', value: 'Computer Science' },
       { label: 'Focus', value: 'Software & applied AI' },
-      { label: 'Also', value: 'Roblox dev & animator' },
     ],
     /** Your photo: put the file in public/images/ and write its name, e.g. 'me.jpg'. */
     photo: undefined as string | undefined,
@@ -52,9 +48,15 @@ export const profile = {
   /** Most important first: on the Contact page the first link is the biggest, then each gets smaller. */
   socials: [
     { label: 'LinkedIn', href: 'https://www.linkedin.com/in/example-profile/' },
-    { label: 'GitHub', href: 'https://github.com/example-profile' },
+    { label: 'GitHub', href: 'https://github.com/realgnh' },
     { label: 'X', href: 'https://x.com/example_profile' },
   ],
+
+  /**
+   * GitHub activity panel. `id` is your permanent GitHub account number, so the panel keeps
+   * working if you rename your account. `login` is only a fallback for links if GitHub can't be reached.
+   */
+  github: { id: 150723285, login: 'realgnh', repoCount: 4 },
 
   /** Replace public/resume.pdf with your own file. */
   resume: { href: '/resume.pdf', label: 'Download résumé' },

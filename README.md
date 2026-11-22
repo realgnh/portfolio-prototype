@@ -27,6 +27,10 @@ The site deploys from GitHub: every push to `main` rebuilds and publishes it.
 | Build output directory | `dist` |
 | Node version | from `.nvmrc` (24) |
 
+### Turn on the AI for "Ask my portfolio" (optional, free)
+
+In the Pages project: **Settings → Bindings → Add → Workers AI**, set the variable name to `AI`, save, then redeploy. Until then (and in `npm run dev`), the chat answers from an offline search of the site's content.
+
 Direct links such as `/projects/clearpath-onboarding` work because there is no `404.html`, so Pages serves the app for every route. Caching and security headers live in [`public/_headers`](public/_headers).
 
 ## Edit the content

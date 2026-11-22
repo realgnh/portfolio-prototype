@@ -49,35 +49,38 @@
 }
 .bubble:hover .bubble-tip, .bubble:focus-visible .bubble-tip { opacity: 1; translate: -50% 0; }
 
-/* Pops. Appearing: .bubble-inner springs up (bubble-pop) and a small firework bursts as it peaks.
-   Clicking: .bubble-burst squishes and snaps (bubble-burst) with a firework; clicking again restarts it.
-   Fireworks are two layers of tiny sparks (box-shadows of an invisible dot) that shoot out,
-   drift down a little and fade. Only transform/opacity animate, so it stays smooth. */
+/* Pops. Appearing: .bubble-inner springs up (bubble-pop) and a firework goes off as it peaks.
+   Clicking: .bubble-burst squishes (bubble-burst) with a firework; clicking again restarts it.
+   Firework: 12 thin streaks (.sparks i) shoot out along their own angle and keep drifting outward
+   as they slow (spark-shoot), while the whole group falls with gravity and fades (spark-fall).
+   Only transform/opacity animate, so it stays smooth. */
 .bubble { cursor: pointer; -webkit-tap-highlight-color: transparent; }
 .bubble-burst { position: relative; display: block; border-radius: 999px; }
-.bubble-inner::before,
-.bubble-burst::before,
-.bubble-burst::after {
-  position: absolute; top: 50%; left: 50%; width: 3px; height: 3px; margin: -1.5px; border-radius: 999px;
-  opacity: 0; pointer-events: none; content: "";
+.sparks { position: absolute; inset: 0; pointer-events: none; will-change: transform, opacity; }
+.sparks i {
+  position: absolute; top: 50%; left: 50%; width: 2px; height: 11px; margin: -5.5px 0 0 -1px; border-radius: 2px;
+  background: var(--tone-ink); opacity: 0; transform: rotate(var(--a)); will-change: transform;
 }
-/* Outer sparks: 12 around a 46px circle, alternating the bubble's ink colour and the accent. */
-.bubble-inner::before, .bubble-burst::before {
-  box-shadow:
-    0 -46px var(--tone-ink), 23px -40px var(--accent), 40px -23px var(--tone-ink), 46px 0 var(--accent),
-    40px 23px var(--tone-ink), 23px 40px var(--accent), 0 46px var(--tone-ink), -23px 40px var(--accent),
-    -40px 23px var(--tone-ink), -46px 0 var(--accent), -40px -23px var(--tone-ink), -23px -40px var(--accent);
-}
-/* Inner sparks: 6 shorter ones between the outer ones, for depth. */
-.bubble-burst::after {
-  box-shadow: 17px -30px var(--accent), 34px 0 var(--tone-ink), 17px 30px var(--accent),
-    -17px 30px var(--tone-ink), -34px 0 var(--accent), -17px -30px var(--tone-ink);
-}
-.bubble-inner::before, .bubble-burst::before, .bubble-burst::after { will-change: transform, opacity; }
-.bubble-inner::before { animation: firework 1000ms linear calc(var(--enter, 0ms) + 220ms) backwards; }
+.sparks i:nth-child(even) { height: 8px; margin-top: -4px; background: var(--accent); }
+/* Appear firework (only until the bubble is first clicked). */
+.bubble-burst:not([data-popped]) .sparks { animation: spark-fall 1100ms linear calc(var(--enter, 0ms) + 200ms) backwards; }
+.bubble-burst:not([data-popped]) .sparks i { animation: spark-shoot 1100ms linear calc(var(--enter, 0ms) + 200ms) backwards; }
+/* Click firework. */
 .bubble-burst[data-pop] { animation: bubble-burst 460ms linear; }
-.bubble-burst[data-pop]::before { animation: firework 1000ms linear 60ms; }
-.bubble-burst[data-pop]::after { animation: firework-inner 850ms linear 90ms; }
+.bubble-burst[data-pop] .sparks { animation: spark-fall 1050ms linear 40ms backwards; }
+.bubble-burst[data-pop] .sparks i { animation: spark-shoot 1050ms linear 40ms backwards; }
+
+@keyframes spark-shoot {
+  0%   { opacity: 0; transform: rotate(var(--a)) translateY(-14px) scaleY(0.4); animation-timing-function: cubic-bezier(.1, .75, .3, 1); }
+  4%   { opacity: 1; }
+  32%  { opacity: 1; transform: rotate(var(--a)) translateY(-40px) scaleY(1.15); animation-timing-function: cubic-bezier(.2, .5, .5, 1); }
+  100% { opacity: 1; transform: rotate(var(--a)) translateY(-56px) scaleY(0.55); }
+}
+@keyframes spark-fall {
+  0%, 35% { opacity: 1; transform: translateY(0); animation-timing-function: cubic-bezier(.45, 0, .9, .55); }
+  60%  { opacity: 0.95; }
+  100% { opacity: 0; transform: translateY(30px); }
+}
 
 /* Squish: swell, snap a little smaller, settle. Each step has its own easing for a soft, springy feel. */
 @keyframes bubble-burst {
@@ -87,20 +90,6 @@
   76%  { transform: scale(1.04); animation-timing-function: cubic-bezier(.4, 0, .4, 1); }
   100% { transform: scale(1); }
 }
-/* Firework: sparks shoot out fast and slow down (0–30%), hang for a moment,
-   then fall with gravity (speeding up) while fading out. */
-@keyframes firework {
-  0%   { opacity: 1; transform: translateY(0) scale(0.15); animation-timing-function: cubic-bezier(.05, .7, .3, 1); }
-  30%  { opacity: 1; transform: translateY(0) scale(1); animation-timing-function: cubic-bezier(.4, 0, .9, .6); }
-  55%  { opacity: 0.9; transform: translateY(6px) scale(1.04); animation-timing-function: cubic-bezier(.4, .2, .9, .7); }
-  100% { opacity: 0; transform: translateY(26px) scale(1.08); }
-}
-@keyframes firework-inner {
-  0%   { opacity: 1; transform: translateY(0) scale(0.2); animation-timing-function: cubic-bezier(.05, .7, .3, 1); }
-  32%  { opacity: 1; transform: translateY(0) scale(1); animation-timing-function: cubic-bezier(.4, 0, .9, .6); }
-  100% { opacity: 0; transform: translateY(20px) scale(1.05); }
-}
-
 /* Three slow, uneven wandering paths with a gentle tilt (no two bubbles share a rhythm). */
 @keyframes wander-1 {
   0%, 100% { transform: translate(0, 0) rotate(0deg); }
@@ -163,7 +152,7 @@
 .company-logo {
   display: grid; place-items: center; width: 3.25rem; height: 3.25rem; overflow: hidden;
   border: 1px solid var(--line); border-radius: 0.9rem; background: var(--surface);
-  font-weight: 800; font-size: 0.85rem; color: var(--text-muted);
+  font-weight: 700; font-size: 0.85rem; color: var(--text-muted);
   filter: grayscale(1); transition: filter 250ms, transform 250ms var(--ease);
 }
 .company-logo img { width: 100%; height: 100%; object-fit: contain; }
@@ -184,14 +173,18 @@
   border: 1px solid var(--line); border-radius: var(--radius); background: var(--surface);
   transition: transform 250ms var(--ease), box-shadow 250ms var(--ease), border-color 250ms;
 }
-.project-card:hover, .project-card:focus-within { transform: translateY(-4px); box-shadow: var(--shadow); border-color: transparent; }
-/* Soft glow in the card's pastel colour that follows the cursor (ProjectCard.tsx sets --glow-x/y). */
+.project-card:hover, .project-card:focus-within { transform: translateY(-4px); box-shadow: var(--shadow); }
+/* Glow in the card's pastel colour that follows the cursor (ProjectCard.tsx sets --glow-x/y).
+   A bright, light centre fading out wide; the card edge picks up the colour too. */
+.project-card { --glow: color-mix(in srgb, var(--tone) 70%, #fff); }
+:root[data-theme="dark"] .project-card { --glow: color-mix(in srgb, var(--tone-ink) 26%, transparent); }
 .project-card::before {
   position: absolute; z-index: -1; inset: 0; border-radius: inherit; pointer-events: none; content: "";
-  background: radial-gradient(22rem circle at var(--glow-x, 50%) var(--glow-y, 0%), color-mix(in srgb, var(--tone) 85%, transparent), transparent 65%);
+  background: radial-gradient(26rem circle at var(--glow-x, 50%) var(--glow-y, 0%), var(--glow), color-mix(in srgb, var(--glow) 45%, transparent) 35%, transparent 70%);
   opacity: 0; transition: opacity 300ms ease;
 }
 .project-card:hover::before { opacity: 1; }
+.project-card:hover { border-color: color-mix(in srgb, var(--tone-ink) 22%, transparent); }
 .project-card .image-slot { transition: transform 400ms var(--ease); }
 .project-card:hover .image-slot { transform: scale(1.015); }
 .project-card-body { display: grid; align-content: start; gap: 0.5rem; padding-inline: 0.5rem; }
@@ -205,7 +198,7 @@
 .result-pill { padding: 0.25rem 0.7rem; border-radius: 999px; background: var(--tone); color: var(--tone-ink); font-weight: 600; }
 
 .currently-list { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 15rem), 1fr)); gap: 1rem; margin-top: 1.5rem; }
-.currently-list > div { padding: 1.25rem; border: 1px solid var(--line); border-radius: var(--radius); background: var(--surface); }
+.currently-list > div { padding-top: 0.9rem; border-top: 2px solid var(--line); }
 .currently-list dt { margin-bottom: 0.4rem; font-size: 0.8rem; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; color: var(--accent); }
 
 .contact-band {
@@ -222,20 +215,18 @@
 .contact-band .button-row { justify-content: center; margin-top: 0.75rem; }
 
 
-/* About me: big statement, photo slot, story, quick facts, Now playing / learning. */
-.about-statement {
-  max-width: 22ch; margin-top: 0.75rem; font-size: clamp(2.25rem, 6.5vw, 4.5rem); font-weight: 800;
-  letter-spacing: -0.05em; line-height: 1;
-}
-.about-statement::after { content: ""; display: block; width: 4.5rem; height: 0.4rem; margin-top: 1.25rem; border-radius: 999px; background: linear-gradient(90deg, var(--tone-lilac-ink), var(--accent), var(--tone-peach-ink)); }
-.about-grid { display: grid; grid-template-columns: minmax(0, 18rem) minmax(0, 1fr); gap: clamp(1.5rem, 5vw, 3.5rem); margin-top: 2.5rem; align-items: start; }
-.about-photo .image-slot { border-radius: calc(var(--radius) * 1.4); rotate: -2deg; transition: rotate 400ms var(--ease); }
-.about-photo:hover .image-slot { rotate: 1deg; }
-.about-body { display: grid; gap: 1.1rem; font-size: 1.1rem; }
-.about-facts { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 10rem), 1fr)); gap: 0.75rem; margin-top: 0.5rem; }
-.about-facts > div { padding: 0.9rem 1rem; border: 1px solid var(--line); border-radius: 1rem; background: var(--surface); }
-.about-facts dt { font-size: 0.75rem; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; color: var(--text-muted); }
-.about-facts dd { font-size: 1rem; font-weight: 700; }
+/* About: photo beside one bold line, a paragraph, quick facts and Now playing / learning. */
+.about-grid { display: grid; grid-template-columns: 11rem minmax(0, 1fr); gap: clamp(1.5rem, 4vw, 2.75rem); align-items: center; }
+.about-photo .image-slot { border-radius: calc(var(--radius) * 1.2); rotate: -3deg; transition: rotate 400ms var(--ease); }
+.about-photo:hover .image-slot { rotate: 2deg; }
+.about-body { display: grid; gap: 0.75rem; max-width: 44rem; font-size: 1.05rem; }
+.about-body > .eyebrow { font-family: var(--font-sans); font-size: 0.8rem; letter-spacing: 0.06em; }
+.about-statement { font-family: var(--font-display); font-size: clamp(1.75rem, 4vw, 2.6rem); font-weight: 800; letter-spacing: -0.035em; line-height: 1.05; }
+.about-facts { display: flex; flex-wrap: wrap; gap: 0.35rem 1.5rem; font-size: 0.95rem; }
+.about-facts > div { display: flex; gap: 0.4rem; }
+.about-facts dt { color: var(--text-muted); }
+.about-facts dt::after { content: ":"; }
+.about-facts dd { font-weight: 600; }
 .now-line { display: flex; flex-wrap: wrap; gap: 0.5rem 1.5rem; font-size: 0.95rem; }
 .now-line li { display: inline-flex; align-items: center; gap: 0.5rem; }
 .now-dot { color: var(--accent); }
@@ -246,18 +237,17 @@
 @keyframes eq { 0%, 100% { transform: scaleY(0.3); } 50% { transform: scaleY(1); } }
 @media (max-width: 44rem) {
   .about-grid { grid-template-columns: 1fr; }
-  .about-photo { max-width: 14rem; }
+  .about-photo { width: 9rem; }
 }
 
-/* Skills grid: one pastel card per area. */
-.skills-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 12.5rem), 1fr)); gap: 1rem; }
-.skill-group { padding: 1.25rem; border-radius: var(--radius); background: var(--tone); color: var(--tone-ink); }
-.skill-group h3 { margin-bottom: 0.9rem; font-size: 1rem; }
-.skill-group ul { display: grid; gap: 0.55rem; }
-.skill-group li { display: flex; align-items: center; gap: 0.6rem; font-weight: 600; color: var(--text); }
+/* Skills grid: one column per area; the area's colour shows only in its heading and icons. */
+.skills-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 9rem), 1fr)); gap: 1.5rem clamp(1.25rem, 3vw, 2rem); }
+.skill-group h3 { margin-bottom: 0.85rem; padding-bottom: 0.5rem; border-bottom: 2px solid var(--tone); font-size: 1rem; color: var(--tone-ink); }
+.skill-group ul { display: grid; gap: 0.6rem; }
+.skill-group li { display: flex; align-items: center; gap: 0.6rem; font-weight: 600; }
 .skill-icon {
   display: grid; place-items: center; width: 2rem; height: 2rem; padding: 0.4rem; border-radius: 0.6rem;
-  background: var(--surface); transition: transform 250ms var(--ease);
+  background: var(--tone); transition: transform 250ms var(--ease);
 }
 .skill-group li:hover .skill-icon { transform: rotate(-8deg) scale(1.1); }
 

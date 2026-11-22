@@ -13,6 +13,12 @@ Everything you'd normally change is text in **`src/content/`**. You rarely need 
 | Milestones on the Experience timeline (awards, firsts…) | `src/content/milestones.ts` |
 | When a project appears on the timeline | `date` on that project in `src/content/projects.ts` |
 | Easter egg triggers, hint text and the character's message | `src/content/easterEggs.ts` |
+| Notes (blog posts) | Add a Markdown file to `src/content/notes/` (see the README there for the header) |
+| Keyboard shortcuts and the `?` cheat sheet | `src/content/shortcuts.ts` |
+| Your GitHub account for the activity panel | `profile.github` in `src/content/profile.ts` (uses your permanent account ID, so renames are fine) |
+| What "Ask my portfolio" knows | Nothing extra: it reads your content files. Wording and suggested questions are `chat` in `src/content/sections.ts` |
+| The AI model or its instructions | `functions/api/ask.ts` |
+| A project's interactive demo | Create it in `src/demos/` and register it in `src/demos/index.ts` |
 | How many projects show on Home | `profile.featuredCount` in `src/content/profile.ts` |
 | Education | `profile.education` in `src/content/profile.ts` |
 | Internships and jobs (dates as `'2026-04'`, or `'present'`) | `src/content/experience.ts` — ranges and durations ("3 months") are worked out for you |
@@ -48,6 +54,8 @@ Everything you'd normally change is text in **`src/content/`**. You rarely need 
 | Smooth scrolling speed (logo, "See experience below") | `src/lib/smoothScroll.ts` |
 | Project card cursor glow | `.project-card::before` in `src/styles/home.css` |
 | Contact greeting wording ("Good evening!") | `src/lib/timeGreeting.ts` |
+| Fonts (Bricolage Grotesque headings, Inter text) | `--font-display` / `--font-sans` in `src/styles/tokens.css` and the imports in `src/main.tsx` |
+| Chat, cheat sheet, GitHub panel, Notes and demo styles | `src/styles/features.css` |
 | The easter-egg character and brick loading cube | `src/components/layout/EasterEgg.tsx`; styles at the bottom of `src/styles/layout.css` |
 
 ## How the code is organised
@@ -55,17 +63,22 @@ Everything you'd normally change is text in **`src/content/`**. You rarely need 
 ```
 src/
   content/     ← all your text and data (start here)
-  pages/       ← one file per page: Home, Projects, ProjectDetail, Experience, Resume, Contact, NotFound
+  pages/       ← one file per page: Home, Projects, ProjectDetail, Experience, Notes, Note, Resume, Contact, NotFound
+  demos/       ← interactive project demos (registered in demos/index.ts)
   components/
     ui/        ← small reusable pieces: Button, Chip, ImageSlot, BrandIcon, SectionHeading, Metadata
     layout/    ← frame around every page: Layout, Header, Footer, ThemeToggle, MotionToggle,
-                 CommandMenu (Quick search), LoadingScreen, RouteProgress, EasterEgg
+                 CommandMenu (Quick search), LoadingScreen, RouteProgress, EasterEgg, ShortcutsHelp
+    chat/      ← Ask my portfolio: ChatLauncher (button) and AskPortfolio (panel, loaded on demand)
     sections/  ← bigger blocks used on pages: Hero, SkillBubbles, About, ExperienceList, ProjectCard,
-                 ProjectMedia, SkillsGrid, Hobbies, CurrentlyList, ContactBand, Timeline
+                 ProjectMedia, SkillsGrid, Hobbies, CurrentlyList, ContactBand, Timeline, GitHubActivity
   lib/         ← behaviour helpers: preferences (theme + animations), dates, timeline, reveal,
-                 timeGreeting, easterEgg, toast, copy-email
+                 timeGreeting, easterEgg, smoothScroll, github, notes, knowledge, localAnswer,
+                 useShortcuts, toast, copy-email
   styles/      ← CSS, split as in the table above
   main.tsx     ← fonts, CSS imports and the list of routes (URLs)
+functions/
+  api/ask.ts   ← Cloudflare Pages Function behind "Ask my portfolio" (Workers AI)
 public/
   images/projects/   ← project screenshots
   images/companies/  ← company logos

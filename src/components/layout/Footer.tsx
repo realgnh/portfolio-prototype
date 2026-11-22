@@ -17,7 +17,7 @@ export function Footer() {
         </div>
       </div>
       <p className="muted footer-note">{profile.footerNote}</p>
-      {easterEgg.hint && <p className="footer-hint">🎮 {easterEgg.hint}</p>}
+      <p className="footer-hint">⌨️ Press <kbd>?</kbd> for keyboard shortcuts.{easterEgg.hint && <> 🎮 {easterEgg.hint}</>}</p>
     </footer>
   )
 }

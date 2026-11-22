@@ -2,6 +2,7 @@ import { useEffect, useId, useMemo, useRef, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { navItems } from '../../content/navigation'
 import { projects } from '../../content/projects'
+import { notes } from '../../lib/notes'
 import { sections } from '../../content/sections'
 import { profile } from '../../content/profile'
 import { EASTER_EGG_EVENT } from '../../lib/easterEgg'
@@ -14,7 +15,7 @@ type Item = { id: string; group: string; label: string; run: () => void }
  * Quick search (Ctrl/⌘+K): jump to a page or project, or run an action like copying the email.
  * Rendered only while open (see Layout.tsx), so it starts empty every time. Add actions to `items`.
  */
-export function CommandMenu({ onClose }: { onClose: () => void }) {
+export function CommandMenu({ onClose, onAsk, onShortcuts }: { onClose: () => void; onAsk: () => void; onShortcuts: () => void }) {
   const navigate = useNavigate()
   const copyEmail = useCopyEmail()
   const [query, setQuery] = useState('')
@@ -28,6 +29,9 @@ export function CommandMenu({ onClose }: { onClose: () => void }) {
     { id: 'easter-egg', group: copy.actions, label: copy.surprise, run: () => window.dispatchEvent(new Event(EASTER_EGG_EVENT)) },
     ...navItems.map(({ to, label }) => ({ id: `page-${to}`, group: copy.pages, label, run: () => navigate(to) })),
     ...projects.map(({ slug, title }) => ({ id: `project-${slug}`, group: copy.projects, label: title, run: () => navigate(`/projects/${slug}`) })),
+    ...notes.map(({ slug, title }) => ({ id: `note-${slug}`, group: copy.notes, label: title, run: () => navigate(`/notes/${slug}`) })),
+    { id: 'ask', group: copy.actions, label: copy.ask, run: onAsk },
+    { id: 'shortcuts', group: copy.actions, label: copy.shortcuts, run: onShortcuts },
     { id: 'copy-email', group: copy.actions, label: copy.copyEmail, run: () => void copyEmail() },
     { id: 'download-resume', group: copy.actions, label: copy.downloadResume, run: () => {
       const link = Object.assign(document.createElement('a'), { href: profile.resume.href, download: '' })
@@ -35,7 +39,7 @@ export function CommandMenu({ onClose }: { onClose: () => void }) {
     } },
     { id: 'toggle-theme', group: copy.actions, label: copy.toggleTheme, run: () => toggleTheme() },
     { id: 'toggle-motion', group: copy.actions, label: copy.toggleMotion, run: toggleMotion },
-  ], [navigate, copyEmail, copy])
+  ], [navigate, copyEmail, copy, onAsk, onShortcuts])
 
   const results = items.filter(item => item.label.toLowerCase().includes(query.trim().toLowerCase()))
 
