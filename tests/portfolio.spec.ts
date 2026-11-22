@@ -354,11 +354,11 @@ test('Ask my portfolio answers with the AI when available and offline otherwise,
   // Unasked suggestions stay available.
   await expect(chatPanel.getByRole('button', { name: chat.suggestions[1] })).toBeVisible()
 
-  await page.route('**/api/ask', route => route.fulfill({ json: { answer: 'Alex builds software and applied AI projects.' } }))
-  await chatPanel.getByRole('textbox').fill('Summarise Alex')
+  await page.route('**/api/ask', route => route.fulfill({ json: { answer: 'Abdalla builds software and applied AI projects.' } }))
+  await chatPanel.getByRole('textbox').fill('Summarise Abdalla')
   await chatPanel.getByRole('button', { name: sections.chat.send }).click()
   await expect(chatPanel.locator('.chat-typing')).toBeVisible()
-  await expect(chatPanel.locator('li[data-role="assistant"]').last().locator('.chat-words')).toHaveText('Alex builds software and applied AI projects.')
+  await expect(chatPanel.locator('li[data-role="assistant"]').last().locator('.chat-words')).toHaveText('Abdalla builds software and applied AI projects.')
   // Scrolling over the chat never scrolls the page behind it.
   const before = await page.evaluate(() => scrollY)
   const box = (await chatPanel.boundingBox())!
@@ -382,25 +382,25 @@ test('a small keyboard button opens the shortcuts list', async ({ page }) => {
 })
 
 test('offline answers give clear answers to common questions', () => {
-  expect(localAnswer('What has Alex built?').link).toBe('/projects')
+  expect(localAnswer('What has Abdalla built?').link).toBe('/projects')
   expect(localAnswer('What is the tech stack?').link).toBe('/#skills')
-  expect(localAnswer('How can I contact Alex?').link).toBe('/contact')
-  expect(localAnswer('Does Alex do Roblox?').link).toBe('/#hobbies')
+  expect(localAnswer('How can I contact Abdalla?').link).toBe('/contact')
+  expect(localAnswer('Does Abdalla do Roblox?').link).toBe('/#hobbies')
 
-  const open = localAnswer('Is Alex open to internships?')
+  const open = localAnswer('Is Abdalla open to internships?')
   expect(open.text).toContain(chat.availability)
   expect(open.text).toContain(profile.email)
 
-  const experienceAnswer = localAnswer('What experience does Alex have?')
+  const experienceAnswer = localAnswer('What experience does Abdalla have?')
   expect(experienceAnswer.link).toBe('/experience')
   for (const job of experience) expect(experienceAnswer.text).toContain(job.company)
 
-  const longest = localAnswer('What was Alex’s longest internship?')
+  const longest = localAnswer('What was Abdalla’s longest internship?')
   const role = longestRole()
   expect(longest.text).toContain(role.company)
   expect(longest.text).toContain(duration(role.start, role.end))
 
-  const impact = localAnswer('What’s Alex’s most impactful project?')
+  const impact = localAnswer('What’s Abdalla’s most impactful project?')
   expect(impact.text).toContain(mostImpactfulProject().title)
   expect(impact.link).toBe(`/projects/${chat.mostImpactful.slug}`)
 })

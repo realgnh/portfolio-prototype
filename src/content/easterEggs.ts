@@ -5,7 +5,7 @@
  * Any one trigger works:
  * - typing `secretWord` anywhere on the page (not inside a text box),
  * - pressing the `arrowCode` keys in order,
- * - clicking the "AM." logo `logoClicks` times quickly.
+ * - clicking the "AK." logo `logoClicks` times quickly.
  */
 export const easterEgg = {
   secretWord: 'roblox',
@@ -13,7 +13,7 @@ export const easterEgg = {
   logoClicks: 5,
 
   /** Small hint in the footer. Set to '' to hide it. */
-  hint: 'Psst… type “roblox” anywhere, or tap the AM. logo 5 times.',
+  hint: 'Psst… type “roblox” anywhere, or tap the AK. logo 5 times.',
   speech: 'Hey! You found the secret 🎉',
   /** How long the character stays (milliseconds). */
   stay: 6000,

@@ -41,8 +41,8 @@ export const sections = {
   },
   chat: {
     title: 'Ask my portfolio',
-    subtitle: 'about Alex',
-    greeting: 'Hi! Ask me anything about Alex: projects, skills, experience or how to get in touch.',
+    subtitle: 'about Abdalla',
+    greeting: 'Hi! Ask me anything about Abdalla: projects, skills, experience or how to get in touch.',
     placeholder: 'Ask a question…',
     send: 'Ask',
     open: 'Open page',

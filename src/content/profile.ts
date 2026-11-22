@@ -5,9 +5,9 @@ import type { Area } from './skills'
  * Everything here is placeholder text; replace it with your own.
  */
 export const profile = {
-  name: 'Alex Morgan',
-  firstName: 'Alex',
-  initials: 'AM',
+  name: 'Abdalla Khedr',
+  firstName: 'Abdalla',
+  initials: 'AK',
 
   /** Small chip above your name. Set to '' to hide it. */
   status: 'Open to internships · Summer 20XX',
@@ -19,12 +19,12 @@ export const profile = {
     { label: 'AI curious', area: 'ai' },
   ] satisfies { label: string; area: Area }[],
 
-  intro: 'CS student at X university, building software and learning how to make AI systems people can trust.',
+  intro: 'CS student at GIU, building software and learning how to make AI systems people can trust.',
 
   /** The "About" section on Home: one bold line, one short paragraph and a few quick facts. */
   about: {
     statement: 'I like building things I can measure.',
-    paragraph: 'CS student at X university, heading toward Software / AI Engineering. I care about results you can see: a faster workflow, a clearer interface, a model I can explain. Off the clock I animate and build games on Roblox, which taught me to ship and listen to players.',
+    paragraph: 'CS student at GIU, heading toward Software / AI Engineering. I care about results you can see: a faster workflow, a clearer interface, a model I can explain. Off the clock I animate and build games on Roblox, which taught me to ship and listen to players.',
     facts: [
       { label: 'Based in', value: 'Cairo' },
       { label: 'Studying', value: 'Computer Science' },
@@ -40,7 +40,7 @@ export const profile = {
     learning: 'Docker & deploying FastAPI',
   },
 
-  email: 'alex@example.com',
+  email: 'abdalla@example.com',
   /** IANA time zone used for the local time on the Contact page. */
   timeZone: 'Africa/Cairo',
   location: 'Cairo',
@@ -61,7 +61,7 @@ export const profile = {
   /** Replace public/resume.pdf with your own file. */
   resume: { href: '/resume.pdf', label: 'Download résumé' },
   /** `start` / `end` are 'YYYY-MM'. Set `expected: true` while you're still studying. */
-  education: [{ program: 'B.Sc. Computer Science', school: 'X university', start: '2024-09', end: '2028-06', expected: true }],
+  education: [{ program: 'B.Sc. Computer Science', school: 'German International University (GIU)', start: '2024-09', end: '2028-06', expected: true }],
 
   /** "Currently working on…" cards on Home. Keep it to three. */
   currently: [

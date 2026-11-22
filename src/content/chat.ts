@@ -5,19 +5,19 @@
 export const chat = {
   /** Shown as buttons when the chat opens. */
   suggestions: [
-    'What has Alex built?',
-    'What experience does Alex have?',
-    'What was Alex’s longest internship?',
-    'What’s Alex’s most impactful project?',
-    'Is Alex open to internships?',
-    'What’s Alex’s tech stack?',
-    'How can I contact Alex?',
+    'What has Abdalla built?',
+    'What experience does Abdalla have?',
+    'What was Abdalla’s longest internship?',
+    'What’s Abdalla’s most impactful project?',
+    'Is Abdalla open to internships?',
+    'What’s Abdalla’s tech stack?',
+    'How can I contact Abdalla?',
   ],
   /** The project you consider most impactful (its slug in projects.ts) and why, in one sentence. */
   mostImpactful: {
     slug: 'clearpath-onboarding',
     why: 'it changed a core flow that every new user goes through, and the result was measured against a clear baseline.',
   },
-  /** What you're open to right now. Used for "Is Alex open to internships?". */
-  availability: 'Yes! Alex is open to software engineering and AI internships for Summer 20XX, and happy to talk about interesting projects too.',
+  /** What you're open to right now. Used for "Is Abdalla open to internships?". */
+  availability: 'Yes! Abdalla is open to software engineering and AI internships for Summer 20XX, and happy to talk about interesting projects too.',
 }

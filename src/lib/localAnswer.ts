@@ -6,7 +6,7 @@ import { profile } from '../content/profile'
 import { intentAnswer } from './chatAnswers'
 import { knowledgeDocs } from './knowledge'
 
-const stopWords = new Set('a an and are as at be can do does for from has have how i in is it me my of on or so tell the to what when where which who why with you your his her their alex'.split(' '))
+const stopWords = new Set('a an and are as at be can do does for from has have how i in is it me my of on or so tell the to what when where which who why with you your his her their alex abdalla'.split(' '))
 
 function words(text: string) {
   return text.toLowerCase().replace(/[^a-z0-9+#.\s]/g, ' ').split(/\s+/).filter(word => word.length > 1 && !stopWords.has(word))
