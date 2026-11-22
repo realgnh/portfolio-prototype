@@ -8,7 +8,7 @@ export function Experience() {
   return (
     <section className="page shell" aria-labelledby="experience-page-title">
       <Metadata title={pages.experience.title} description={pages.experience.description} />
-      <header className="page-header">
+      <header className="page-header" data-scene="Experience">
         <h1 id="experience-page-title">{pages.experience.title}</h1>
         <p className="muted">{sections.experience.pageIntro}</p>
       </header>

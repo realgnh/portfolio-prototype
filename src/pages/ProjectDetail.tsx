@@ -28,7 +28,7 @@ export function ProjectDetail() {
       <Metadata title={project.title} description={project.summary} />
       <Link className="arrow-link back-link" to="/work"><span aria-hidden="true">←</span> {copy.back}</Link>
 
-      <header className="page-header">
+      <header className="page-header" data-scene="Overview">
         <Tags items={[...project.tags, project.year]} />
         <h1>{project.title}</h1>
         <p className="lede muted">{project.summary}</p>
@@ -46,7 +46,7 @@ export function ProjectDetail() {
         </div>
       </dl>
 
-      <section aria-labelledby="results-title">
+      <section aria-labelledby="results-title" data-scene="Results">
         <h2 id="results-title" className="visually-hidden">Results</h2>
         <dl className="metrics">
           {project.metrics.map(({ value, label }) => (
@@ -56,7 +56,7 @@ export function ProjectDetail() {
       </section>
 
       {Demo && (
-        <section className="demo-section" aria-labelledby="demo-title">
+        <section className="demo-section" aria-labelledby="demo-title" data-scene="Demo">
           <h2 id="demo-title">{copy.demo}</h2>
           <p className="muted">{copy.demoIntro}</p>
           <Suspense fallback={<div className="demo demo-loading" aria-busy="true" />}><Demo /></Suspense>
@@ -68,7 +68,7 @@ export function ProjectDetail() {
         <p>{accomplished}, as measured by <mark>{measuredBy}</mark>, by {byDoing}.</p>
       </section>
 
-      <div className="story">
+      <div className="story" data-scene="Story">
         <section aria-labelledby="problem-title"><h2 id="problem-title">{copy.problem}</h2><p>{project.caseStudy.problem}</p></section>
         <section aria-labelledby="approach-title">
           <h2 id="approach-title">{copy.approach}</h2>
@@ -77,7 +77,7 @@ export function ProjectDetail() {
         <section aria-labelledby="result-title"><h2 id="result-title">{copy.result}</h2><p>{project.caseStudy.outcome}</p></section>
       </div>
 
-      <section className="faq" aria-labelledby="faq-title">
+      <section className="faq" aria-labelledby="faq-title" data-scene="Questions">
         <h2 id="faq-title">{copy.faq}</h2>
         {project.faq.map(({ question, answer }) => (
           <details key={question}>

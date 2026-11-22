@@ -37,7 +37,7 @@ export function GitHubActivity() {
   const profileUrl = state.status === 'ready' ? state.data.url : `https://github.com/${profile.github.login}`
 
   return (
-    <section ref={root} id="github" className="section shell" aria-labelledby="github-title">
+    <section ref={root} id="github" className="section shell" aria-labelledby="github-title" data-scene="GitHub">
       <SectionHeading
         id="github-title"
         title={copy.heading}

@@ -22,7 +22,7 @@ export function Projects() {
   return (
     <section className="page shell" aria-labelledby="projects-title">
       <Metadata title={pages.projects.title} description={pages.projects.description} />
-      <header className="page-header">
+      <header className="page-header" data-scene="Work">
         <h1 id="projects-title">{pages.projects.title}</h1>
         <p className="muted">{sections.projects.pageIntro}</p>
       </header>

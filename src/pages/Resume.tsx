@@ -26,7 +26,7 @@ export function Resume() {
         <Button href={profile.resume.href} download>{profile.resume.label} <span aria-hidden="true">↓</span></Button>
       </header>
 
-      <section className="resume-section" aria-labelledby="resume-education">
+      <section className="resume-section" aria-labelledby="resume-education" data-scene="Education">
         <h2 id="resume-education">{copy.education}</h2>
         <ul className="plain-list education-list">
           {profile.education.map(({ program, school, start, end, expected }) => (
@@ -35,12 +35,12 @@ export function Resume() {
         </ul>
       </section>
 
-      <section className="resume-section" aria-labelledby="resume-experience">
+      <section className="resume-section" aria-labelledby="resume-experience" data-scene="Experience">
         <h2 id="resume-experience">{copy.experience}</h2>
         <ExperienceList />
       </section>
 
-      <section className="resume-section" aria-labelledby="resume-projects">
+      <section className="resume-section" aria-labelledby="resume-projects" data-scene="Projects">
         <h2 id="resume-projects">{copy.projects}</h2>
         <ul className="plain-list">
           {selected.map(project => (
@@ -52,7 +52,7 @@ export function Resume() {
         </ul>
       </section>
 
-      <section className="resume-section" aria-labelledby="resume-skills">
+      <section className="resume-section" aria-labelledby="resume-skills" data-scene="Skills">
         <h2 id="resume-skills">{copy.skills}</h2>
         <dl className="skill-table">
           {(Object.keys(skillAreas) as Area[]).map(area => (

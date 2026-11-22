@@ -27,7 +27,7 @@ export function Contact() {
     <>
       <article className="page shell">
         <Metadata title={pages.contact.title} description={pages.contact.description} />
-        <header className="page-header">
+        <header className="page-header" data-scene="Contact">
           <h1>{copy.heading}</h1>
           <p className="lede muted">{profile.contactIntro}</p>
         </header>
