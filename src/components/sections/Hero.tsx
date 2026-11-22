@@ -1,6 +1,7 @@
 import { profile } from '../../content/profile'
 import { sections } from '../../content/sections'
 import { toneOf } from '../../content/skills'
+import { smoothScrollToElement } from '../../lib/smoothScroll'
 import { Button } from '../ui/Button'
 import { Chip } from '../ui/Chip'
 import { SkillBubbles } from './SkillBubbles'
@@ -22,7 +23,11 @@ export function Hero() {
           <Button variant="outline" href={profile.resume.href} download>{sections.hero.secondary} <span aria-hidden="true">↓</span></Button>
         </div>
       </div>
-      <a className="scroll-cue" href="#experience">
+      <a
+        className="scroll-cue"
+        href="#experience"
+        onClick={event => { event.preventDefault(); smoothScrollToElement(document.getElementById('experience')) }}
+      >
         {sections.hero.scrollCue} <span className="scroll-cue-arrow" aria-hidden="true">↓</span>
       </a>
     </section>

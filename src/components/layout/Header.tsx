@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import { Link, useLocation } from 'react-router-dom'
 import { navItems } from '../../content/navigation'
-import { motionAllowed } from '../../lib/preferences'
+import { smoothScrollTo } from '../../lib/smoothScroll'
 import { profile } from '../../content/profile'
 import { sections } from '../../content/sections'
 import { MotionToggle } from './MotionToggle'
@@ -24,8 +24,10 @@ export function Header({ onOpenSearch }: { onOpenSearch: () => void }) {
   useEffect(() => setOpen(false), [pathname])
 
   // Already on Home? The logo scrolls back to the top instead of doing nothing.
-  function backToTop() {
-    if (pathname === '/') window.scrollTo({ top: 0, behavior: motionAllowed() ? 'smooth' : 'auto' })
+  function backToTop(event: React.MouseEvent) {
+    if (pathname !== '/') return
+    event.preventDefault()
+    smoothScrollTo(0)
   }
 
   return (

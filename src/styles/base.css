@@ -1,7 +1,8 @@
 /* BASE — page defaults, typography, the .shell container, page/theme transitions and the animations switch. */
 * { box-sizing: border-box; }
 
-html { scroll-behavior: smooth; scroll-padding-top: 6rem; }
+/* Smooth scrolling is done in JS (lib/smoothScroll.ts) so it works even when the OS turns browser animations off. */
+html { scroll-padding-top: 6rem; }
 
 body {
   margin: 0;
@@ -48,7 +49,6 @@ main:focus { outline: none; }
 }
 
 /* Animations switch (header sparkle button): data-motion="off" stops every animation and transition. */
-:root[data-motion="off"] { scroll-behavior: auto; }
 :root[data-motion="off"] *,
 :root[data-motion="off"] *::before,
 :root[data-motion="off"] *::after {

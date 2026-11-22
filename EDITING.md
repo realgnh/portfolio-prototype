@@ -44,6 +44,8 @@ Everything you'd normally change is text in **`src/content/`**. You rarely need 
 | Order of sections on Home | `src/pages/Home.tsx` |
 | Section fade-in timing (and which elements fade) | `STAGGER` / `SELECTOR` in `src/lib/reveal.ts`; look at `.reveal` in `src/styles/base.css` |
 | Timeline line and dots | `.timeline…` rules at the bottom of `src/styles/pages.css`; data merge in `src/lib/timeline.ts` |
+| Bubble pop effects (appear and click) | "Pops" block in `src/styles/home.css` |
+| Smooth scrolling speed (logo, "See experience below") | `src/lib/smoothScroll.ts` |
 | Project card cursor glow | `.project-card::before` in `src/styles/home.css` |
 | Contact greeting wording ("Good evening!") | `src/lib/timeGreeting.ts` |
 | The easter-egg character and brick loading cube | `src/components/layout/EasterEgg.tsx`; styles at the bottom of `src/styles/layout.css` |

@@ -23,7 +23,21 @@ const spots = [
   { x: 67, y: 96, depth: 11, path: 1, speed: 21 },
 ]
 
-/** Brand-logo bubbles that wander slowly, tilt a little and lean toward the cursor. Hover or focus shows the name. */
+/** Replays the click "pop" (squish, ring and droplets: .bubble-burst[data-pop] in home.css). */
+function pop(event: React.SyntheticEvent<HTMLElement>) {
+  const burst = event.currentTarget.querySelector<HTMLElement>('.bubble-burst')
+  if (!burst || burst.hasAttribute('data-pop')) return
+  burst.setAttribute('data-pop', '')
+}
+
+function endPop(event: React.AnimationEvent<HTMLElement>) {
+  if (event.animationName === 'bubble-burst') event.currentTarget.removeAttribute('data-pop')
+}
+
+/**
+ * Brand-logo bubbles that pop in, wander slowly, tilt a little and lean toward the cursor.
+ * Hover or focus shows the name; clicking (or Enter/Space) makes a bubble pop.
+ */
 export function SkillBubbles() {
   const list = useRef<HTMLUListElement>(null)
 
@@ -65,13 +79,17 @@ export function SkillBubbles() {
             data-path={spot.path}
             tabIndex={0}
             aria-label={skill.name}
+            onClick={pop}
+            onKeyDown={event => { if (event.key === 'Enter' || event.key === ' ') { event.preventDefault(); pop(event) } }}
             style={{
               '--x': `${spot.x}%`, '--y': `${spot.y}%`, '--depth': `${spot.depth}px`,
               '--speed': `${spot.speed}s`, '--delay': `${index * -2.7}s`, '--enter': `${150 + index * 90}ms`,
             } as React.CSSProperties}
           >
             <span className="bubble-float">
-              <span className="bubble-inner"><BrandIcon skill={skill} /></span>
+              <span className="bubble-burst" onAnimationEnd={endPop}>
+                <span className="bubble-inner"><BrandIcon skill={skill} /></span>
+              </span>
             </span>
             <span className="bubble-tip" aria-hidden="true">{skill.name}</span>
           </li>

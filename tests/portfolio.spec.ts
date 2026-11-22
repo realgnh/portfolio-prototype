@@ -82,6 +82,20 @@ test('skill bubbles show brand logos and name the tool on hover or focus', async
   await expect(bubbles.nth(1).locator('.bubble-tip')).toHaveCSS('opacity', '1')
 })
 
+test('bubbles pop when clicked or pressed with Enter, and can pop again', async ({ page }) => {
+  await page.goto('/')
+  const bubble = page.locator('.bubble').first()
+  const burst = bubble.locator('.bubble-burst')
+  await bubble.click()
+  await expect(burst).toHaveAttribute('data-pop', '')
+  await expect(burst).toHaveCSS('animation-name', 'bubble-burst')
+  await expect(burst).not.toHaveAttribute('data-pop', { timeout: 2000 })
+  await bubble.focus()
+  await page.keyboard.press('Enter')
+  await expect(burst).toHaveAttribute('data-pop', '')
+  await expect(page.locator('.bubble-inner').first()).toHaveCSS('animation-name', 'bubble-pop')
+})
+
 test('animations are on by default, even when the OS asks for less motion, and can be switched off', async ({ page }) => {
   await page.emulateMedia({ reducedMotion: 'reduce' })
   await page.goto('/')
@@ -244,6 +258,9 @@ test('bubbles stay below the header, the logo scrolls Home back to the top, and 
   await page.mouse.wheel(0, 1200)
   await expect.poll(() => page.evaluate(() => scrollY)).toBeGreaterThan(300)
   await page.locator('.monogram').first().click()
+  // Smooth (our own animation, so it works even when the OS turns browser smooth scrolling off): not at the top instantly.
+  await page.waitForTimeout(120)
+  expect(await page.evaluate(() => scrollY)).toBeGreaterThan(0)
   await expect.poll(() => page.evaluate(() => scrollY)).toBe(0)
 
   for (const href of ['/favicon.svg', '/favicon-32.png', '/apple-touch-icon.png']) {

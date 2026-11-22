@@ -34,7 +34,7 @@
 .bubble[data-path="2"] { --path-name: wander-2; }
 .bubble[data-path="3"] { --path-name: wander-3; }
 .bubble-inner {
-  display: grid; place-items: center; width: 3.6rem; height: 3.6rem; padding: 0.95rem;
+  position: relative; display: grid; place-items: center; width: 3.6rem; height: 3.6rem; padding: 0.95rem;
   border-radius: 999px; background: var(--tone); color: var(--tone-ink);
   box-shadow: 0 6px 20px color-mix(in srgb, var(--tone-ink) 14%, transparent);
   animation: bubble-pop 650ms linear var(--enter, 0ms) backwards;
@@ -48,6 +48,44 @@
   opacity: 0; transition: opacity 180ms, translate 180ms var(--ease);
 }
 .bubble:hover .bubble-tip, .bubble:focus-visible .bubble-tip { opacity: 1; translate: -50% 0; }
+
+/* Pops. Appearing: .bubble-inner springs up (bubble-pop) and a ring bursts outward as it peaks.
+   Clicking: .bubble-burst squishes and snaps (bubble-burst) with a ring and six droplets.
+   Everything animates transform/opacity only, so it stays smooth. */
+.bubble { cursor: pointer; -webkit-tap-highlight-color: transparent; }
+.bubble-inner::after,
+.bubble-burst::after {
+  position: absolute; inset: 0; border: 2px solid var(--tone-ink); border-radius: 999px;
+  opacity: 0; pointer-events: none; content: "";
+}
+.bubble-inner::after { animation: bubble-ring 600ms ease-out calc(var(--enter, 0ms) + 260ms) backwards; }
+.bubble-burst { position: relative; display: block; border-radius: 999px; }
+.bubble-burst::before {
+  /* Six droplets drawn as shadows of an invisible dot, evenly round the bubble; scaling spreads them like spray. */
+  position: absolute; top: 50%; left: 50%; width: 6px; height: 6px; margin: -3px; border-radius: 999px;
+  opacity: 0; pointer-events: none; content: "";
+  box-shadow: 0 -30px 0 var(--tone-ink), 26px -15px 0 var(--tone-ink), 26px 15px 0 var(--tone-ink),
+    0 30px 0 var(--tone-ink), -26px 15px 0 var(--tone-ink), -26px -15px 0 var(--tone-ink);
+}
+.bubble-burst[data-pop] { animation: bubble-burst 560ms linear; }
+.bubble-burst[data-pop]::after { animation: bubble-ring 520ms ease-out 120ms; }
+.bubble-burst[data-pop]::before { animation: bubble-droplets 560ms ease-out 110ms; }
+@keyframes bubble-burst {
+  0%   { transform: scale(1); animation-timing-function: ease-out; }
+  22%  { transform: scale(1.26); animation-timing-function: cubic-bezier(.6, 0, .9, .5); }
+  38%  { transform: scale(0.82); animation-timing-function: ease-out; }
+  65%  { transform: scale(1.09); animation-timing-function: ease-in-out; }
+  100% { transform: scale(1); }
+}
+@keyframes bubble-ring {
+  0%   { opacity: 0.8; transform: scale(1); }
+  100% { opacity: 0; transform: scale(1.9); }
+}
+@keyframes bubble-droplets {
+  0%   { opacity: 0; transform: scale(0.3); }
+  20%  { opacity: 1; }
+  100% { opacity: 0; transform: scale(1.5); }
+}
 
 /* Three slow, uneven wandering paths with a gentle tilt (no two bubbles share a rhythm). */
 @keyframes wander-1 {
