@@ -19,7 +19,8 @@ export function useShortcuts(run: (action: ShortcutAction) => void) {
     let timer = 0
 
     function onKey(event: KeyboardEvent) {
-      if (event.defaultPrevented || event.metaKey || event.ctrlKey || event.altKey || isTyping(event.target)) return
+      // Holding a key down doesn't repeat shortcuts (e.g. holding T would flicker the theme).
+      if (event.repeat || event.defaultPrevented || event.metaKey || event.ctrlKey || event.altKey || isTyping(event.target)) return
       if (document.querySelector('[role="dialog"][aria-modal="true"]')) return // let open dialogs handle keys
       const key = event.key.length === 1 ? event.key.toLowerCase() : event.key
       const sequence = [...pending, key]

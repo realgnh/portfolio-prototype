@@ -36,29 +36,49 @@ export function motionAllowed() {
 }
 
 /** Switches theme with a circular reveal from `origin` (e.g. the toggle button) when animations are on. */
+let activeTransition: ViewTransition | null = null
+/** The theme we're switching to while a transition runs (so quick repeat presses toggle correctly). */
+let pendingTheme: Theme | null = null
+
+/** Switches theme with a circular reveal from `origin` (e.g. the toggle button) when animations are on. */
 export function setTheme(next: Theme, origin?: { x: number; y: number }) {
   const root = document.documentElement
   save(keys.theme, next)
   const apply = () => { root.dataset.theme = next; emit() }
-  if (!document.startViewTransition || !motionAllowed()) return apply()
+  // Finish any switch that's still running before starting a new one.
+  activeTransition?.skipTransition()
+  if (!document.startViewTransition || !motionAllowed()) { pendingTheme = null; return apply() }
   const x = origin?.x ?? window.innerWidth / 2
   const y = origin?.y ?? 0
   root.style.setProperty('--reveal-x', `${x}px`)
   root.style.setProperty('--reveal-y', `${y}px`)
   root.dataset.themeSwitch = ''
+  pendingTheme = next
   const transition = document.startViewTransition(apply)
+  activeTransition = transition
   // Safety net: if the browser abandons the transition, still switch the theme.
-  const ensure = () => { if (root.dataset.theme !== next) apply() }
+  const ensure = () => { if (root.dataset.theme !== next && pendingTheme === next) apply() }
   const timer = window.setTimeout(ensure, 1000)
   transition.finished.catch(() => {}).finally(() => {
     window.clearTimeout(timer)
+    // Only the latest switch cleans up, so an older one can't cancel a newer one's animation.
+    if (activeTransition !== transition) return
     ensure()
+    activeTransition = null
+    pendingTheme = null
     delete root.dataset.themeSwitch
   })
 }
 
+/** Toggles light/dark. Without an origin, the reveal starts from the theme button in the header. */
 export function toggleTheme(origin?: { x: number; y: number }) {
-  setTheme(getTheme() === 'dark' ? 'light' : 'dark', origin)
+  const current = pendingTheme ?? getTheme()
+  let from = origin
+  if (!from) {
+    const button = document.querySelector('[data-theme-toggle]')?.getBoundingClientRect()
+    if (button && button.width) from = { x: button.left + button.width / 2, y: button.top + button.height / 2 }
+  }
+  setTheme(current === 'dark' ? 'light' : 'dark', from)
 }
 
 export function setMotion(next: Motion) {

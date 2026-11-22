@@ -8,6 +8,7 @@ export function ThemeToggle() {
     <button
       type="button"
       className="icon-button"
+      data-theme-toggle=""
       aria-label={sections.theme.label}
       aria-pressed={theme === 'dark'}
       title={sections.theme.label}
