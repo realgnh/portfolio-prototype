@@ -601,6 +601,7 @@ test('every project card opens a detail page with results, questions and neighbo
 })
 
 test('Quick search opens with Ctrl+K, finds a project, runs actions and closes with Escape', async ({ page }) => {
+  await page.setViewportSize({ width: 1440, height: 800 }) // wide enough for the "Quick search" label
   await page.goto('/')
   const opener = page.getByRole('button', { name: sections.commandMenu.button })
   await expect(opener).toHaveText(sections.commandMenu.button)
@@ -721,9 +722,25 @@ test('the scroll ruler has one keyframe per scene on Home', async ({ page }) => 
   await skills.click()
   await expect.poll(() => page.evaluate(() => scrollY)).toBeGreaterThan(500)
   await expect(skills).toHaveAttribute('data-active', 'true')
+  // Clicking lands the playhead exactly on the keyframe.
+  const at = await skills.evaluate(el => parseFloat((el as HTMLElement).style.left) / 100)
+  const progress = await ruler.evaluate(el => Number(getComputedStyle(el).getPropertyValue('--progress')))
+  expect(Math.abs(progress - at)).toBeLessThan(0.004)
   // Keyframes are spread out, not stacked at the end.
   const lefts = await ruler.locator('.ruler-key').evaluateAll(els => els.map(el => parseFloat((el as HTMLElement).style.left)))
   expect(new Set(lefts.map(left => Math.round(left))).size).toBe(lefts.length)
+})
+
+test('ruler labels never overlap, even on busy pages', async ({ page }) => {
+  for (const path of ['/', '/hobby-projects', `/work/${projects[0].slug}`, '/resume', '/contact']) {
+    await page.goto(path)
+    await page.waitForTimeout(700)
+    const boxes = await page.locator('.ruler-key-label').evaluateAll(els => els
+      .filter(el => getComputedStyle(el).display !== 'none')
+      .map(el => el.getBoundingClientRect()).map(box => ({ left: box.left, right: box.right })))
+    const sorted = [...boxes].sort((a, b) => a.left - b.left)
+    for (let i = 1; i < sorted.length; i++) expect(sorted[i].left, `labels overlap on ${path}`).toBeGreaterThanOrEqual(sorted[i - 1].right - 1)
+  }
 })
 
 test('the ruler runs from 0 at the top of the page to 1 at the bottom', async ({ page }) => {
@@ -767,15 +784,19 @@ test('links that leave the site open in a new tab', async ({ page }) => {
   await expect(page.getByRole('main').locator('a[href^="mailto:"]').first()).not.toHaveAttribute('target', '_blank')
 })
 
-test('the header puts AK. far left, the tabs after it and the actions far right', async ({ page }) => {
-  await page.setViewportSize({ width: 1440, height: 800 })
-  await page.goto('/')
-  const box = async (selector: string) => (await page.locator(selector).first().boundingBox())!
-  const [logo, nav, actions] = [await box('.monogram'), await box('.site-nav'), await box('.header-actions')]
-  expect(logo.x).toBeLessThan(60)
-  expect(nav.x).toBeGreaterThan(logo.x + logo.width)
-  expect(nav.x + nav.width / 2).toBeLessThan(720 - 50) // left of centre, leaving space
-  expect(actions.x + actions.width).toBeGreaterThan(1440 - 60)
+test('the header has AK. far left, the tabs centred in their own bubble and the actions far right', async ({ page }) => {
+  for (const width of [1100, 1280, 1440]) {
+    await page.setViewportSize({ width, height: 800 })
+    await page.goto('/')
+    const box = async (selector: string) => (await page.locator(selector).first().boundingBox())!
+    const [logo, nav, actions] = [await box('.monogram'), await box('.site-nav'), await box('.header-actions')]
+    expect(Math.abs(nav.x + nav.width / 2 - width / 2), `centred at ${width}px`).toBeLessThan(1.5)
+    expect(nav.x, `no overlap with the logo at ${width}px`).toBeGreaterThan(logo.x + logo.width + 16)
+    expect(actions.x, `no overlap with the actions at ${width}px`).toBeGreaterThan(nav.x + nav.width + 16)
+    expect(logo.x).toBeLessThan(60)
+    expect(actions.x + actions.width).toBeGreaterThan(width - 60)
+    await expect(page.locator('.site-nav')).toHaveCSS('border-radius', '999px')
+  }
 })
 
 test('page changes wait for the slate to cover the screen', async ({ page }) => {
