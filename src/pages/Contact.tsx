@@ -7,6 +7,7 @@ import { profile } from '../content/profile'
 import { sections } from '../content/sections'
 import { differenceFrom, greetingFor } from '../lib/timeGreeting'
 import { useCopyEmail } from '../lib/useCopyEmail'
+import { newTab } from '../lib/links'
 
 function formatTime(date: Date) {
   return new Intl.DateTimeFormat('en-US', { hour: 'numeric', minute: '2-digit', second: '2-digit', timeZone: profile.timeZone }).format(date)
@@ -55,7 +56,7 @@ export function Contact() {
             <ul className="social-list" aria-label="Contact links">
               {profile.socials.map(({ label, href }, index) => (
                 <li key={href} data-rank={Math.min(index + 1, 3)}>
-                  <a className="social-link" href={href}>
+                  <a className="social-link" href={href} {...newTab}>
                     <span>{label}</span>
                     <span className="social-handle muted">{href.replace(/^https?:\/\/(www\.)?/, '').replace(/\/$/, '')}</span>
                     <span className="social-arrow" aria-hidden="true">↗</span>

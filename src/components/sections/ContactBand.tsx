@@ -1,5 +1,6 @@
 import { profile } from '../../content/profile'
 import { sections } from '../../content/sections'
+import { newTab } from '../../lib/links'
 
 const links = ['GitHub', 'LinkedIn']
   .map(label => profile.socials.find(social => social.label === label))
@@ -15,7 +16,7 @@ export function ContactBand() {
         <ul className="contact-band-links">
           <li><a href={`mailto:${profile.email}`}>{profile.email} <span aria-hidden="true">↗</span></a></li>
           {links.map(({ label, href }) => (
-            <li key={label}><a href={href} target="_blank" rel="noreferrer">{label} <span aria-hidden="true">↗</span></a></li>
+            <li key={label}><a href={href} {...newTab}>{label} <span aria-hidden="true">↗</span></a></li>
           ))}
         </ul>
       </div>

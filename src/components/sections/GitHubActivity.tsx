@@ -8,6 +8,7 @@ import { BrandIcon } from '../ui/BrandIcon'
 import { SectionHeading } from '../ui/SectionHeading'
 import { ContributionActivity } from './ContributionActivity'
 import { ContributionYears } from './ContributionYears'
+import { newTab } from '../../lib/links'
 
 type State = { status: 'idle' | 'loading' } | { status: 'ready'; data: GitHubData } | { status: 'error' }
 
@@ -41,9 +42,9 @@ export function GitHubActivity() {
         id="github-title"
         title={copy.heading}
         intro={copy.intro}
-        action={<a className="arrow-link" href={profileUrl}>{copy.profile} <span aria-hidden="true">↗</span></a>}
+        action={<a className="arrow-link" href={profileUrl} {...newTab}>{copy.profile} <span aria-hidden="true">↗</span></a>}
       />
-      {state.status === 'error' && <p className="muted github-note">{copy.error} <a href={profileUrl}>{copy.profile}</a>.</p>}
+      {state.status === 'error' && <p className="muted github-note">{copy.error} <a href={profileUrl} {...newTab}>{copy.profile}</a>.</p>}
       {(state.status === 'idle' || state.status === 'loading') && <div className="github-skeleton" aria-busy="true"><div /><div /></div>}
       {state.status === 'ready' && (
         <div className="github-layout">
@@ -74,7 +75,7 @@ export function GitHubActivity() {
               {state.data.repos.length === 0 && <li className="muted">{copy.noRepos}</li>}
               {state.data.repos.map(repo => (
                 <li key={repo.name}>
-                  <a href={repo.url}>{repo.name}</a>
+                  <a href={repo.url} {...newTab}>{repo.name}</a>
                   {repo.description && <p className="muted">{repo.description}</p>}
                   <p className="github-meta">{repo.language && <span>{repo.language}</span>}<span>★ {repo.stars}</span><span>{copy.updated} {timeAgo(repo.pushedAt)}</span></p>
                 </li>

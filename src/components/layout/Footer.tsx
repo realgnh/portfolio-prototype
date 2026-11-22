@@ -3,6 +3,7 @@ import { easterEgg } from '../../content/easterEggs'
 import { profile } from '../../content/profile'
 import { sections } from '../../content/sections'
 import { useCopyEmail } from '../../lib/useCopyEmail'
+import { newTab } from '../../lib/links'
 
 export function Footer() {
   const copyEmail = useCopyEmail()
@@ -13,7 +14,7 @@ export function Footer() {
         <div className="footer-links">
           <a href={`mailto:${profile.email}`}>{profile.email}</a>
           <button type="button" className="text-button" onClick={copyEmail}>{sections.contact.copy}</button>
-          {profile.socials.map(({ label, href }) => <a key={href} href={href}>{label}</a>)}
+          {profile.socials.map(({ label, href }) => <a key={href} href={href} {...newTab}>{label}</a>)}
         </div>
       </div>
       <p className="muted footer-note">{profile.footerNote}</p>

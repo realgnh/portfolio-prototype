@@ -1,5 +1,6 @@
 import { experience } from '../../content/experience'
 import { formatDuration, formatRange } from '../../lib/dates'
+import { newTab } from '../../lib/links'
 
 function initials(name: string) {
   return name.split(/\s+/).map(word => word[0]).join('').slice(0, 2).toUpperCase()
@@ -21,7 +22,7 @@ export function ExperienceList({ compact = false, limit }: { compact?: boolean; 
           </div>
           <div className="experience-text">
             <h3>{role}</h3>
-            <p className="muted">{url ? <a href={url}>{company}</a> : company}{location ? ` · ${location}` : ''}</p>
+            <p className="muted">{url ? <a href={url} {...newTab}>{company}</a> : company}{location ? ` · ${location}` : ''}</p>
             {(compact ? highlights.slice(0, 1) : highlights).map(line => <p key={line} className="experience-highlight">{line}</p>)}
           </div>
           <p className="experience-period">

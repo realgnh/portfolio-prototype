@@ -1,5 +1,6 @@
 import type { ActivityMonth } from '../../lib/github'
 import { languageColors, monthLabel } from '../../lib/github'
+import { newTab } from '../../lib/links'
 
 function plural(count: number, word: string) {
   return `${count} ${word}${count === 1 ? '' : 's'}`
@@ -30,7 +31,7 @@ export function ContributionActivity({ months }: { months: ActivityMonth[] }) {
                 <ul>
                   {month.commits.map(item => (
                     <li key={item.repo} className="activity-row">
-                      <a href={item.url}>{item.repo}</a> <span className="muted">{plural(item.count, 'commit')}</span>
+                      <a href={item.url} {...newTab}>{item.repo}</a> <span className="muted">{plural(item.count, 'commit')}</span>
                       <span className="activity-bar" style={{ '--share': item.count / most } as React.CSSProperties} aria-hidden="true" />
                     </li>
                   ))}
@@ -44,7 +45,7 @@ export function ContributionActivity({ months }: { months: ActivityMonth[] }) {
                 <ul>
                   {month.created.map(item => (
                     <li key={item.repo} className="activity-row">
-                      <a href={item.url}>{item.repo}</a>
+                      <a href={item.url} {...newTab}>{item.repo}</a>
                       {item.language && <span className="activity-language"><i style={{ background: languageColors[item.language] ?? 'var(--text-muted)' }} />{item.language}</span>}
                       <span className="muted activity-date">{shortDate(item.date)}</span>
                     </li>
@@ -59,7 +60,7 @@ export function ContributionActivity({ months }: { months: ActivityMonth[] }) {
                 <ul>
                   {month.pullRequests.map(item => (
                     <li key={item.url} className="activity-row">
-                      <a href={item.url}>{item.title}</a>
+                      <a href={item.url} {...newTab}>{item.title}</a>
                       <span className="activity-state" data-merged={item.merged}>{item.merged ? 'merged' : 'open'}</span>
                       <span className="muted activity-date">{shortDate(item.date)}</span>
                     </li>

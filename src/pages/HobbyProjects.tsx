@@ -5,6 +5,7 @@ import { Tags } from '../components/ui/Tags'
 import { hobbyProjects } from '../content/hobbyProjects'
 import { pages } from '../content/navigation'
 import { sections } from '../content/sections'
+import { newTab } from '../lib/links'
 
 /**
  * /hobby-projects — Roblox games, the Luau systems behind them and an animation reel.
@@ -34,7 +35,7 @@ export function HobbyProjects() {
               {featured.stats.map(stat => <div key={stat.label}><dd>{stat.value}</dd><dt>{stat.label}</dt></div>)}
             </dl>
             <Tags items={featured.tags} />
-            {featured.url && <a className="button button-primary" href={featured.url}>{copy.play} <span aria-hidden="true">↗</span></a>}
+            {featured.url && <a className="button button-primary" href={featured.url} {...newTab}>{copy.play} <span aria-hidden="true">↗</span></a>}
           </div>
         </article>
 
