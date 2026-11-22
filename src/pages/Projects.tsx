@@ -35,6 +35,7 @@ export function Projects() {
         ))}
         <span className="muted filter-count" role="status">{shown.length} of {projects.length}</span>
       </div>
+      {shown.length === 0 && <p className="muted">{sections.projects.empty}</p>}
       <ul className="project-grid">
         {shown.map(project => <li key={project.slug}><ProjectCard project={project} /></li>)}
       </ul>
