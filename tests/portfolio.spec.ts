@@ -90,9 +90,17 @@ test('bubbles pop when clicked or pressed with Enter, and can pop again', async 
   await expect(burst).toHaveAttribute('data-pop', '')
   await expect(burst).toHaveCSS('animation-name', 'bubble-burst')
   await expect(burst).not.toHaveAttribute('data-pop', { timeout: 2000 })
+  // Spamming restarts the pop from the beginning.
+  await bubble.click()
+  await page.waitForTimeout(150)
+  await bubble.click()
+  const [time] = await burst.evaluate(el => el.getAnimations().map(animation => Number(animation.currentTime)))
+  expect(time, 'the pop restarted instead of continuing from 150ms').toBeLessThan(100)
+  await expect(burst).not.toHaveAttribute('data-pop', { timeout: 2000 })
   await bubble.focus()
   await page.keyboard.press('Enter')
   await expect(burst).toHaveAttribute('data-pop', '')
+  expect(await burst.evaluate(el => getComputedStyle(el, '::before').animationName)).toBe('firework')
   await expect(page.locator('.bubble-inner').first()).toHaveCSS('animation-name', 'bubble-pop')
 })
 
@@ -246,6 +254,8 @@ test('brick mode changes the loading screen cube', async ({ page, context }) => 
   await context.addInitScript(() => localStorage.setItem('portfolio-brick', '1'))
   await page.goto('/')
   await expect(page.locator('.loader')).toHaveAttribute('data-brick', 'true')
+  await expect(page.locator('.loader-logos-window')).toBeVisible()
+  await expect(page.locator('.loader-logos svg').first()).toHaveCSS('filter', 'brightness(0) invert(1)')
 })
 
 test('bubbles stay below the header, the logo scrolls Home back to the top, and the favicon loads', async ({ page }) => {

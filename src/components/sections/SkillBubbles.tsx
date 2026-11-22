@@ -23,15 +23,21 @@ const spots = [
   { x: 67, y: 96, depth: 11, path: 1, speed: 21 },
 ]
 
-/** Replays the click "pop" (squish, ring and droplets: .bubble-burst[data-pop] in home.css). */
+/**
+ * Plays the click "pop" (squish + firework: .bubble-burst[data-pop] in home.css).
+ * Clicking again mid-pop restarts it from the beginning.
+ */
 function pop(event: React.SyntheticEvent<HTMLElement>) {
   const burst = event.currentTarget.querySelector<HTMLElement>('.bubble-burst')
-  if (!burst || burst.hasAttribute('data-pop')) return
+  if (!burst) return
+  burst.removeAttribute('data-pop')
+  void burst.offsetWidth // let the browser notice the removal so the animation restarts
   burst.setAttribute('data-pop', '')
 }
 
+/** Clears the pop once the longest part (the outer sparks, ::before) has finished. */
 function endPop(event: React.AnimationEvent<HTMLElement>) {
-  if (event.animationName === 'bubble-burst') event.currentTarget.removeAttribute('data-pop')
+  if (event.animationName === 'firework' && event.pseudoElement === '::before') event.currentTarget.removeAttribute('data-pop')
 }
 
 /**

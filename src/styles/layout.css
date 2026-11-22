@@ -110,7 +110,7 @@
 :root[data-loading] { overflow: hidden; }
 /* While loading, skip the heavier page-entrance work underneath so the cube stays smooth. */
 :root[data-loading] .route-frame { animation: none; }
-:root[data-loading] .bubble-float, :root[data-loading] .bubble-inner, :root[data-loading] .bubble-inner::after { animation-play-state: paused; }
+:root[data-loading] .bubble-float, :root[data-loading] .bubble-inner, :root[data-loading] .bubble-inner::before { animation-play-state: paused; }
 .loader {
   position: fixed; z-index: 100; inset: 0; display: grid; place-items: center; padding: var(--gutter);
   background:
@@ -208,11 +208,9 @@
 @keyframes egg-wave { from { transform: rotate(-12deg); } to { transform: rotate(28deg); } }
 @keyframes egg-speech { from { opacity: 0; transform: translateY(8px) scale(0.9); } }
 
-/* Brick mode (unlocked by the easter egg): the loading cube becomes a red brick with studs. */
+/* Brick mode (unlocked by the easter egg): the loading cube becomes a red brick with a white logo. */
 .loader[data-brick] .loader-block {
-  border-color: #7a1d14; background: #d8392b;
-  background-image: radial-gradient(circle at 30% 32%, #f0604f 0 18%, transparent 19%), radial-gradient(circle at 70% 32%, #f0604f 0 18%, transparent 19%),
-    radial-gradient(circle at 30% 70%, #f0604f 0 18%, transparent 19%), radial-gradient(circle at 70% 70%, #f0604f 0 18%, transparent 19%);
-  border-radius: 0.35rem;
+  border-color: #7a1d14; border-radius: 0.35rem; background: linear-gradient(145deg, #e8503f, #c42f22);
+  box-shadow: inset 0 2px 0 #ff8a7a66, inset 0 -3px 0 #0000002e;
 }
-.loader[data-brick] .loader-logos-window { visibility: hidden; }
+.loader[data-brick] .loader-logos svg { filter: brightness(0) invert(1); }

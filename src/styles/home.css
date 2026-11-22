@@ -49,42 +49,45 @@
 }
 .bubble:hover .bubble-tip, .bubble:focus-visible .bubble-tip { opacity: 1; translate: -50% 0; }
 
-/* Pops. Appearing: .bubble-inner springs up (bubble-pop) and a ring bursts outward as it peaks.
-   Clicking: .bubble-burst squishes and snaps (bubble-burst) with a ring and six droplets.
-   Everything animates transform/opacity only, so it stays smooth. */
+/* Pops. Appearing: .bubble-inner springs up (bubble-pop) and a small firework bursts as it peaks.
+   Clicking: .bubble-burst squishes and snaps (bubble-burst) with a firework; clicking again restarts it.
+   Fireworks are two layers of tiny sparks (box-shadows of an invisible dot) that shoot out,
+   drift down a little and fade. Only transform/opacity animate, so it stays smooth. */
 .bubble { cursor: pointer; -webkit-tap-highlight-color: transparent; }
-.bubble-inner::after,
-.bubble-burst::after {
-  position: absolute; inset: 0; border: 2px solid var(--tone-ink); border-radius: 999px;
-  opacity: 0; pointer-events: none; content: "";
-}
-.bubble-inner::after { animation: bubble-ring 600ms ease-out calc(var(--enter, 0ms) + 260ms) backwards; }
 .bubble-burst { position: relative; display: block; border-radius: 999px; }
-.bubble-burst::before {
-  /* Six droplets drawn as shadows of an invisible dot, evenly round the bubble; scaling spreads them like spray. */
-  position: absolute; top: 50%; left: 50%; width: 6px; height: 6px; margin: -3px; border-radius: 999px;
+.bubble-inner::before,
+.bubble-burst::before,
+.bubble-burst::after {
+  position: absolute; top: 50%; left: 50%; width: 3px; height: 3px; margin: -1.5px; border-radius: 999px;
   opacity: 0; pointer-events: none; content: "";
-  box-shadow: 0 -30px 0 var(--tone-ink), 26px -15px 0 var(--tone-ink), 26px 15px 0 var(--tone-ink),
-    0 30px 0 var(--tone-ink), -26px 15px 0 var(--tone-ink), -26px -15px 0 var(--tone-ink);
 }
-.bubble-burst[data-pop] { animation: bubble-burst 560ms linear; }
-.bubble-burst[data-pop]::after { animation: bubble-ring 520ms ease-out 120ms; }
-.bubble-burst[data-pop]::before { animation: bubble-droplets 560ms ease-out 110ms; }
+/* Outer sparks: 12 around a 46px circle, alternating the bubble's ink colour and the accent. */
+.bubble-inner::before, .bubble-burst::before {
+  box-shadow:
+    0 -46px var(--tone-ink), 23px -40px var(--accent), 40px -23px var(--tone-ink), 46px 0 var(--accent),
+    40px 23px var(--tone-ink), 23px 40px var(--accent), 0 46px var(--tone-ink), -23px 40px var(--accent),
+    -40px 23px var(--tone-ink), -46px 0 var(--accent), -40px -23px var(--tone-ink), -23px -40px var(--accent);
+}
+/* Inner sparks: 6 shorter ones between the outer ones, for depth. */
+.bubble-burst::after {
+  box-shadow: 17px -30px var(--accent), 34px 0 var(--tone-ink), 17px 30px var(--accent),
+    -17px 30px var(--tone-ink), -34px 0 var(--accent), -17px -30px var(--tone-ink);
+}
+.bubble-inner::before { animation: firework 520ms cubic-bezier(.1, .7, .3, 1) calc(var(--enter, 0ms) + 220ms) backwards; }
+.bubble-burst[data-pop] { animation: bubble-burst 380ms linear; }
+.bubble-burst[data-pop]::before { animation: firework 480ms cubic-bezier(.1, .7, .3, 1) 70ms; }
+.bubble-burst[data-pop]::after { animation: firework 420ms cubic-bezier(.1, .7, .3, 1) 100ms; }
 @keyframes bubble-burst {
   0%   { transform: scale(1); animation-timing-function: ease-out; }
-  22%  { transform: scale(1.26); animation-timing-function: cubic-bezier(.6, 0, .9, .5); }
-  38%  { transform: scale(0.82); animation-timing-function: ease-out; }
-  65%  { transform: scale(1.09); animation-timing-function: ease-in-out; }
+  25%  { transform: scale(1.22); animation-timing-function: cubic-bezier(.6, 0, .9, .5); }
+  45%  { transform: scale(0.86); animation-timing-function: ease-out; }
+  72%  { transform: scale(1.06); animation-timing-function: ease-in-out; }
   100% { transform: scale(1); }
 }
-@keyframes bubble-ring {
-  0%   { opacity: 0.8; transform: scale(1); }
-  100% { opacity: 0; transform: scale(1.9); }
-}
-@keyframes bubble-droplets {
-  0%   { opacity: 0; transform: scale(0.3); }
-  20%  { opacity: 1; }
-  100% { opacity: 0; transform: scale(1.5); }
+@keyframes firework {
+  0%   { opacity: 1; transform: scale(0.15); }
+  60%  { opacity: 1; }
+  100% { opacity: 0; transform: translateY(5px) scale(1.15); }
 }
 
 /* Three slow, uneven wandering paths with a gentle tilt (no two bubbles share a rhythm). */
