@@ -21,8 +21,6 @@ import { Layout } from './components/layout/Layout'
 import { Contact } from './pages/Contact'
 import { Experience } from './pages/Experience'
 import { Home } from './pages/Home'
-import { Note } from './pages/Note'
-import { Notes } from './pages/Notes'
 import { NotFound } from './pages/NotFound'
 import { ProjectDetail } from './pages/ProjectDetail'
 import { Projects } from './pages/Projects'
@@ -45,8 +43,6 @@ const router = createBrowserRouter([
       { path: 'projects', element: <Projects /> },
       { path: 'projects/:slug', element: <ProjectDetail /> },
       { path: 'experience', element: <Experience /> },
-      { path: 'notes', element: <Notes /> },
-      { path: 'notes/:slug', element: <Note /> },
       { path: 'resume', element: <Resume /> },
       { path: 'contact', element: <Contact /> },
       { path: 'work/:slug?', element: <LegacyProjectsRedirect /> },

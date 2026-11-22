@@ -13,7 +13,6 @@ Everything you'd normally change is text in **`src/content/`**. You rarely need 
 | Milestones on the Experience timeline (awards, firsts…) | `src/content/milestones.ts` |
 | When a project appears on the timeline | `date` on that project in `src/content/projects.ts` |
 | Easter egg triggers, hint text and the character's message | `src/content/easterEggs.ts` |
-| Notes (blog posts) | Add a Markdown file to `src/content/notes/` (see the README there for the header) |
 | Keyboard shortcuts and the `?` cheat sheet | `src/content/shortcuts.ts` (the floating Ask and keyboard buttons are in `src/components/chat/ChatLauncher.tsx`) |
 | Where the GitHub section shows | It's on the Contact page: `<GitHubActivity />` in `src/pages/Contact.tsx` |
 | GitHub contribution chart and activity | `src/components/sections/ContributionCalendar.tsx` / `ContributionActivity.tsx`; data in `src/lib/github.ts` and `src/lib/contributions.ts` |
@@ -59,7 +58,7 @@ Everything you'd normally change is text in **`src/content/`**. You rarely need 
 | Project card cursor glow | `.project-card::before` in `src/styles/home.css` |
 | Contact greeting wording ("Good evening!") | `src/lib/timeGreeting.ts` |
 | Fonts (Bricolage Grotesque headings, Inter text) | `--font-display` / `--font-sans` in `src/styles/tokens.css` and the imports in `src/main.tsx` |
-| Chat, cheat sheet, GitHub panel, Notes and demo styles | `src/styles/features.css` |
+| Chat, cheat sheet, GitHub panel and demo styles | `src/styles/features.css` |
 | The easter-egg character and brick loading cube | `src/components/layout/EasterEgg.tsx`; styles at the bottom of `src/styles/layout.css` |
 
 ## How the code is organised
@@ -67,7 +66,7 @@ Everything you'd normally change is text in **`src/content/`**. You rarely need 
 ```
 src/
   content/     ← all your text and data (start here)
-  pages/       ← one file per page: Home, Projects, ProjectDetail, Experience, Notes, Note, Resume, Contact, NotFound
+  pages/       ← one file per page: Home, Projects, ProjectDetail, Experience, Resume, Contact, NotFound
   demos/       ← interactive project demos (registered in demos/index.ts)
   components/
     ui/        ← small reusable pieces: Button, Chip, ImageSlot, BrandIcon, SectionHeading, Metadata
@@ -77,7 +76,7 @@ src/
     sections/  ← bigger blocks used on pages: Hero, SkillBubbles, About, ExperienceList, ProjectCard,
                  ProjectMedia, SkillsGrid, Hobbies, CurrentlyList, ContactBand, Timeline, GitHubActivity
   lib/         ← behaviour helpers: preferences (theme + animations), dates, timeline, reveal,
-                 timeGreeting, easterEgg, smoothScroll, github, notes, knowledge, localAnswer,
+                 timeGreeting, easterEgg, smoothScroll, github, knowledge, localAnswer,
                  useShortcuts, toast, copy-email
   styles/      ← CSS, split as in the table above
   main.tsx     ← fonts, CSS imports and the list of routes (URLs)

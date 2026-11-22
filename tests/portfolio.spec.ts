@@ -1,5 +1,4 @@
 import { expect, test } from '@playwright/test'
-import { readdirSync, readFileSync } from 'node:fs'
 import { join } from 'node:path'
 import { experience } from '../src/content/experience'
 import { hobbies } from '../src/content/hobbies'
@@ -18,14 +17,6 @@ import { profile } from '../src/content/profile'
 import { projects } from '../src/content/projects'
 import { sections } from '../src/content/sections'
 import { skillAreas, skills } from '../src/content/skills'
-
-// Notes are loaded by Vite at build time, so the tests read the Markdown files directly (newest first).
-const notesDir = new URL('../src/content/notes/', import.meta.url).pathname
-const notes = readdirSync(notesDir).filter(file => file.endsWith('.md') && file !== 'README.md').map(file => {
-  const raw = readFileSync(notesDir + file, 'utf8')
-  const field = (name: string) => raw.match(new RegExp(`^${name}:\\s*(.+)$`, 'm'))?.[1].trim() ?? ''
-  return { slug: file.replace(/\.md$/, ''), title: field('title'), date: field('date') }
-}).sort((a, b) => b.date.localeCompare(a.date))
 
 const mainNav = (page: import('@playwright/test').Page) => page.getByRole('navigation', { name: 'Main navigation' })
 
@@ -326,8 +317,8 @@ test('keyboard shortcuts navigate, toggle and show the ? cheat sheet', async ({ 
   await page.keyboard.press('p')
   await expect(page).toHaveURL('/projects')
   await page.keyboard.press('g')
-  await page.keyboard.press('n')
-  await expect(page).toHaveURL('/notes')
+  await page.keyboard.press('e')
+  await expect(page).toHaveURL('/experience')
   const theme = await page.locator('html').getAttribute('data-theme')
   await page.keyboard.press('t')
   await expect(page.locator('html')).not.toHaveAttribute('data-theme', theme!)
@@ -335,7 +326,7 @@ test('keyboard shortcuts navigate, toggle and show the ? cheat sheet', async ({ 
   await expect(page.getByRole('dialog', { name: sections.commandMenu.label })).toBeVisible()
   // Shortcuts don't fire while typing.
   await page.keyboard.type('gp')
-  await expect(page).toHaveURL('/notes')
+  await expect(page).toHaveURL('/experience')
 })
 
 test('Ask my portfolio answers with the AI when available and offline otherwise, fading text in', async ({ page }) => {
@@ -473,18 +464,6 @@ test('the contribution parser reads GitHub calendar HTML', () => {
     <tool-tip id="t1" for="contribution-day-component-5-50" popover="manual">No contributions on November 20th.</tool-tip>
     <tool-tip id="t2" for="contribution-day-component-6-50" popover="manual">9 contributions on November 21st.</tool-tip>`
   expect(parseContributions(html)).toEqual({ total: 42, days: [{ date: '2026-11-20', count: 0, level: 0 }, { date: '2026-11-21', count: 9, level: 3 }] })
-})
-
-test('Notes list Markdown files and render them', async ({ page }) => {
-  expect(notes.length).toBeGreaterThan(0)
-  await page.goto('/notes')
-  for (const note of notes) await expect(page.getByText(note.title, { exact: true })).toBeVisible()
-  await page.getByText(notes[0].title, { exact: true }).click()
-  await expect(page).toHaveURL(`/notes/${notes[0].slug}`)
-  await expect(page.getByRole('heading', { level: 1 })).toHaveText(notes[0].title)
-  await expect(page.locator('.prose h2').first()).toBeVisible()
-  await page.goto('/notes/missing-note')
-  await expect(page.getByRole('heading', { level: 1 })).toHaveText(sections.notFound.title)
 })
 
 test('the Clearpath project has a working interactive demo', async ({ page }) => {
@@ -701,7 +680,7 @@ for (const width of [360, 768, 1440]) {
       await page.setViewportSize({ width, height: 900 })
       await page.emulateMedia({ colorScheme: theme })
       const evidence = process.env.PORTFOLIO_SCREENSHOTS
-      for (const path of ['/', '/projects', `/projects/${projects[0].slug}`, '/experience', '/notes', `/notes/${notes[0].slug}`, '/resume', '/contact']) {
+      for (const path of ['/', '/projects', `/projects/${projects[0].slug}`, '/experience', '/resume', '/contact']) {
         await page.goto(path)
         await expect(page.getByRole('heading', { level: 1 })).toBeVisible()
         await page.evaluate(() => document.fonts.ready)

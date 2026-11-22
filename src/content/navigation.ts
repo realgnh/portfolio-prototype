@@ -6,9 +6,8 @@ export const pages = {
   home: { to: '/', label: 'Home', title: 'Home', description: 'Abdalla Khedr, CS student building software and applied AI. Projects, experience and contact.' },
   projects: { to: '/projects', label: 'Projects', title: 'Projects', description: 'Projects by Abdalla Khedr with example results.' },
   experience: { to: '/experience', label: 'Experience', title: 'Experience', description: 'Abdalla Khedr’s internships, research and work experience.' },
-  notes: { to: '/notes', label: 'Notes', title: 'Notes', description: 'Abdalla Khedr’s notes and write-ups on software, AI and game development.' },
   resume: { to: '/resume', label: 'Résumé', title: 'Résumé', description: 'Abdalla Khedr’s education, experience, skills and downloadable résumé.' },
   contact: { to: '/contact', label: 'Contact', title: 'Contact', description: 'Get in touch with Abdalla Khedr by email or social links.' },
 }
 
-export const navItems = [pages.home, pages.projects, pages.experience, pages.notes, pages.resume, pages.contact]
+export const navItems = [pages.home, pages.projects, pages.experience, pages.resume, pages.contact]

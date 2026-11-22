@@ -2,7 +2,6 @@ import { useEffect, useId, useMemo, useRef, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { navItems } from '../../content/navigation'
 import { projects } from '../../content/projects'
-import { notes } from '../../lib/notes'
 import { sections } from '../../content/sections'
 import { profile } from '../../content/profile'
 import { EASTER_EGG_EVENT } from '../../lib/easterEgg'
@@ -29,7 +28,6 @@ export function CommandMenu({ onClose, onAsk, onShortcuts }: { onClose: () => vo
     { id: 'easter-egg', group: copy.actions, label: copy.surprise, run: () => window.dispatchEvent(new Event(EASTER_EGG_EVENT)) },
     ...navItems.map(({ to, label }) => ({ id: `page-${to}`, group: copy.pages, label, run: () => navigate(to) })),
     ...projects.map(({ slug, title }) => ({ id: `project-${slug}`, group: copy.projects, label: title, run: () => navigate(`/projects/${slug}`) })),
-    ...notes.map(({ slug, title }) => ({ id: `note-${slug}`, group: copy.notes, label: title, run: () => navigate(`/notes/${slug}`) })),
     { id: 'ask', group: copy.actions, label: copy.ask, run: onAsk },
     { id: 'shortcuts', group: copy.actions, label: copy.shortcuts, run: onShortcuts },
     { id: 'copy-email', group: copy.actions, label: copy.copyEmail, run: () => void copyEmail() },

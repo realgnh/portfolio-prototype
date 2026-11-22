@@ -15,7 +15,7 @@ export const sections = {
   resume: { heading: 'Résumé', intro: 'Education, experience, selected projects and skills.', education: 'Education', experience: 'Experience', skills: 'Skills', projects: 'Selected projects', projectSlugs: ['clearpath-onboarding', 'signal-dashboard', 'index-library'] },
   contact: { heading: 'Contact', email: 'Email', copy: 'Copy email', localTime: 'My local time', elsewhere: 'Elsewhere' },
   placeholders: { project: 'Add screenshot', projectMedia: 'Add screenshot or video', photo: 'Add photo' },
-  commandMenu: { label: 'Quick search', button: 'Quick search', placeholder: 'Search pages, projects and actions…', copyEmail: 'Copy email address', toggleTheme: 'Switch light / dark mode', toggleMotion: 'Turn animations on / off', surprise: 'Summon a surprise 🎮', ask: 'Ask my portfolio a question', shortcuts: 'Show keyboard shortcuts (?)', downloadResume: 'Download résumé', empty: 'Nothing matches.', pages: 'Pages', projects: 'Projects', notes: 'Notes', actions: 'Actions' },
+  commandMenu: { label: 'Quick search', button: 'Quick search', placeholder: 'Search pages, projects and actions…', copyEmail: 'Copy email address', toggleTheme: 'Switch light / dark mode', toggleMotion: 'Turn animations on / off', surprise: 'Summon a surprise 🎮', ask: 'Ask my portfolio a question', shortcuts: 'Show keyboard shortcuts (?)', downloadResume: 'Download résumé', empty: 'Nothing matches.', pages: 'Pages', projects: 'Projects', actions: 'Actions' },
   toast: { copied: 'Email copied', failed: 'Couldn’t copy. Select the address and press Ctrl+C.' },
   theme: { label: 'Dark mode' },
   motion: { label: 'Animations', on: 'Animations on', off: 'Animations off' },
@@ -23,7 +23,6 @@ export const sections = {
     title: 'Loading portfolio',
     tips: ['Spawning projects…', 'Rigging animations…', 'Compiling coffee…', 'Tip: press Ctrl+K for quick search', 'Placing skill bubbles…'],
   },
-  notes: { intro: 'Short write-ups on what I’m building, testing and learning.', back: 'All notes', minutes: 'min read' },
   github: {
     heading: 'On GitHub',
     intro: 'Live from my GitHub: contributions over the last year and what I’ve been working on lately.',
