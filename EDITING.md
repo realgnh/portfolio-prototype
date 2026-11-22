@@ -8,8 +8,9 @@ Everything you'd normally change is text in **`src/content/`**. You rarely need 
 | Email, social links, time zone / location (Contact page clock) | `src/content/profile.ts` |
 | The bold "About me" (statement, paragraphs, facts, photo) | `profile.about` in `src/content/profile.ts` (photo file goes in `public/images/`) |
 | The "Now playing / Now learning" line | `profile.now` in `src/content/profile.ts` |
-| The "Currently working on…" cards on Home | `profile.currently` in `src/content/profile.ts` |
-| Hobbies ("Outside of class") | `src/content/hobbies.ts` |
+| The one-line "Currently building" under The short version | `profile.currently` in `src/content/profile.ts` |
+| Hero roles, headline and intro | `profile.roles`, `profile.headline`, `profile.intro` in `src/content/profile.ts` |
+| Hobby projects page (Roblox games, Luau systems, animation reel) | `src/content/hobbyProjects.ts`; images in `public/images/hobby/`, videos in `public/videos/hobby/` |
 | Milestones on the Experience timeline (awards, firsts…) | `src/content/milestones.ts` |
 | When a project appears on the timeline | `date` on that project in `src/content/projects.ts` |
 | Easter egg triggers, hint text and the character's message | `src/content/easterEggs.ts` |
@@ -27,7 +28,7 @@ Everything you'd normally change is text in **`src/content/`**. You rarely need 
 | Internships and jobs (dates as `'2026-04'`, or `'present'`) | `src/content/experience.ts` — ranges and durations ("3 months") are worked out for you |
 | How many jobs show on Home | `experience.homeCount` in `src/content/sections.ts` |
 | A company logo | Put the file in `public/images/companies/`, then set `logo: 'file.svg'` in `src/content/experience.ts` |
-| Projects (text, numbers, FAQ, tags) | `src/content/projects.ts` |
+| Work projects (text, numbers, FAQ, tags) | `src/content/projects.ts` (the first `profile.featuredCount` appear in Selected work on Home; the first is the big one) |
 | A project screenshot | Put the file in `public/images/projects/`, then set `image: 'file.png'` in `src/content/projects.ts` |
 | A looping project video (plays on the project's page) | Put the file in `public/videos/projects/`, then set `video: 'file.mp4'` in `src/content/projects.ts` |
 | Skill bubbles (logos and names) | `src/content/skills.ts` — logos come from [simpleicons.org](https://simpleicons.org); import the `si…` name at the top |
@@ -41,11 +42,15 @@ Everything you'd normally change is text in **`src/content/`**. You rarely need 
 
 | I want to change… | Edit this |
 |---|---|
-| Colours, pastel tones, font, corner radius, page width | `src/styles/tokens.css` (dark theme values are in the same file) |
+| Colours (paper, ink, signal orange), fonts, corner radius, page width | `src/styles/tokens.css` (dark theme values are in the same file) |
 | Buttons, chips, picture placeholders | `src/styles/ui.css` |
 | Header, menu, footer, Quick search, toast, loading screen, page progress bar | `src/styles/layout.css` |
-| Hero, bubbles (and their wandering paths), About, experience rows, project cards, Skills, Hobbies | `src/styles/home.css` |
-| Projects, project detail, Experience, Résumé, Contact pages | `src/styles/pages.css` |
+| Hero, bubbles (and their wandering paths), experience rows, project cards, Selected work band, Skills, About, orange Contact band | `src/styles/home.css` |
+| Work, project detail, Hobby projects, Experience, Résumé, Contact and 404 pages | `src/styles/pages.css` |
+| Scroll ruler, page-change slate, loader and jump game | `src/styles/layout.css` |
+| Which sections get a ◆ on the scroll ruler | Add `data-scene="Name"` to a section (see `src/pages/Home.tsx`) |
+| Page names on the scene-cut slate | `src/lib/sceneName.ts` |
+| Jump game speed, block spacing and jump length | Constants at the top of `src/lib/useJumpGame.ts` |
 | Page transition, light/dark transition, the animations switch | `src/styles/base.css` |
 | Where each skill bubble floats, its path and speed | `spots` at the top of `src/components/sections/SkillBubbles.tsx` |
 | Loading-screen length and bar segments (the cube's hop/roll speed is `hop`/`roll` in `layout.css`) | `DURATION` / `SEGMENTS` at the top of `src/components/layout/LoadingScreen.tsx` |
@@ -66,15 +71,15 @@ Everything you'd normally change is text in **`src/content/`**. You rarely need 
 ```
 src/
   content/     ← all your text and data (start here)
-  pages/       ← one file per page: Home, Projects, ProjectDetail, Experience, Resume, Contact, NotFound
+  pages/       ← one file per page: Home, Projects (/work), ProjectDetail (/work/:slug), HobbyProjects, Experience, Resume, Contact, NotFound
   demos/       ← interactive project demos (registered in demos/index.ts)
   components/
-    ui/        ← small reusable pieces: Button, Chip, ImageSlot, BrandIcon, SectionHeading, Metadata
+    ui/        ← small reusable pieces: Button, Tags, OnionText, ImageSlot, BrandIcon, SectionHeading, Metadata, JumpGame
     layout/    ← frame around every page: Layout, Header, Footer, ThemeToggle, MotionToggle,
-                 CommandMenu (Quick search), LoadingScreen, RouteProgress, EasterEgg, ShortcutsHelp
+                 CommandMenu (Quick search), LoadingScreen, ScrollRuler, SceneSlate, EasterEgg, ShortcutsHelp
     chat/      ← Ask my portfolio: ChatLauncher (button) and AskPortfolio (panel, loaded on demand)
     sections/  ← bigger blocks used on pages: Hero, SkillBubbles, About, ExperienceList, ProjectCard,
-                 ProjectMedia, SkillsGrid, Hobbies, CurrentlyList, ContactBand, Timeline, GitHubActivity
+                 ProjectMedia, SelectedWork, SkillsGrid, ContactBand, Timeline, GitHubActivity
   lib/         ← behaviour helpers: preferences (theme + animations), dates, timeline, reveal,
                  timeGreeting, easterEgg, smoothScroll, github, knowledge, localAnswer,
                  useShortcuts, toast, copy-email
