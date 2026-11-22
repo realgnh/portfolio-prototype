@@ -20,12 +20,14 @@ export type ActivityMonth = {
 }
 export type GitHubData = {
   login: string; name: string | null; avatar: string; url: string; publicRepos: number; followers: number
+  /** Year the GitHub account was created: the earliest year the year picker offers. */
+  joinedYear: number
   repos: GitHubRepo[]; languages: { name: string; count: number }[]
   contributions: Contributions | null
   activity: ActivityMonth[]
 }
 
-const CACHE_KEY = 'portfolio-github-v3'
+const CACHE_KEY = 'portfolio-github-v4'
 const CACHE_MS = 60 * 60 * 1000
 /** How many recently pushed repositories to count commits in (one request each). */
 const COMMIT_REPOS = 5
@@ -36,7 +38,7 @@ async function get<T>(url: string): Promise<T> {
   return response.json() as Promise<T>
 }
 
-type RawUser = { login: string; name: string | null; avatar_url: string; html_url: string; public_repos: number; followers: number }
+type RawUser = { login: string; name: string | null; avatar_url: string; html_url: string; public_repos: number; followers: number; created_at?: string }
 type RawRepo = { name: string; full_name: string; description: string | null; language: string | null; stargazers_count: number; html_url: string; pushed_at: string; created_at: string; fork: boolean; private?: boolean; visibility?: string }
 type RawEvent = { type: string; repo: { name: string }; created_at: string; payload?: { action?: string; number?: number } }
 type RawCommit = { commit: { author: { date: string } } }
@@ -49,11 +51,18 @@ function windowStart(now = new Date()) {
   return new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth() - 1, 1)).toISOString()
 }
 
-async function loadContributions(login: string): Promise<Contributions | null> {
-  try {
-    const response = await fetch(`/api/github-contributions?login=${encodeURIComponent(login)}`)
-    return response.ok ? await response.json() as Contributions : null
-  } catch { return null }
+const contributionCache = new Map<string, Promise<Contributions | null>>()
+
+/** Contribution chart for the rolling last year (no `year`) or one calendar year. Cached for the visit. */
+export function loadContributions(login: string, year?: number): Promise<Contributions | null> {
+  const key = `${login}/${year ?? 'last'}`
+  if (!contributionCache.has(key)) {
+    const query = `login=${encodeURIComponent(login)}${year ? `&year=${year}` : ''}`
+    contributionCache.set(key, fetch(`/api/github-contributions?${query}`)
+      .then(response => response.ok ? response.json() as Promise<Contributions> : null)
+      .catch(() => null))
+  }
+  return contributionCache.get(key)!
 }
 
 export async function loadGitHub(): Promise<GitHubData> {
@@ -100,6 +109,7 @@ export async function loadGitHub(): Promise<GitHubData> {
 
   const data: GitHubData = {
     login, name: user.name, avatar: user.avatar_url, url: user.html_url, publicRepos: user.public_repos, followers: user.followers,
+    joinedYear: user.created_at ? new Date(user.created_at).getUTCFullYear() : new Date().getUTCFullYear(),
     repos: own.slice(0, profile.github.repoCount).map(repo => ({
       name: repo.name, description: repo.description, language: repo.language, stars: repo.stargazers_count, url: repo.html_url, pushedAt: repo.pushed_at, createdAt: repo.created_at,
     })),

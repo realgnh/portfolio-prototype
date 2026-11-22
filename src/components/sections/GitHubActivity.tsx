@@ -7,7 +7,7 @@ import type { GitHubData } from '../../lib/github'
 import { BrandIcon } from '../ui/BrandIcon'
 import { SectionHeading } from '../ui/SectionHeading'
 import { ContributionActivity } from './ContributionActivity'
-import { ContributionCalendar } from './ContributionCalendar'
+import { ContributionYears } from './ContributionYears'
 
 type State = { status: 'idle' | 'loading' } | { status: 'ready'; data: GitHubData } | { status: 'error' }
 
@@ -48,9 +48,7 @@ export function GitHubActivity() {
       {state.status === 'ready' && (
         <div className="github-layout">
           <div className="github-card github-calendar-card">
-            {state.data.contributions
-              ? <ContributionCalendar data={state.data.contributions} />
-              : <p className="muted">{copy.noCalendar}</p>}
+            <ContributionYears login={state.data.login} joinedYear={state.data.joinedYear} initial={state.data.contributions} />
           </div>
           <div className="github-card github-activity-card">
             <h3>{copy.recentActivity}</h3>

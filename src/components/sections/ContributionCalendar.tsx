@@ -57,7 +57,7 @@ export function ContributionCalendar({ data }: { data: Contributions }) {
 
   return (
     <figure ref={figure} className="calendar" onPointerOver={showTip} onPointerLeave={() => setTip(null)}>
-      <figcaption className="calendar-total"><strong>{data.total}</strong> contributions in the last year</figcaption>
+      <figcaption className="calendar-total"><strong>{data.total}</strong> contribution{data.total === 1 ? '' : 's'} {data.year ? `in ${data.year}` : 'in the last year'}</figcaption>
       <div ref={scroller} className="calendar-scroll" onScroll={() => setTip(null)}>
         <div className="calendar-grid" style={{ '--weeks': weeks.length } as React.CSSProperties}>
           <span className="calendar-corner" />
