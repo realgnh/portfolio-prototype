@@ -27,9 +27,9 @@
 .facts > div:last-child { grid-column: span 2; }
 .facts dt, .skill-table dt { margin-bottom: 0.35rem; font-size: 0.8rem; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; color: var(--text-muted); }
 .facts dd { font-weight: 600; }
-.tool-list { display: flex; flex-wrap: wrap; gap: 0.5rem; }
-.tool { display: inline-flex; align-items: center; gap: 0.45rem; padding: 0.3rem 0.75rem 0.3rem 0.35rem; border: 1px solid var(--line); border-radius: 999px; background: var(--surface); font-size: 0.875rem; font-weight: 600; }
-.tool-icon { display: grid; width: 1.35rem; height: 1.35rem; padding: 0.15rem; color: var(--text-muted); }
+.tool-list { display: flex; flex-wrap: wrap; gap: 0.5rem 1.25rem; }
+.tool { display: inline-flex; align-items: center; gap: 0.4rem; font-size: 0.9rem; font-weight: 500; }
+.tool-icon { display: grid; width: 1.15rem; height: 1.15rem; color: var(--text-muted); }
 
 .metrics { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 14rem), 1fr)); gap: 1rem; }
 .metrics > div { display: grid; gap: 0.35rem; padding-top: 1rem; border-top: 2px solid var(--text); }
@@ -44,8 +44,8 @@
 .story { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 17rem), 1fr)); gap: 2rem; }
 .story section { display: grid; align-content: start; gap: 0.6rem; }
 .steps { display: grid; gap: 0.6rem; counter-reset: step; }
-.steps li { display: grid; grid-template-columns: 1.75rem 1fr; counter-increment: step; }
-.steps li::before { display: grid; place-items: center; width: 1.35rem; height: 1.35rem; margin-top: 0.15rem; border-radius: 999px; background: var(--accent-soft); color: var(--accent); font-size: 0.75rem; font-weight: 800; content: counter(step); }
+.steps li { display: grid; grid-template-columns: 2rem 1fr; counter-increment: step; }
+.steps li::before { font: 500 0.8rem/1.7 var(--font-mono); color: var(--accent); content: counter(step, decimal-leading-zero); }
 
 .faq { display: grid; gap: 0.25rem; }
 .faq h2 { margin-bottom: 0.5rem; }
@@ -154,7 +154,7 @@
 .game-stat { font: 500 0.85rem var(--font-mono); white-space: nowrap; }
 .game-stat strong { font-family: var(--font-display); font-size: 1.4rem; }
 .system-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 22rem), 1fr)); gap: 2.25rem 3rem; margin-top: 1rem; }
-.system-grid li { display: grid; gap: 0.6rem; padding-top: 1rem; border-top: 2px solid var(--accent-fill); }
+.system-grid > li { display: grid; gap: 0.6rem; padding-top: 1rem; border-top: 2px solid var(--accent-fill); }
 .system-grid h3 { font-size: 1.35rem; }
 .reel { margin-top: 1.25rem; }
 .reel video, .reel .image-slot { width: 100%; border-radius: var(--radius); }

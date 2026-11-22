@@ -66,7 +66,7 @@
 .eyebrow { font-size: 0.8rem; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; color: var(--text-muted); }
 .visually-hidden { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
 
-mark { padding: 0 0.2em; border-radius: 0.3em; background: var(--accent-soft); color: inherit; }
+mark { padding: 0; background: none; color: inherit; text-decoration: underline; text-decoration-color: var(--accent-fill); text-decoration-thickness: 0.14em; text-underline-offset: 0.18em; }
 
 .brand-logo, .brand-initials { width: 100%; height: 100%; }
 .brand-initials { display: grid; place-items: center; font-weight: 700; font-size: 0.85rem; }
