@@ -25,12 +25,13 @@ export function ChatLauncher({ open, onOpen, onClose, onShortcuts }: Props) {
       {!open && (
         <div className="floating-actions">
           <button type="button" className="chat-launcher" data-compact={compact} onClick={onOpen} aria-label={sections.chat.title} title={sections.chat.title} aria-keyshortcuts="A">
-            <span className="chat-launcher-icon" aria-hidden="true" /><span className="chat-launcher-label" aria-hidden="true">{sections.chat.title}</span>
+            <span className="chat-launcher-label" aria-hidden="true">{sections.chat.title}</span>
           </button>
           <button type="button" className="shortcuts-button" onClick={onShortcuts} aria-label={sections.shortcuts.title} title={sections.shortcuts.title}>
             <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
               <rect x="2.5" y="6" width="19" height="12" rx="2.5" /><path d="M6.5 10h.01M10 10h.01M13.5 10h.01M17 10h.01M7.5 14h9" />
             </svg>
+            <kbd className="shortcuts-key" aria-hidden="true">?</kbd>
           </button>
         </div>
       )}

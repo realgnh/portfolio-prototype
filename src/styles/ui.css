@@ -80,8 +80,8 @@ mark { padding: 0; background: none; color: inherit; text-decoration: underline;
   color: var(--accent-fill); opacity: 0; transition: opacity 250ms, transform 450ms var(--ease);
 }
 .onion::after { color: var(--text-muted); }
-.onion:hover::before { opacity: 0.22; transform: translateX(-0.06em); }
-.onion:hover::after { opacity: 0.12; transform: translateX(-0.12em); }
+.onion:hover::before { opacity: 0.5; transform: translateX(-0.07em); }
+.onion:hover::after { opacity: 0.3; transform: translateX(-0.14em); }
 
 /* Tags: one small uppercase monospace line instead of pills (Tags.tsx). */
 .tags { display: flex; flex-wrap: wrap; gap: 0.2rem 0; font: 500 0.72rem/1.5 var(--font-mono); letter-spacing: 0.06em; text-transform: uppercase; color: var(--text-muted); }

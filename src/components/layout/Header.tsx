@@ -12,7 +12,7 @@ function isActive(to: string, pathname: string) {
 }
 
 /**
- * Top bar. Three equal columns keep the navigation exactly centred:
+ * Top bar. The navigation is absolutely centred on the page:
  * "AK." on the left, text links in the middle, Quick search, Résumé and toggles on the right.
  */
 export function Header({ onOpenSearch }: { onOpenSearch: () => void }) {

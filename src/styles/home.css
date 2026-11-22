@@ -12,7 +12,6 @@
 .hero-intro { max-width: 34rem; font-size: 1.05rem; }
 .hero .button-row { margin-top: 0.4rem; }
 .hero-status { display: inline-flex; align-items: center; gap: 0.55rem; margin-top: 0.4rem; }
-.status-dot { width: 0.5rem; height: 0.5rem; border-radius: 999px; background: var(--accent-fill); }
 .hero-stage { position: relative; height: clamp(22rem, 52vh, 30rem); }
 
 .skill-bubbles { position: absolute; inset: 0; --mx: 0; --my: 0; }

@@ -23,7 +23,7 @@ export function Hero() {
           <Button to="/contact">{sections.hero.primary} <span aria-hidden="true">→</span></Button>
           <Button variant="outline" href={profile.resume.href} download>{sections.hero.secondary} <span aria-hidden="true">↓</span></Button>
         </div>
-        {profile.status && <p className="hero-status mono-meta"><span className="status-dot" aria-hidden="true" />{profile.status}</p>}
+        {profile.status && <p className="hero-status mono-meta">{profile.status}</p>}
       </div>
       <div className="hero-stage">
         <SkillBubbles />

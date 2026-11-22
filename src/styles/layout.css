@@ -1,14 +1,13 @@
 /* LAYOUT — header with pill navigation, footer, quick menu (⌘K) and toasts. */
 .site-header { position: sticky; z-index: 20; top: 0; padding-block: 0.9rem; }
-/* Three equal-width columns keep the pill navigation centred on the page. */
-.header-inner { display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; gap: 1rem; }
-.header-inner > .monogram { justify-self: start; }
+/* The navigation is positioned at the exact centre of the page; logo on the left, actions on the right. */
+.header-inner { position: relative; display: flex; align-items: center; justify-content: space-between; gap: 1rem; min-height: 2.5rem; }
 
 .monogram { font-family: var(--font-display); font-size: 1.4rem; font-weight: 800; letter-spacing: -0.05em; text-decoration: none; }
 .monogram span { color: var(--accent); }
 
 /* Main navigation: plain text links; the current page gets an orange underline. */
-.site-nav { display: flex; gap: clamp(1rem, 2.4vw, 2rem); }
+.site-nav { position: absolute; left: 50%; display: flex; gap: clamp(1rem, 2.4vw, 2rem); transform: translateX(-50%); }
 .site-nav a {
   position: relative; padding-block: 0.35rem; font-size: 0.95rem; font-weight: 500; color: var(--text-muted); text-decoration: none;
   transition: color 200ms;
@@ -42,18 +41,18 @@
 }
 .menu-button { display: none; }
 
-@media (max-width: 52rem) {
-  .header-inner { grid-template-columns: auto 1fr; }
+@media (max-width: 62rem) {
+  .header-inner { position: static; }
   .menu-button { display: inline-grid; }
   .search-button { width: 2.5rem; padding: 0; justify-content: center; }
   .search-label { display: none; }
   .site-nav {
-    position: absolute; top: calc(100% - 0.25rem); right: var(--gutter); left: var(--gutter);
+    position: absolute; top: calc(100% - 0.25rem); right: var(--gutter); left: var(--gutter); transform: none;
     flex-direction: column; gap: 0; padding: 0.5rem 1rem; border: 1px solid var(--line); border-radius: var(--radius);
-    background: var(--surface); box-shadow: var(--shadow); visibility: hidden; opacity: 0; transform: translateY(-6px);
-    transition: opacity 200ms, transform 200ms var(--ease), visibility 200ms;
+    background: var(--surface); box-shadow: var(--shadow); visibility: hidden; opacity: 0; translate: 0 -6px;
+    transition: opacity 200ms, translate 200ms var(--ease), visibility 200ms;
   }
-  .site-nav[data-open="true"] { visibility: visible; opacity: 1; transform: none; }
+  .site-nav[data-open="true"] { visibility: visible; opacity: 1; translate: none; }
   .site-nav a { padding: 0.8rem 0; font-size: 1.05rem; }
   .site-nav a::after { display: none; }
   .site-nav .nav-resume { display: block; }
@@ -174,7 +173,7 @@
 /* Easter egg (EasterEgg.tsx): a blocky character drops in, waves, then hops away. */
 .egg { position: fixed; z-index: 60; right: clamp(1rem, 4vw, 2.5rem); bottom: 0; display: grid; justify-items: end; animation: egg-drop 900ms linear both; }
 .egg[data-leaving="true"] { animation: egg-leave 550ms cubic-bezier(.5, 0, .75, 0) forwards; }
-.egg-character { width: 6.5rem; height: auto; filter: drop-shadow(0 6px 10px #0003); }
+.egg-character { width: 9.75rem; margin-top: -1.6rem; margin-right: -1.6rem; overflow: visible; height: auto; filter: drop-shadow(0 6px 10px #0003); }
 .egg-arm-wave { transform-origin: 52px 36px; animation: egg-wave 700ms ease-in-out 900ms 6 alternate; }
 .egg-speech {
   position: relative; margin-bottom: 0.6rem; padding: 0.55rem 0.9rem; border-radius: 1rem; background: var(--button); color: var(--button-text);

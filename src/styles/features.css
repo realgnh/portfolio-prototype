@@ -16,16 +16,16 @@ kbd {
   box-shadow: 0 12px 34px #00000033; transition: transform 250ms var(--ease), padding 300ms var(--ease);
 }
 .chat-launcher:hover { transform: translateY(-2px); }
-.chat-launcher-icon { width: 0.55rem; height: 0.55rem; border-radius: 999px; background: var(--accent-fill); }
 .chat-launcher-label { overflow: hidden; max-width: 13rem; white-space: nowrap; transition: max-width 300ms var(--ease), opacity 200ms; }
 .chat-launcher[data-compact="true"] { gap: 0; padding: 0.9rem 1.15rem; }
 .chat-launcher[data-compact="true"] .chat-launcher-label { max-width: 0; opacity: 0; }
 .shortcuts-button {
-  display: inline-grid; place-items: center; width: 2.6rem; height: 2.6rem; padding: 0; border: 1px solid var(--line); border-radius: 999px;
-  background: var(--surface); color: var(--text); cursor: pointer; box-shadow: 0 8px 22px #0000001f; transition: transform 250ms var(--ease), border-color 200ms;
+  display: inline-flex; align-items: center; justify-content: center; gap: 0.45rem; height: 3.4rem; padding: 0 1.05rem 0 0.95rem; border: 1.5px solid var(--text); border-radius: 999px;
+  background: var(--surface); color: var(--text); cursor: pointer; box-shadow: 0 8px 22px #0000001f; transition: transform 250ms var(--ease), box-shadow 200ms;
 }
-.shortcuts-button:hover { transform: translateY(-2px); border-color: var(--text); }
-.shortcuts-button svg { width: 1.2rem; height: 1.2rem; }
+.shortcuts-button:hover { transform: translateY(-2px); box-shadow: 0 12px 28px #00000033; }
+.shortcuts-button svg { width: 1.45rem; height: 1.45rem; }
+.shortcuts-key { display: inline-grid; place-items: center; min-width: 1.35rem; height: 1.35rem; padding: 0 0.3rem; border: 1.5px solid currentColor; border-radius: 0.35rem; font: 700 0.8rem var(--font-mono); line-height: 1; }
 @media (hover: none) { .shortcuts-button { display: none; } } /* no keyboard shortcuts on touch-only devices */
 .chat-panel {
   position: fixed; z-index: 35; left: clamp(0.75rem, 3vw, 1.75rem); bottom: clamp(0.75rem, 3vw, 1.75rem);

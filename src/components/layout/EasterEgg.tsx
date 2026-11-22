@@ -38,7 +38,7 @@ export function EasterEgg() {
     <div key={run} className="egg" data-leaving={leaving} role="status">
       <p className="egg-speech">{easterEgg.speech}</p>
       <button type="button" className="egg-close" aria-label="Dismiss" onClick={() => setLeaving(true)}>×</button>
-      <svg className="egg-character" viewBox="0 0 64 96" aria-hidden="true">
+      <svg className="egg-character" viewBox="-16 -16 96 112" overflow="visible" aria-hidden="true">
         {/* Waving arm sits behind the body so the shoulder joint is hidden. */}
         <g className="egg-arm-wave"><rect x="46" y="12" width="12" height="26" rx="3" fill="#f5c84c" /></g>
         <rect x="6" y="38" width="12" height="26" rx="3" fill="#f5c84c" />

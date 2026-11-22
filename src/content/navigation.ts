@@ -11,5 +11,5 @@ export const pages = {
   contact: { to: '/contact', label: 'Contact', title: 'Contact', description: 'Get in touch with Abdalla Khedr by email or social links.' },
 }
 
-/** Main menu. Home is the "AK." logo and the résumé is a button, so neither is listed here. */
-export const navItems = [pages.projects, pages.hobby, pages.experience, pages.contact]
+/** Main menu: Home, Work, Hobby projects, Experience, Contact. The résumé is a button, so it is not listed here. */
+export const navItems = [pages.home, pages.projects, pages.hobby, pages.experience, pages.contact]
