@@ -82,3 +82,22 @@ mark { padding: 0 0.2em; border-radius: 0.3em; background: var(--accent-soft); c
 .onion::after { color: var(--text-muted); }
 .onion:hover::before { opacity: 0.22; transform: translateX(-0.06em); }
 .onion:hover::after { opacity: 0.12; transform: translateX(-0.12em); }
+
+/* Tags: one small uppercase monospace line instead of pills (Tags.tsx). */
+.tags { display: flex; flex-wrap: wrap; gap: 0.2rem 0; font: 500 0.72rem/1.5 var(--font-mono); letter-spacing: 0.06em; text-transform: uppercase; color: var(--text-muted); }
+.tags li + li::before { content: "·"; margin-inline: 0.55em; }
+.mono-meta { font: 500 0.78rem var(--font-mono); letter-spacing: 0.04em; text-transform: uppercase; color: var(--text-muted); }
+.section-title { font-size: clamp(1.9rem, 4.5vw, 3rem); }
+
+/* Big stat numbers (results, game stats). */
+.big-stats { display: flex; flex-wrap: wrap; gap: 1rem 2.5rem; }
+.big-stats > div { display: grid; }
+.big-stats dd { font: 800 clamp(2.25rem, 5vw, 3.25rem)/1 var(--font-display); letter-spacing: -0.04em; }
+.big-stats dt { font: 500 0.75rem var(--font-mono); letter-spacing: 0.06em; text-transform: uppercase; color: var(--text-muted); }
+
+/* Black band: a full-width dark section for rhythm between paper sections. */
+.band { margin-top: clamp(3.5rem, 9vw, 6rem); padding-block: clamp(3rem, 8vw, 5.5rem); background: var(--band); color: var(--band-text); }
+.band-inner { display: grid; gap: 1.25rem; }
+.band .muted, .band .tags, .band .mono-meta, .band-intro { color: var(--band-muted); }
+.band-intro { max-width: 40rem; font-size: 1.05rem; }
+.band .arrow-link { color: var(--accent-fill); }

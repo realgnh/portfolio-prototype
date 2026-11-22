@@ -141,3 +141,24 @@
 [data-kind="project"] .timeline-kind { background: var(--tone-peach); color: var(--tone-peach-ink); }
 [data-kind="milestone"] .timeline-kind { background: var(--tone-butter); color: var(--tone-butter-ink); }
 .timeline-text { font-size: 0.95rem; }
+
+/* ---------- Hobby projects (HobbyProjects.tsx) ---------- */
+.game-featured { display: grid; grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr); gap: clamp(1.5rem, 4vw, 3rem); align-items: center; }
+.game-featured .image-slot { border-radius: var(--radius); }
+.game-featured-body { display: grid; gap: 0.9rem; justify-items: start; }
+.game-featured-body h2 { font-size: clamp(2.25rem, 5vw, 3.5rem); }
+.game-list { display: grid; margin-top: 1.25rem; border-top: 2px solid var(--text); }
+.game-list li { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.4fr) auto; gap: 0.5rem 2rem; align-items: baseline; padding-block: 1.25rem; border-bottom: 1px solid var(--line); }
+.game-list h3 { font-size: 1.4rem; }
+.game-stat { font: 500 0.85rem var(--font-mono); white-space: nowrap; }
+.game-stat strong { font-family: var(--font-display); font-size: 1.4rem; }
+.system-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 22rem), 1fr)); gap: 2.25rem 3rem; margin-top: 1rem; }
+.system-grid li { display: grid; gap: 0.6rem; padding-top: 1rem; border-top: 2px solid var(--accent-fill); }
+.system-grid h3 { font-size: 1.35rem; }
+.reel { margin-top: 1.25rem; }
+.reel video, .reel .image-slot { width: 100%; border-radius: var(--radius); }
+.reel .image-slot { aspect-ratio: 16 / 9; }
+@media (max-width: 52rem) {
+  .game-featured { grid-template-columns: 1fr; }
+  .game-list li { grid-template-columns: 1fr; }
+}

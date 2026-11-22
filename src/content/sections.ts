@@ -24,6 +24,14 @@ export const sections = {
     tips: ['Resolving dependencies…', 'Warming the cache…', 'Reticulating splines…', 'Tip: Ctrl+K. Faster than O(n) scrolling.'],
     gameHint: 'Press Space or tap to jump',
   },
+  hobby: {
+    featured: 'Featured game',
+    play: 'Play on Roblox',
+    more: 'More games',
+    systems: 'Systems I’ve built',
+    systemsIntro: 'The engineering behind the games: networking, persistence and tooling, written in Luau.',
+    reelPlaceholder: 'Add animation reel',
+  },
   github: {
     heading: 'On GitHub',
     intro: 'Live from my GitHub: contributions over the last year and what I’ve been working on lately.',
