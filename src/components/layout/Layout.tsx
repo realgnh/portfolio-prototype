@@ -4,6 +4,7 @@ import { sections } from '../../content/sections'
 import type { ShortcutAction } from '../../content/shortcuts'
 import { toggleMotion, toggleTheme } from '../../lib/preferences'
 import { useSectionReveal } from '../../lib/reveal'
+import { sceneNavigate } from '../../lib/sceneTransition'
 import { smoothScrollTo } from '../../lib/smoothScroll'
 import { ToastProvider } from '../../lib/toast'
 import { useShortcuts } from '../../lib/useShortcuts'
@@ -50,7 +51,7 @@ export function Layout() {
 
   // Keyboard shortcuts (src/content/shortcuts.ts).
   const runShortcut = useCallback((action: ShortcutAction) => {
-    if (action.type === 'go') navigate(action.to)
+    if (action.type === 'go') sceneNavigate(action.to, navigate)
     else if (action.type === 'theme') toggleTheme()
     else if (action.type === 'motion') toggleMotion()
     else if (action.type === 'search') openMenu()
