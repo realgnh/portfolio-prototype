@@ -2,7 +2,7 @@
 * { box-sizing: border-box; }
 
 /* Smooth scrolling is done in JS (lib/smoothScroll.ts) so it works even when the OS turns browser animations off. */
-html { scroll-padding-top: 6rem; }
+html { scroll-padding-top: 7.5rem; }
 
 body {
   margin: 0;
