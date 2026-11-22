@@ -35,12 +35,13 @@
 .bubble[data-path="3"] { --path-name: wander-3; }
 .bubble-inner {
   position: relative; display: grid; place-items: center; width: 3.6rem; height: 3.6rem; padding: 0.95rem;
-  border-radius: 999px; background: var(--tone); color: var(--tone-ink);
-  box-shadow: 0 6px 20px color-mix(in srgb, var(--tone-ink) 14%, transparent);
+  border-radius: 999px; background: var(--surface); color: var(--text);
+  border: 1px solid var(--line);
+  box-shadow: 0 8px 22px #12121214;
   animation: bubble-pop 650ms linear var(--enter, 0ms) backwards;
   transition: scale 300ms var(--ease), box-shadow 300ms;
 }
-.bubble:hover .bubble-inner, .bubble:focus-visible .bubble-inner { scale: 1.15; box-shadow: 0 10px 28px color-mix(in srgb, var(--tone-ink) 24%, transparent); }
+.bubble:hover .bubble-inner, .bubble:focus-visible .bubble-inner { scale: 1.15; box-shadow: 0 12px 30px #12121224; border-color: var(--text); }
 .bubble-tip {
   position: absolute; left: 50%; top: calc(100% + 0.5rem); translate: -50% 4px;
   padding: 0.25rem 0.6rem; border-radius: 999px; background: var(--button); color: var(--button-text);
@@ -59,9 +60,9 @@
 .sparks { position: absolute; inset: 0; pointer-events: none; will-change: transform, opacity; }
 .sparks i {
   position: absolute; top: 50%; left: 50%; width: 5px; height: 5px; margin: -2.5px 0 0 -2.5px; border-radius: 999px;
-  background: var(--tone-ink); opacity: 0; transform: rotate(var(--a)); will-change: transform;
+  background: var(--text); opacity: 0; transform: rotate(var(--a)); will-change: transform;
 }
-.sparks i:nth-child(even) { width: 4px; height: 4px; margin: -2px 0 0 -2px; background: var(--accent); }
+.sparks i:nth-child(even) { width: 4px; height: 4px; margin: -2px 0 0 -2px; background: var(--accent-fill); }
 /* Appear firework (only until the bubble is first clicked). */
 .bubble-burst:not([data-popped]) .sparks { animation: spark-fall 850ms cubic-bezier(.4, 0, .85, .6) calc(var(--enter, 0ms) + 200ms) backwards; }
 .bubble-burst:not([data-popped]) .sparks i { animation: spark-shoot 850ms cubic-bezier(.12, .75, .3, 1) calc(var(--enter, 0ms) + 200ms) backwards; }

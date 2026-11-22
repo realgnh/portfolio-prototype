@@ -1,10 +1,13 @@
-// Fonts (only the weights the design uses): Bricolage Grotesque for headings, Inter for text.
+// Fonts (only the weights the design uses): Bricolage Grotesque for headings,
+// IBM Plex Sans for text and IBM Plex Mono for small labels and tags.
 import '@fontsource/bricolage-grotesque/latin-600.css'
 import '@fontsource/bricolage-grotesque/latin-800.css'
-import '@fontsource/inter/latin-400.css'
-import '@fontsource/inter/latin-500.css'
-import '@fontsource/inter/latin-600.css'
-import '@fontsource/inter/latin-700.css'
+import '@fontsource/ibm-plex-sans/latin-400.css'
+import '@fontsource/ibm-plex-sans/latin-500.css'
+import '@fontsource/ibm-plex-sans/latin-600.css'
+import '@fontsource/ibm-plex-sans/latin-700.css'
+import '@fontsource/ibm-plex-mono/latin-400.css'
+import '@fontsource/ibm-plex-mono/latin-500.css'
 // Styles: tokens first (colours, fonts), then base, then each area.
 import './styles/tokens.css'
 import './styles/base.css'
