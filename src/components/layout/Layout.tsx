@@ -13,7 +13,8 @@ import { EasterEgg } from './EasterEgg'
 import { Footer } from './Footer'
 import { Header } from './Header'
 import { LoadingScreen } from './LoadingScreen'
-import { RouteProgress } from './RouteProgress'
+import { SceneSlate } from './SceneSlate'
+import { ScrollRuler } from './ScrollRuler'
 import { ShortcutsHelp } from './ShortcutsHelp'
 
 /**
@@ -82,7 +83,8 @@ export function Layout() {
   return (
     <ToastProvider>
       <LoadingScreen />
-      <RouteProgress />
+      <SceneSlate />
+      <ScrollRuler />
       <a className="skip-link" href="#main-content">{sections.skip}</a>
       <Header onOpenSearch={openMenu} />
       <main id="main-content" ref={main} tabIndex={-1}>

@@ -72,3 +72,13 @@ mark { padding: 0 0.2em; border-radius: 0.3em; background: var(--accent-soft); c
 .brand-initials { display: grid; place-items: center; font-weight: 700; font-size: 0.85rem; }
 :root[data-theme="dark"] .brand-logo { filter: brightness(1.25) saturate(0.9); }
 
+
+/* Onion skin (OnionText.tsx): two faint ghost copies trail behind the text on hover. */
+.onion { position: relative; isolation: isolate; }
+.onion::before, .onion::after {
+  position: absolute; inset: 0; z-index: -1; content: attr(data-text); pointer-events: none;
+  color: var(--accent-fill); opacity: 0; transition: opacity 250ms, transform 450ms var(--ease);
+}
+.onion::after { color: var(--text-muted); }
+.onion:hover::before { opacity: 0.22; transform: translateX(-0.06em); }
+.onion:hover::after { opacity: 0.12; transform: translateX(-0.12em); }

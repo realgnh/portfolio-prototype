@@ -94,18 +94,6 @@
 @keyframes toast-in { from { opacity: 0; transform: translateY(10px); } }
 
 
-/* Thin colourful bar that sweeps across the top on every page change (RouteProgress.tsx). */
-.route-progress {
-  position: fixed; z-index: 45; top: 0; left: 0; height: 3px; width: 100%;
-  background: linear-gradient(90deg, var(--tone-lilac-ink), var(--accent), var(--tone-mint-ink), var(--tone-peach-ink));
-  transform-origin: left; animation: route-sweep 650ms var(--ease) forwards;
-}
-@keyframes route-sweep {
-  0% { transform: scaleX(0); opacity: 1; }
-  70% { transform: scaleX(1); opacity: 1; }
-  100% { transform: scaleX(1); opacity: 0; }
-}
-
 /* Loading screen (LoadingScreen.tsx): a block hops along a segmented, game-style bar. */
 :root[data-loading] { overflow: hidden; }
 /* While loading, skip the heavier page-entrance work underneath so the cube stays smooth. */
@@ -113,11 +101,7 @@
 :root[data-loading] .bubble-float, :root[data-loading] .bubble-inner, :root[data-loading] .sparks, :root[data-loading] .sparks i { animation-play-state: paused; }
 .loader {
   position: fixed; z-index: 100; inset: 0; display: grid; place-items: center; padding: var(--gutter);
-  background:
-    radial-gradient(circle at 20% 25%, var(--tone-lilac), transparent 40%),
-    radial-gradient(circle at 80% 75%, var(--tone-peach), transparent 40%),
-    radial-gradient(circle at 75% 20%, var(--tone-mint), transparent 35%),
-    var(--bg);
+  background: var(--bg);
   transition: opacity 450ms ease, visibility 450ms;
 }
 .loader[data-leaving="true"] { opacity: 0; visibility: hidden; transition-duration: 500ms; }
@@ -175,10 +159,7 @@
   border: 2px solid var(--text); border-radius: 0.55rem; background: var(--surface); box-shadow: 0 3px 0 var(--text);
 }
 .loader-bar span { border-radius: 2px; background: color-mix(in srgb, var(--text) 8%, transparent); transition: background-color 200ms; }
-.loader-bar span[data-on]:nth-child(4n+1) { background: var(--tone-lilac-ink); }
-.loader-bar span[data-on]:nth-child(4n+2) { background: var(--accent); }
-.loader-bar span[data-on]:nth-child(4n+3) { background: var(--tone-mint-ink); }
-.loader-bar span[data-on]:nth-child(4n+4) { background: var(--tone-peach-ink); }
+.loader-bar span[data-on] { background: var(--accent-fill); }
 .loader-meta { display: flex; justify-content: space-between; gap: 1rem; font-size: 0.875rem; font-weight: 600; }
 .loader-tip { color: var(--text-muted); }
 .loader-percent { font-variant-numeric: tabular-nums; }
@@ -214,3 +195,80 @@
   box-shadow: inset 0 2px 0 #ff8a7a66, inset 0 -3px 0 #0000002e;
 }
 .loader[data-brick] .loader-logos svg { filter: brightness(0) invert(1); }
+
+/* ---------- Scroll ruler (ScrollRuler.tsx): ticks, playhead and a ◆ per section ---------- */
+.ruler {
+  --progress: 0;
+  position: fixed; z-index: 25; top: 0; left: 0; right: 0; height: 10px;
+  background: var(--bg);
+}
+.ruler-ticks {
+  position: absolute; inset: 0;
+  background:
+    repeating-linear-gradient(90deg, var(--line) 0 1px, transparent 1px 10px) bottom / 100% 4px no-repeat,
+    repeating-linear-gradient(90deg, var(--text-muted) 0 1px, transparent 1px 100px) bottom / 100% 7px no-repeat;
+  opacity: 0.7;
+}
+.ruler-fill { position: absolute; left: 0; bottom: 0; height: 2px; width: 100%; background: var(--accent-fill); transform-origin: left; transform: scaleX(var(--progress)); }
+.ruler-playhead {
+  position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none;
+  transform: translateX(calc(var(--progress) * (100% - 10px)));
+}
+.ruler-playhead::before {
+  position: absolute; top: 0; left: 0; width: 10px; height: 8px; background: var(--accent-fill);
+  clip-path: polygon(0 0, 100% 0, 50% 100%); content: "";
+}
+.ruler-key {
+  position: absolute; top: 1px; width: 9px; height: 9px; margin-left: -4.5px; padding: 0; border: 0;
+  background: var(--text); rotate: 45deg; cursor: pointer; transition: background-color 200ms, scale 200ms var(--ease);
+}
+.ruler-key:hover, .ruler-key:focus-visible { background: var(--accent-fill); scale: 1.3; }
+.ruler-key-label {
+  position: absolute; top: 14px; left: 50%; rotate: -45deg; translate: -50% 0; transform-origin: 0 0;
+  padding: 0.2rem 0.5rem; border-radius: 0.35rem; background: var(--text); color: var(--bg);
+  font: 500 0.7rem var(--font-mono); letter-spacing: 0.04em; text-transform: uppercase; white-space: nowrap;
+  opacity: 0; pointer-events: none; transition: opacity 150ms;
+}
+.ruler-key:hover .ruler-key-label, .ruler-key:focus-visible .ruler-key-label { opacity: 1; }
+.site-header { top: 10px; }
+
+/* ---------- Scene-cut slate between pages (SceneSlate.tsx) ---------- */
+.slate {
+  position: fixed; z-index: 90; inset: 0; display: grid; place-items: center; pointer-events: none;
+  background: var(--band); color: var(--band-text);
+  animation: slate-wipe 620ms cubic-bezier(.7, 0, .3, 1) both;
+}
+.slate-clapper {
+  position: absolute; top: 0; left: 0; right: 0; height: 2.25rem;
+  background: repeating-linear-gradient(-45deg, var(--accent-fill) 0 22px, var(--band) 22px 44px);
+}
+.slate-name {
+  font: 800 clamp(2.5rem, 9vw, 6rem) / 1 var(--font-display); letter-spacing: -0.04em; text-transform: uppercase;
+  animation: slate-name 620ms var(--ease) both;
+}
+@keyframes slate-wipe {
+  0%   { clip-path: inset(0 100% 0 0); }
+  35%  { clip-path: inset(0 0 0 0); }
+  62%  { clip-path: inset(0 0 0 0); }
+  100% { clip-path: inset(0 0 0 100%); }
+}
+@keyframes slate-name { 0%, 20% { opacity: 0; transform: translateX(-24px); } 40%, 70% { opacity: 1; transform: none; } 100% { opacity: 0; transform: translateX(24px); } }
+
+/* ---------- Jump game (lib/useJumpGame.ts), on the loading screen and the 404 page ---------- */
+.jump-lane { position: absolute; left: 0; right: 0; top: 2.25rem; height: 0.8rem; overflow: hidden; pointer-events: none; }
+.jump-block {
+  position: absolute; left: 0; bottom: 0; width: 12px; height: 12px; border-radius: 2px;
+  background: var(--text); will-change: transform;
+}
+.jump-block[data-hit] { background: var(--accent-fill); animation: block-hit 300ms ease-out; }
+@keyframes block-hit { 50% { scale: 1.5; } }
+.loader-leap.is-leaping { animation: leap 560ms cubic-bezier(.25, .8, .45, 1); }
+@keyframes leap {
+  0%   { translate: 0 0; animation-timing-function: cubic-bezier(.2, .7, .4, 1); }
+  50%  { translate: 0 -34px; animation-timing-function: cubic-bezier(.6, 0, .8, .3); }
+  100% { translate: 0 0; }
+}
+.loader-leap { position: absolute; inset: 0; }
+.jump-hint { margin-top: 0.4rem; font: 500 0.75rem var(--font-mono); color: var(--text-muted); text-align: center; letter-spacing: 0.02em; }
+.jump-hint strong { color: var(--text); }
+.loader { cursor: pointer; -webkit-tap-highlight-color: transparent; }
