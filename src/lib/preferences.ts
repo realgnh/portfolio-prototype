@@ -47,7 +47,14 @@ export function setTheme(next: Theme, origin?: { x: number; y: number }) {
   root.style.setProperty('--reveal-y', `${y}px`)
   root.dataset.themeSwitch = ''
   const transition = document.startViewTransition(apply)
-  transition.finished.finally(() => { delete root.dataset.themeSwitch })
+  // Safety net: if the browser abandons the transition, still switch the theme.
+  const ensure = () => { if (root.dataset.theme !== next) apply() }
+  const timer = window.setTimeout(ensure, 1000)
+  transition.finished.catch(() => {}).finally(() => {
+    window.clearTimeout(timer)
+    ensure()
+    delete root.dataset.themeSwitch
+  })
 }
 
 export function toggleTheme(origin?: { x: number; y: number }) {

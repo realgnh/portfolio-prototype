@@ -51,35 +51,32 @@
 
 /* Pops. Appearing: .bubble-inner springs up (bubble-pop) and a firework goes off as it peaks.
    Clicking: .bubble-burst squishes (bubble-burst) with a firework; clicking again restarts it.
-   Firework: 12 thin streaks (.sparks i) shoot out along their own angle and keep drifting outward
-   as they slow (spark-shoot), while the whole group falls with gravity and fades (spark-fall).
-   Only transform/opacity animate, so it stays smooth. */
+   Firework: 12 dots (.sparks i). From the very first frame, all at once: each dot flies outward
+   along its own angle and slows down (spark-shoot), while the whole group falls with gravity and
+   fades out (spark-fall). Only transform/opacity animate, so it stays smooth. */
 .bubble { cursor: pointer; -webkit-tap-highlight-color: transparent; }
 .bubble-burst { position: relative; display: block; border-radius: 999px; }
 .sparks { position: absolute; inset: 0; pointer-events: none; will-change: transform, opacity; }
 .sparks i {
-  position: absolute; top: 50%; left: 50%; width: 2px; height: 11px; margin: -5.5px 0 0 -1px; border-radius: 2px;
+  position: absolute; top: 50%; left: 50%; width: 5px; height: 5px; margin: -2.5px 0 0 -2.5px; border-radius: 999px;
   background: var(--tone-ink); opacity: 0; transform: rotate(var(--a)); will-change: transform;
 }
-.sparks i:nth-child(even) { height: 8px; margin-top: -4px; background: var(--accent); }
+.sparks i:nth-child(even) { width: 4px; height: 4px; margin: -2px 0 0 -2px; background: var(--accent); }
 /* Appear firework (only until the bubble is first clicked). */
-.bubble-burst:not([data-popped]) .sparks { animation: spark-fall 1100ms linear calc(var(--enter, 0ms) + 200ms) backwards; }
-.bubble-burst:not([data-popped]) .sparks i { animation: spark-shoot 1100ms linear calc(var(--enter, 0ms) + 200ms) backwards; }
+.bubble-burst:not([data-popped]) .sparks { animation: spark-fall 850ms cubic-bezier(.4, 0, .85, .6) calc(var(--enter, 0ms) + 200ms) backwards; }
+.bubble-burst:not([data-popped]) .sparks i { animation: spark-shoot 850ms cubic-bezier(.12, .75, .3, 1) calc(var(--enter, 0ms) + 200ms) backwards; }
 /* Click firework. */
-.bubble-burst[data-pop] { animation: bubble-burst 460ms linear; }
-.bubble-burst[data-pop] .sparks { animation: spark-fall 1050ms linear 40ms backwards; }
-.bubble-burst[data-pop] .sparks i { animation: spark-shoot 1050ms linear 40ms backwards; }
+.bubble-burst[data-pop] { animation: bubble-burst 420ms linear; }
+.bubble-burst[data-pop] .sparks { animation: spark-fall 850ms cubic-bezier(.4, 0, .85, .6) backwards; }
+.bubble-burst[data-pop] .sparks i { animation: spark-shoot 850ms cubic-bezier(.12, .75, .3, 1) backwards; }
 
 @keyframes spark-shoot {
-  0%   { opacity: 0; transform: rotate(var(--a)) translateY(-14px) scaleY(0.4); animation-timing-function: cubic-bezier(.1, .75, .3, 1); }
-  4%   { opacity: 1; }
-  32%  { opacity: 1; transform: rotate(var(--a)) translateY(-40px) scaleY(1.15); animation-timing-function: cubic-bezier(.2, .5, .5, 1); }
-  100% { opacity: 1; transform: rotate(var(--a)) translateY(-56px) scaleY(0.55); }
+  from { opacity: 1; transform: rotate(var(--a)) translateY(-14px) scale(1); }
+  to   { opacity: 1; transform: rotate(var(--a)) translateY(-52px) scale(0.55); }
 }
 @keyframes spark-fall {
-  0%, 35% { opacity: 1; transform: translateY(0); animation-timing-function: cubic-bezier(.45, 0, .9, .55); }
-  60%  { opacity: 0.95; }
-  100% { opacity: 0; transform: translateY(30px); }
+  from { opacity: 1; transform: translateY(0); }
+  to   { opacity: 0; transform: translateY(26px); }
 }
 
 /* Squish: swell, snap a little smaller, settle. Each step has its own easing for a soft, springy feel. */

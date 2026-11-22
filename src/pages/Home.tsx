@@ -3,7 +3,6 @@ import { About } from '../components/sections/About'
 import { ContactBand } from '../components/sections/ContactBand'
 import { CurrentlyList } from '../components/sections/CurrentlyList'
 import { ExperienceList } from '../components/sections/ExperienceList'
-import { GitHubActivity } from '../components/sections/GitHubActivity'
 import { Hero } from '../components/sections/Hero'
 import { Hobbies } from '../components/sections/Hobbies'
 import { ProjectCard } from '../components/sections/ProjectCard'
@@ -46,7 +45,6 @@ export function Home() {
         </ul>
       </section>
 
-      <GitHubActivity />
       <SkillsGrid />
       <Hobbies />
       <CurrentlyList />

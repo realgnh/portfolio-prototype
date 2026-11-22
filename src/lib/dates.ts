@@ -22,6 +22,13 @@ export function formatRange(start: string, end: string) {
   return start === end ? formatMonth(start) : `${formatMonth(start)} – ${formatMonth(end)}`
 }
 
+/** Number of months a role lasted, counting both the first and last month. */
+export function monthsBetween(start: string, end: string, today = new Date()) {
+  const from = parse(start, today)
+  const to = parse(end, today)
+  return (to.year - from.year) * 12 + (to.month - from.month) + 1
+}
+
 /**
  * Length of a role, counting both the first and last month (like LinkedIn):
  * April–June → '3 months', June–June → '1 month', 14 months → '1 year 2 months'.

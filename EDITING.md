@@ -15,8 +15,12 @@ Everything you'd normally change is text in **`src/content/`**. You rarely need 
 | Easter egg triggers, hint text and the character's message | `src/content/easterEggs.ts` |
 | Notes (blog posts) | Add a Markdown file to `src/content/notes/` (see the README there for the header) |
 | Keyboard shortcuts and the `?` cheat sheet | `src/content/shortcuts.ts` |
+| Where the GitHub section shows | It's on the Contact page: `<GitHubActivity />` in `src/pages/Contact.tsx` |
+| GitHub contribution chart and activity | `src/components/sections/ContributionCalendar.tsx` / `ContributionActivity.tsx`; data in `src/lib/github.ts` and `src/lib/contributions.ts` |
 | Your GitHub account for the activity panel | `profile.github` in `src/content/profile.ts` (uses your permanent account ID, so renames are fine) |
-| What "Ask my portfolio" knows | Nothing extra: it reads your content files. Wording and suggested questions are `chat` in `src/content/sections.ts` |
+| What "Ask my portfolio" knows | Nothing extra: it reads your content files |
+| Chat suggested questions, your availability and most impactful project | `src/content/chat.ts` |
+| Ready-made chat answers (availability, longest role, most impactful…) | `src/lib/chatAnswers.ts` |
 | The AI model or its instructions | `functions/api/ask.ts` |
 | A project's interactive demo | Create it in `src/demos/` and register it in `src/demos/index.ts` |
 | How many projects show on Home | `profile.featuredCount` in `src/content/profile.ts` |
@@ -78,7 +82,8 @@ src/
   styles/      ← CSS, split as in the table above
   main.tsx     ← fonts, CSS imports and the list of routes (URLs)
 functions/
-  api/ask.ts   ← Cloudflare Pages Function behind "Ask my portfolio" (Workers AI)
+  api/ask.ts                   ← Cloudflare Pages Function behind "Ask my portfolio" (Workers AI)
+  api/github-contributions.ts  ← serves your GitHub contribution chart (also served by vite.config.ts in dev)
 public/
   images/projects/   ← project screenshots
   images/companies/  ← company logos

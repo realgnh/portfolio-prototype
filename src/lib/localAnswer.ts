@@ -3,6 +3,7 @@
  * Used when the AI isn't available (local development, or before Workers AI is switched on).
  */
 import { profile } from '../content/profile'
+import { intentAnswer } from './chatAnswers'
 import { knowledgeDocs } from './knowledge'
 
 const stopWords = new Set('a an and are as at be can do does for from has have how i in is it me my of on or so tell the to what when where which who why with you your his her their alex'.split(' '))
@@ -12,6 +13,9 @@ function words(text: string) {
 }
 
 export function localAnswer(question: string): { text: string; link?: string } {
+  // Common questions have ready-made answers (lib/chatAnswers.ts).
+  const ready = intentAnswer(question)
+  if (ready) return ready
   const asked = words(question)
   const docs = knowledgeDocs()
   const matches = (terms: string[], word: string) => terms.some(term => term === word || (word.length > 3 && (term.startsWith(word) || word.startsWith(term))))

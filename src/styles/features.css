@@ -30,7 +30,11 @@ kbd {
 .chat-messages li[data-role="assistant"] { justify-self: start; border-bottom-left-radius: 0.3rem; background: var(--bg); }
 .chat-messages li[data-role="user"] { justify-self: end; border-bottom-right-radius: 0.3rem; background: var(--button); color: var(--button-text); }
 .chat-messages .arrow-link { font-size: 0.85rem; }
-.chat-suggestions { display: flex; flex-wrap: wrap; gap: 0.4rem; padding: 0 1rem 0.75rem; }
+.chat-suggestions { display: flex; flex-wrap: wrap; gap: 0.4rem; max-height: 7.5rem; overflow-y: auto; padding: 0 1rem 0.75rem; }
+/* Answers fade in word by word (FadingText in AskPortfolio.tsx); --i is each word's position. */
+.chat-words span, .chat-link { animation: word-in 420ms ease both; animation-delay: calc(var(--i) * 28ms); }
+@keyframes word-in { from { opacity: 0; transform: translateY(4px); } }
+.chat-words span { display: inline-block; }
 .chat-chip { cursor: pointer; font: inherit; font-size: 0.8rem; }
 .chat-chip:hover { border-color: var(--text); color: var(--text); }
 .chat-form { display: flex; gap: 0.5rem; padding: 0.75rem; border-top: 1px solid var(--line); }
@@ -57,27 +61,75 @@ kbd {
 .shortcuts-help > p { margin-top: 0.9rem; font-size: 0.85rem; }
 .footer-hint kbd { font-size: 0.75rem; }
 
-/* ---------- GitHub panel ---------- */
-.github-grid { display: grid; grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.3fr) minmax(0, 1fr); gap: 1rem; }
+/* ---------- GitHub section (Contact page) ---------- */
+/* GitHub's green scale for the contribution squares, light and dark. */
+:root { --level-0: #ebedf0; --level-1: #9be9a8; --level-2: #40c463; --level-3: #30a14e; --level-4: #216e39; }
+:root[data-theme="dark"] { --level-0: #1f2228; --level-1: #0e4429; --level-2: #006d32; --level-3: #26a641; --level-4: #39d353; }
+
+.github-layout { display: grid; grid-template-columns: minmax(0, 1.6fr) minmax(0, 1fr); gap: 1rem; align-items: start; }
+.github-calendar-card { grid-column: 1 / -1; }
+.github-side { display: grid; gap: 1rem; }
 .github-card { display: grid; align-content: start; gap: 0.9rem; padding: 1.25rem; border: 1px solid var(--line); border-radius: var(--radius); background: var(--surface); }
+.github-card > h3 { font-size: 1.15rem; }
 .github-profile { grid-template-columns: auto 1fr; align-items: center; }
 .github-profile img { width: 3rem; height: 3rem; border-radius: 999px; }
 .github-login { display: flex; align-items: center; gap: 0.4rem; font-family: var(--font-display); font-size: 1.2rem; font-weight: 800; }
 .github-mark { display: grid; width: 1.1rem; height: 1.1rem; }
 .github-profile .muted { font-size: 0.85rem; }
-.github-languages { grid-column: 1 / -1; display: flex; flex-wrap: wrap; gap: 0.4rem; }
-.github-languages li { padding: 0.2rem 0.65rem; border-radius: 999px; background: var(--bg); font-size: 0.8rem; font-weight: 600; }
-.github-repos li, .github-events li { display: grid; gap: 0.2rem; }
-.github-repos li + li, .github-events li + li { padding-top: 0.75rem; border-top: 1px solid var(--line); }
-.github-repos a { font-weight: 700; text-decoration: none; }
-.github-repos a:hover { color: var(--accent); }
+.github-languages { grid-column: 1 / -1; display: flex; flex-wrap: wrap; gap: 0.35rem 0.9rem; font-size: 0.85rem; font-weight: 600; }
+.github-languages li, .activity-language { display: inline-flex; align-items: center; gap: 0.35rem; }
+.github-languages i, .activity-language i { width: 0.6rem; height: 0.6rem; border-radius: 999px; }
+.github-repos li { display: grid; gap: 0.2rem; }
+.github-repos li + li { padding-top: 0.75rem; border-top: 1px solid var(--line); }
+.github-repos a, .activity a { font-weight: 600; color: var(--accent); text-decoration: none; }
+.github-repos a:hover, .activity a:hover { text-decoration: underline; }
 .github-repos p { font-size: 0.85rem; }
 .github-meta { display: flex; flex-wrap: wrap; gap: 0.75rem; color: var(--text-muted); }
-.github-events li { grid-template-columns: 1fr auto; gap: 0.75rem; font-size: 0.875rem; }
-.github-events time { white-space: nowrap; font-size: 0.8rem; }
-.github-skeleton > div { height: 11rem; border-radius: var(--radius); background: linear-gradient(90deg, var(--surface), var(--bg), var(--surface)); background-size: 200% 100%; animation: shimmer 1.4s linear infinite; }
+.github-private-note { font-size: 0.8rem; }
+.github-skeleton { display: grid; gap: 1rem; }
+.github-skeleton > div { height: 10rem; border-radius: var(--radius); background: linear-gradient(90deg, var(--surface), var(--bg), var(--surface)); background-size: 200% 100%; animation: shimmer 1.4s linear infinite; }
 @keyframes shimmer { to { background-position: -200% 0; } }
-@media (max-width: 60rem) { .github-grid { grid-template-columns: 1fr; } }
+@media (max-width: 60rem) { .github-layout { grid-template-columns: 1fr; } }
+
+/* Contribution chart (ContributionCalendar.tsx). */
+.calendar { display: grid; gap: 0.75rem; margin: 0; }
+.calendar-total { font-size: 1.05rem; }
+.calendar-scroll { overflow-x: auto; padding-bottom: 0.25rem; container-type: inline-size; }
+/* Squares grow to fill the card's width (but never below 0.62rem; narrow screens scroll instead). */
+.calendar-grid {
+  --cell: max(0.62rem, calc((100cqw - 2rem - var(--weeks) * 3px) / var(--weeks)));
+  display: grid; grid-template-columns: 2rem repeat(var(--weeks), var(--cell)); grid-template-rows: 1.1rem repeat(7, var(--cell));
+  gap: 3px; width: max-content; font-size: 0.72rem; color: var(--text-muted);
+}
+.calendar-corner { grid-row: 1; grid-column: 1; }
+.calendar-month { grid-row: 1; white-space: nowrap; overflow: visible; line-height: 1; }
+.calendar-row { display: contents; }
+.calendar-weekday { grid-column: 1; align-self: center; line-height: 1; }
+.calendar-grid i { border-radius: 3px; }
+.calendar-legend i { width: 0.72rem; height: 0.72rem; }
+.calendar-grid i, .calendar-legend i { display: block; border-radius: 2px; background: var(--level-0); outline: 1px solid color-mix(in srgb, var(--text) 6%, transparent); outline-offset: -1px; }
+.calendar-grid i[data-empty] { visibility: hidden; }
+.calendar-grid i[data-level="1"], .calendar-legend i[data-level="1"] { background: var(--level-1); }
+.calendar-grid i[data-level="2"], .calendar-legend i[data-level="2"] { background: var(--level-2); }
+.calendar-grid i[data-level="3"], .calendar-legend i[data-level="3"] { background: var(--level-3); }
+.calendar-grid i[data-level="4"], .calendar-legend i[data-level="4"] { background: var(--level-4); }
+.calendar-legend { display: flex; align-items: center; justify-content: flex-end; gap: 3px; font-size: 0.75rem; color: var(--text-muted); }
+.calendar-legend i { margin-inline: 1px; }
+
+/* Contribution activity (ContributionActivity.tsx). */
+.activity { display: grid; gap: 1.25rem; }
+.activity-heading { display: flex; align-items: baseline; gap: 0.4rem; padding-bottom: 0.5rem; border-bottom: 1px solid var(--line); font-family: var(--font-sans); font-size: 0.9rem; letter-spacing: 0; }
+.activity-count { margin-left: auto; font-size: 0.85rem; font-weight: 500; }
+.activity-group { display: grid; gap: 0.5rem; margin-top: 0.85rem; padding-left: 0.9rem; border-left: 2px solid var(--line); }
+.activity-title { display: flex; align-items: center; gap: 0.5rem; font-weight: 600; }
+.activity-icon { display: inline-grid; place-items: center; width: 1.5rem; height: 1.5rem; margin-left: -1.65rem; border: 1px solid var(--line); border-radius: 999px; background: var(--surface); font-size: 0.75rem; }
+.activity ul { display: grid; gap: 0.35rem; }
+.activity-row { display: flex; flex-wrap: wrap; align-items: center; gap: 0.25rem 0.75rem; font-size: 0.9rem; }
+.activity-row a { overflow-wrap: anywhere; }
+.activity-bar { flex: 0 0 auto; width: calc(5.5rem * var(--share)); min-width: 0.6rem; height: 0.45rem; margin-left: auto; border-radius: 999px; background: var(--level-3); }
+.activity-date { margin-left: auto; font-size: 0.8rem; }
+.activity-state { padding: 0.05rem 0.5rem; border-radius: 999px; background: var(--tone-mint); color: var(--tone-mint-ink); font-size: 0.75rem; font-weight: 600; }
+.activity-state[data-merged="true"] { background: var(--tone-lilac); color: var(--tone-lilac-ink); }
 
 /* ---------- Notes ---------- */
 .note-list { display: grid; border-top: 1px solid var(--line); }

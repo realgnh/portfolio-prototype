@@ -1,12 +1,33 @@
 import { useEffect, useRef, useState } from 'react'
 import { Link } from 'react-router-dom'
+import { chat } from '../../content/chat'
 import { sections } from '../../content/sections'
 import { localAnswer } from '../../lib/localAnswer'
 
-type Message = { role: 'user' | 'assistant'; content: string; link?: string; offline?: boolean }
+type Message = { role: 'user' | 'assistant'; content: string; link?: string; offline?: boolean; animate?: boolean }
 
 /** Waits at most this long for the AI before answering offline (ms). */
 const TIMEOUT = 12000
+/** The "typing…" dots show for at least this long, so answers don't pop in instantly (ms). */
+const MIN_THINKING = 700
+/** Delay between words as an answer fades in (ms). */
+const WORD_DELAY = 28
+
+/** An answer that fades in word by word, like a chatbot typing; its link appears when the text has finished. */
+function FadingText({ text, link, onLink }: { text: string; link?: string; onLink: () => void }) {
+  const parts = text.split(/(\s+)/)
+  let word = 0
+  return (
+    <>
+      <p className="chat-words">
+        {parts.map((part, index) => /^\s+$/.test(part)
+          ? part
+          : <span key={index} style={{ '--i': word++ } as React.CSSProperties}>{part}</span>)}
+      </p>
+      {link && <Link to={link} className="arrow-link chat-link" style={{ '--i': word } as React.CSSProperties} onClick={onLink}>{sections.chat.open} <span aria-hidden="true">→</span></Link>}
+    </>
+  )
+}
 
 async function ask(question: string, history: Message[]): Promise<Message> {
   try {
@@ -21,11 +42,11 @@ async function ask(question: string, history: Message[]): Promise<Message> {
     window.clearTimeout(timer)
     if (response.ok) {
       const data = await response.json() as { answer?: string }
-      if (data.answer) return { role: 'assistant', content: data.answer }
+      if (data.answer) return { role: 'assistant', content: data.answer, animate: true }
     }
   } catch { /* fall through to the offline answer */ }
   const offline = localAnswer(question)
-  return { role: 'assistant', content: offline.text, link: offline.link, offline: true }
+  return { role: 'assistant', content: offline.text, link: offline.link, offline: true, animate: true }
 }
 
 /**
@@ -41,6 +62,11 @@ export default function AskPortfolio({ onClose }: { onClose: () => void }) {
   const input = useRef<HTMLInputElement>(null)
   const list = useRef<HTMLOListElement>(null)
 
+  // All suggestions at first; afterwards up to three you haven't asked yet.
+  const asked = new Set(messages.filter(message => message.role === 'user').map(message => message.content))
+  const unasked = chat.suggestions.filter(suggestion => !asked.has(suggestion))
+  const suggestions = messages.length === 1 ? unasked : unasked.slice(0, 3)
+
   useEffect(() => input.current?.focus(), [])
   useEffect(() => { list.current?.scrollTo({ top: list.current.scrollHeight }) }, [messages, busy])
 
@@ -51,7 +77,7 @@ export default function AskPortfolio({ onClose }: { onClose: () => void }) {
     setMessages(current => [...current, { role: 'user', content: text }])
     setDraft('')
     setBusy(true)
-    const reply = await ask(text, history)
+    const [reply] = await Promise.all([ask(text, history), new Promise(resolve => window.setTimeout(resolve, MIN_THINKING))])
     setMessages(current => [...current, reply])
     setBusy(false)
     input.current?.focus()
@@ -66,15 +92,16 @@ export default function AskPortfolio({ onClose }: { onClose: () => void }) {
       <ol ref={list} className="chat-messages" aria-live="polite">
         {messages.map((message, index) => (
           <li key={index} data-role={message.role}>
-            <p>{message.content}</p>
-            {message.link && <Link to={message.link} className="arrow-link" onClick={onClose}>{copy.open} <span aria-hidden="true">→</span></Link>}
+            {message.animate
+              ? <FadingText text={message.content} link={message.link} onLink={onClose} />
+              : <p>{message.content}</p>}
           </li>
         ))}
         {busy && <li data-role="assistant" className="chat-typing" aria-label={copy.thinking}><span className="dots" aria-hidden="true"><span>.</span><span>.</span><span>.</span></span></li>}
       </ol>
-      {messages.length === 1 && (
+      {!busy && suggestions.length > 0 && (
         <ul className="chat-suggestions" aria-label="Suggested questions">
-          {copy.suggestions.map(suggestion => (
+          {suggestions.map(suggestion => (
             <li key={suggestion}><button type="button" className="chip chat-chip" onClick={() => send(suggestion)}>{suggestion}</button></li>
           ))}
         </ul>

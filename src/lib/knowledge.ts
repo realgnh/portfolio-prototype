@@ -3,12 +3,14 @@
  * Used by the AI (functions/api/ask.ts) and by the offline fallback (lib/localAnswer.ts),
  * so updating your content updates the chat automatically.
  */
+import { chat } from '../content/chat'
 import { experience } from '../content/experience'
 import { hobbies } from '../content/hobbies'
 import { milestones } from '../content/milestones'
 import { profile } from '../content/profile'
 import { projects } from '../content/projects'
 import { skillAreas, skills } from '../content/skills'
+import { longestRole, mostImpactfulProject } from './chatAnswers'
 import { formatDuration, formatRange } from './dates'
 
 export type KnowledgeDoc = { title: string; text: string; link?: string; keywords: string }
@@ -35,6 +37,24 @@ export function knowledgeDocs(): KnowledgeDoc[] {
         .join('. ') + '.',
       link: '/#skills',
       keywords: 'skills stack tech technologies languages tools frameworks know use program',
+    },
+    {
+      title: 'Availability',
+      text: chat.availability,
+      link: '/contact',
+      keywords: 'open available availability internship hire hiring looking',
+    },
+    {
+      title: 'Longest role',
+      text: (() => { const role = longestRole(); return role ? `${role.role} at ${role.company}, ${formatRange(role.start, role.end)} (${formatDuration(role.start, role.end)}).` : 'No roles listed yet.' })(),
+      link: '/experience',
+      keywords: 'longest long internship role duration',
+    },
+    {
+      title: 'Most impactful project',
+      text: `${mostImpactfulProject().title}: ${mostImpactfulProject().summary} Why: ${chat.mostImpactful.why}`,
+      link: `/projects/${mostImpactfulProject().slug}`,
+      keywords: 'impact impactful best biggest proudest project',
     },
     {
       title: 'Projects overview',

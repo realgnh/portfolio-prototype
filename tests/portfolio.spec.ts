@@ -8,6 +8,10 @@ import { differenceFrom, greetingFor } from '../src/lib/timeGreeting'
 import { easterEgg } from '../src/content/easterEggs'
 import { milestones } from '../src/content/milestones'
 import { shortcuts } from '../src/content/shortcuts'
+import { chat } from '../src/content/chat'
+import { formatDuration as duration } from '../src/lib/dates'
+import { longestRole, mostImpactfulProject } from '../src/lib/chatAnswers'
+import { parseContributions } from '../src/lib/contributions'
 import { localAnswer } from '../src/lib/localAnswer'
 import { navItems, pages } from '../src/content/navigation'
 import { profile } from '../src/content/profile'
@@ -334,52 +338,101 @@ test('keyboard shortcuts navigate, toggle and show the ? cheat sheet', async ({ 
   await expect(page).toHaveURL('/notes')
 })
 
-test('Ask my portfolio answers with the AI when available and offline otherwise', async ({ page }) => {
+test('Ask my portfolio answers with the AI when available and offline otherwise, fading text in', async ({ page }) => {
   await page.goto('/')
   await page.getByRole('button', { name: sections.chat.title }).click()
-  const chat = page.getByRole('dialog', { name: sections.chat.title })
-  await expect(chat).toBeVisible()
+  const chatPanel = page.getByRole('dialog', { name: sections.chat.title })
+  await expect(chatPanel).toBeVisible()
+  for (const suggestion of chat.suggestions) await expect(chatPanel.getByRole('button', { name: suggestion })).toBeVisible()
   // No /api/ask in local development → offline answer from the site's own content.
-  await chat.getByRole('button', { name: sections.chat.suggestions[0] }).click()
-  await expect(chat.locator('li[data-role="assistant"]').last()).toContainText(projects[0].title)
-  await expect(chat.getByRole('link', { name: sections.chat.open })).toHaveAttribute('href', '/projects')
+  await chatPanel.getByRole('button', { name: chat.suggestions[0] }).click()
+  const last = chatPanel.locator('li[data-role="assistant"]').last()
+  await expect(last).toContainText(projects[0].title)
+  await expect(last.locator('.chat-words span').first()).toHaveCSS('animation-name', 'word-in')
+  expect(await last.locator('.chat-words span').count()).toBeGreaterThan(5)
+  await expect(chatPanel.getByRole('link', { name: sections.chat.open })).toHaveAttribute('href', '/projects')
+  // Unasked suggestions stay available.
+  await expect(chatPanel.getByRole('button', { name: chat.suggestions[1] })).toBeVisible()
 
   await page.route('**/api/ask', route => route.fulfill({ json: { answer: 'Alex builds software and applied AI projects.' } }))
-  await chat.getByRole('textbox').fill('Summarise Alex')
-  await chat.getByRole('button', { name: sections.chat.send }).click()
-  await expect(chat.locator('li[data-role="assistant"]').last()).toHaveText('Alex builds software and applied AI projects.')
+  await chatPanel.getByRole('textbox').fill('Summarise Alex')
+  await chatPanel.getByRole('button', { name: sections.chat.send }).click()
+  await expect(chatPanel.locator('.chat-typing')).toBeVisible()
+  await expect(chatPanel.locator('li[data-role="assistant"]').last().locator('.chat-words')).toHaveText('Alex builds software and applied AI projects.')
   await page.keyboard.press('Escape')
-  await expect(chat).toBeHidden()
+  await expect(chatPanel).toBeHidden()
   await page.keyboard.press('a')
-  await expect(chat).toBeVisible()
+  await expect(chatPanel).toBeVisible()
 })
 
-test('offline answers pick the right topic', () => {
+test('offline answers give clear answers to common questions', () => {
   expect(localAnswer('What has Alex built?').link).toBe('/projects')
   expect(localAnswer('What is the tech stack?').link).toBe('/#skills')
   expect(localAnswer('How can I contact Alex?').link).toBe('/contact')
-  expect(localAnswer('Any internships?').link).toBe('/experience')
   expect(localAnswer('Does Alex do Roblox?').link).toBe('/#hobbies')
+
+  const open = localAnswer('Is Alex open to internships?')
+  expect(open.text).toContain(chat.availability)
+  expect(open.text).toContain(profile.email)
+
+  const experienceAnswer = localAnswer('What experience does Alex have?')
+  expect(experienceAnswer.link).toBe('/experience')
+  for (const job of experience) expect(experienceAnswer.text).toContain(job.company)
+
+  const longest = localAnswer('What was Alex’s longest internship?')
+  const role = longestRole()
+  expect(longest.text).toContain(role.company)
+  expect(longest.text).toContain(duration(role.start, role.end))
+
+  const impact = localAnswer('What’s Alex’s most impactful project?')
+  expect(impact.text).toContain(mostImpactfulProject().title)
+  expect(impact.link).toBe(`/projects/${chat.mostImpactful.slug}`)
 })
 
-test('the GitHub panel looks the account up by its permanent ID', async ({ page }) => {
+test('GitHub on Contact: contribution chart and activity, looked up by permanent ID', async ({ page }) => {
+  const thisMonth = new Date().toISOString().slice(0, 7)
   const requested: string[] = []
+  const days = Array.from({ length: 365 }, (_, index) => {
+    const date = new Date(Date.now() - (364 - index) * 86400000).toISOString().slice(0, 10)
+    return { date, count: index % 50 === 0 ? 3 : 0, level: index % 50 === 0 ? 2 : 0 }
+  })
+  await page.route('**/api/github-contributions?login=renamed-user', route => route.fulfill({ json: { total: 24, days } }))
   await page.route('https://api.github.com/**', route => {
     const url = route.request().url()
     requested.push(url)
     if (url.includes(`/user/${profile.github.id}`)) return route.fulfill({ json: { login: 'renamed-user', name: null, avatar_url: 'https://avatars.githubusercontent.com/u/1?v=4', html_url: 'https://github.com/renamed-user', public_repos: 3, followers: 2 } })
-    if (url.includes('/repos')) return route.fulfill({ json: [{ name: 'cool-repo', description: 'A repo', language: 'TypeScript', stargazers_count: 5, html_url: 'https://github.com/renamed-user/cool-repo', pushed_at: new Date().toISOString(), fork: false }] })
-    return route.fulfill({ json: [{ type: 'PushEvent', repo: { name: 'renamed-user/cool-repo' }, created_at: new Date().toISOString(), payload: { size: 2 } }] })
+    if (url.includes('/users/renamed-user/repos')) return route.fulfill({ json: [{ name: 'cool-repo', full_name: 'renamed-user/cool-repo', description: 'A repo', language: 'TypeScript', stargazers_count: 5, html_url: 'https://github.com/renamed-user/cool-repo', pushed_at: new Date().toISOString(), created_at: new Date().toISOString(), fork: false }] })
+    if (url.includes('/commits')) return route.fulfill({ json: Array.from({ length: 4 }, () => ({ commit: { author: { date: new Date().toISOString() } } })) })
+    if (url.includes('/pulls/7')) return route.fulfill({ json: { title: 'Add a feature', html_url: 'https://github.com/renamed-user/cool-repo/pull/7', merged_at: new Date().toISOString(), created_at: new Date().toISOString() } })
+    return route.fulfill({ json: [{ type: 'PullRequestEvent', repo: { name: 'renamed-user/cool-repo' }, created_at: new Date().toISOString(), payload: { action: 'opened', number: 7 } }] })
   })
   await page.route('https://avatars.githubusercontent.com/**', route => route.fulfill({ status: 204 }))
   await page.goto('/')
+  await expect(page.getByRole('region', { name: sections.github.heading })).toHaveCount(0)
+  await page.goto('/contact')
   const panel = page.getByRole('region', { name: sections.github.heading })
   await panel.scrollIntoViewIfNeeded()
-  await expect(panel).toContainText('renamed-user')
-  await expect(panel.getByRole('link', { name: 'cool-repo' })).toHaveAttribute('href', 'https://github.com/renamed-user/cool-repo')
-  await expect(panel).toContainText('Pushed 2 commits to cool-repo')
+  await expect(panel).toContainText('24 contributions in the last year')
+  await expect(panel.locator('.calendar-grid i[data-level]')).toHaveCount(365)
+  await expect(panel.locator('.calendar-grid i[data-level="2"]').first()).toHaveAttribute('title', /^3 contributions on /)
+  await expect(panel).toContainText('Created 4 commits in 1 repository')
+  await expect(panel).toContainText('Created 1 repository')
+  await expect(panel.getByRole('link', { name: 'Add a feature' })).toHaveAttribute('href', 'https://github.com/renamed-user/cool-repo/pull/7')
+  await expect(panel.locator('.activity-month').first()).toContainText(thisMonth.slice(0, 4))
   await expect(panel.getByRole('link', { name: sections.github.profile })).toHaveAttribute('href', 'https://github.com/renamed-user')
   expect(requested[0]).toContain(`/user/${profile.github.id}`)
+  expect(requested.some(url => url.includes('/commits?author=renamed-user'))).toBe(true)
+})
+
+test('the contribution parser reads GitHub calendar HTML', () => {
+  const html = `<h2 class="f4"> 42
+      contributions
+        in the last year </h2>
+    <td tabindex="0" data-ix="0" data-date="2026-11-20" id="contribution-day-component-5-50" data-level="0" role="gridcell"></td>
+    <td tabindex="0" data-date="2026-11-21" id="contribution-day-component-6-50" data-level="3" role="gridcell"></td>
+    <tool-tip id="t1" for="contribution-day-component-5-50" popover="manual">No contributions on November 20th.</tool-tip>
+    <tool-tip id="t2" for="contribution-day-component-6-50" popover="manual">9 contributions on November 21st.</tool-tip>`
+  expect(parseContributions(html)).toEqual({ total: 42, days: [{ date: '2026-11-20', count: 0, level: 0 }, { date: '2026-11-21', count: 9, level: 3 }] })
 })
 
 test('Notes list Markdown files and render them', async ({ page }) => {
