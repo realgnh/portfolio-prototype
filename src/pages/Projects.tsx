@@ -29,7 +29,7 @@ export function Projects() {
       <div className="filter-row" role="group" aria-label="Filter projects by area">
         <button type="button" className="filter" aria-pressed={!area} onClick={() => choose(null)}>{sections.projects.allFilter}</button>
         {usedAreas.map(name => (
-          <button key={name} type="button" className="filter" data-tone={skillAreas[name].tone} aria-pressed={area === name} onClick={() => choose(name)}>
+          <button key={name} type="button" className="filter" aria-pressed={area === name} onClick={() => choose(name)}>
             {skillAreas[name].label}
           </button>
         ))}

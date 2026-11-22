@@ -11,7 +11,7 @@ import { formatDuration, formatMonth, formatRange } from './dates'
 export type TimelineEntry =
   | { kind: 'role'; key: string; sortDate: string; title: string; subtitle: string; when: string; length: string; text: string[]; logo?: string; company: string }
   | { kind: 'project'; key: string; sortDate: string; title: string; subtitle: string; when: string; text: string[]; slug: string }
-  | { kind: 'milestone'; key: string; sortDate: string; title: string; when: string; text: string[]; emoji: string }
+  | { kind: 'milestone'; key: string; sortDate: string; title: string; when: string; text: string[] }
 
 /** Turns 'present' into a sortable value. */
 function sortable(date: string) {
@@ -49,7 +49,6 @@ export function buildTimeline(): TimelineEntry[] {
       title: milestone.title,
       when: formatMonth(milestone.date),
       text: [milestone.text],
-      emoji: milestone.emoji,
     })),
   ]
   return entries.sort((a, b) => b.sortDate.localeCompare(a.sortDate))

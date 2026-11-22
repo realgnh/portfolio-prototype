@@ -1,7 +1,7 @@
 import { Suspense } from 'react'
 import { Link, useParams } from 'react-router-dom'
 import { BrandIcon } from '../components/ui/BrandIcon'
-import { Chip } from '../components/ui/Chip'
+import { Tags } from '../components/ui/Tags'
 import { ProjectMedia } from '../components/sections/ProjectMedia'
 import { Metadata } from '../components/ui/Metadata'
 import { projects } from '../content/projects'
@@ -29,9 +29,7 @@ export function ProjectDetail() {
       <Link className="arrow-link back-link" to="/work"><span aria-hidden="true">←</span> {copy.back}</Link>
 
       <header className="page-header">
-        <ul className="chip-row" aria-label="Tags">
-          {project.tags.map(tag => <li key={tag}><Chip tone={tone}>{tag}</Chip></li>)}
-        </ul>
+        <Tags items={[...project.tags, project.year]} />
         <h1>{project.title}</h1>
         <p className="lede muted">{project.summary}</p>
       </header>
@@ -52,7 +50,7 @@ export function ProjectDetail() {
         <h2 id="results-title" className="visually-hidden">Results</h2>
         <dl className="metrics">
           {project.metrics.map(({ value, label }) => (
-            <div key={label} data-tone={tone}><dd>{value}</dd><dt>{label}</dt></div>
+            <div key={label}><dd>{value}</dd><dt>{label}</dt></div>
           ))}
         </dl>
       </section>

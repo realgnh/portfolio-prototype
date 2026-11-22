@@ -14,7 +14,7 @@ export const easterEgg = {
 
   /** Small hint in the footer. Set to '' to hide it. */
   hint: 'Psst… type “roblox” anywhere, or tap the AK. logo 5 times.',
-  speech: 'Hey! You found the secret 🎉',
+  speech: 'Hey! You found the secret.',
   /** How long the character stays (milliseconds). */
   stay: 6000,
   /** Toast shown the first time, about the loading-screen brick. */

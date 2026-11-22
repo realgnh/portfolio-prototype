@@ -9,13 +9,16 @@
 .lede { font-size: 1.15rem; }
 
 .filter-row { display: flex; flex-wrap: wrap; align-items: center; gap: 0.5rem; }
+.filter-row { gap: 0.25rem 1.5rem; border-bottom: 1px solid var(--line); }
+/* Filters are underlined tabs, not pills. */
 .filter {
-  padding: 0.45rem 0.95rem; border: 1px solid var(--line); border-radius: 999px; background: var(--surface);
-  font-size: 0.875rem; font-weight: 600; cursor: pointer; transition: background-color 200ms, border-color 200ms;
+  position: relative; padding: 0.6rem 0; border: 0; background: none; color: var(--text-muted);
+  font-size: 0.95rem; font-weight: 500; cursor: pointer; transition: color 200ms;
 }
-.filter:hover { border-color: var(--text); }
-.filter[aria-pressed="true"] { border-color: var(--button); background: var(--button); color: var(--button-text); }
-.filter[data-tone][aria-pressed="true"] { border-color: var(--tone-ink); background: var(--tone); color: var(--tone-ink); }
+.filter::after { position: absolute; left: 0; right: 0; bottom: -1px; height: 2px; background: var(--accent-fill); transform: scaleX(0); transform-origin: left; transition: transform 300ms var(--ease); content: ""; }
+.filter:hover { color: var(--text); }
+.filter[aria-pressed="true"] { color: var(--text); }
+.filter[aria-pressed="true"]::after { transform: scaleX(1); }
 .filter-count { margin-left: auto; font-size: 0.875rem; }
 
 .project-page .back-link { justify-self: start; }
@@ -29,9 +32,10 @@
 .tool-icon { display: grid; width: 1.35rem; height: 1.35rem; padding: 0.15rem; color: var(--text-muted); }
 
 .metrics { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 14rem), 1fr)); gap: 1rem; }
-.metrics > div { display: grid; gap: 0.25rem; padding: 1.5rem; border-radius: var(--radius); background: var(--tone); color: var(--tone-ink); }
+.metrics > div { display: grid; gap: 0.35rem; padding-top: 1rem; border-top: 2px solid var(--text); }
 .metrics dd { font-family: var(--font-display); font-size: clamp(2.5rem, 7vw, 3.75rem); font-weight: 800; letter-spacing: -0.05em; line-height: 1; }
-.metrics dt { font-weight: 600; }
+.metrics dd { color: var(--accent); }
+.metrics dt { font: 500 0.78rem var(--font-mono); letter-spacing: 0.06em; text-transform: uppercase; color: var(--text-muted); }
 
 .summary-card { display: grid; gap: 0.6rem; padding: 1.5rem; border: 1px solid var(--line); border-radius: var(--radius); background: var(--surface); }
 .summary-card h2, .story h2, .faq h2, .resume-section > h2 { font-size: 1.25rem; letter-spacing: -0.02em; }
@@ -68,12 +72,13 @@
 
 .contact-grid { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 2fr); gap: 1rem; }
 .contact-card { display: grid; align-content: start; gap: 0.75rem; padding: 1.5rem; border: 1px solid var(--line); border-radius: var(--radius); background: var(--tone, var(--surface)); }
-.contact-card[data-tone] .eyebrow, .contact-card[data-tone] .muted { color: var(--tone-ink); }
-.contact-card[data-tone] { border-color: transparent; color: var(--tone-ink); }
+.contact-card[data-tone] { border-color: var(--band); background: var(--band); color: var(--band-text); }
+.contact-card[data-tone] .eyebrow, .contact-card[data-tone] .muted { color: var(--band-muted); }
+.contact-card[data-tone] .local-time { color: var(--accent-fill); }
 .contact-card-main { grid-column: 1 / -1; }
 .contact-email { font-family: var(--font-display); font-size: clamp(1.6rem, 5vw, 2.75rem); font-weight: 800; letter-spacing: -0.04em; overflow-wrap: anywhere; text-decoration: none; }
 .contact-email:hover { color: var(--accent); }
-.time-greeting { margin-top: auto; padding-top: 0.75rem; border-top: 1px solid color-mix(in srgb, var(--tone-ink) 20%, transparent); font-size: 0.95rem; }
+.time-greeting { margin-top: auto; padding-top: 0.75rem; border-top: 1px solid var(--band-line); font-size: 0.95rem; }
 .local-time { font-family: var(--font-display); font-size: 2.5rem; font-weight: 800; letter-spacing: -0.04em; line-height: 1; }
 .social-list { display: grid; }
 .social-list li + li { border-top: 1px solid var(--line); }
@@ -111,7 +116,7 @@
 .timeline-line { position: absolute; top: 0.5rem; bottom: 0.5rem; left: 1.375rem; width: 3px; border-radius: 3px; background: var(--line); overflow: hidden; }
 .timeline-fill {
   height: 100%; transform-origin: top; transform: scaleY(var(--fill));
-  background: linear-gradient(var(--tone-lilac-ink), var(--accent), var(--tone-mint-ink), var(--tone-peach-ink));
+  background: var(--accent-fill);
 }
 .timeline ol { display: grid; gap: 1.25rem; }
 .timeline-item { display: grid; grid-template-columns: 2.75rem minmax(0, 1fr); gap: 1.25rem; align-items: start; }
@@ -122,11 +127,10 @@
   transition: border-color 400ms, background-color 400ms, color 400ms, transform 400ms var(--ease);
 }
 .timeline-dot img { width: 100%; height: 100%; object-fit: contain; }
-.timeline-item[data-kind="milestone"] .timeline-dot { font-size: 1.15rem; }
+.timeline-item[data-kind="milestone"] .timeline-dot { font-size: 0.95rem; }
 .timeline-item[data-reached] .timeline-dot { border-color: var(--accent); color: var(--text); transform: scale(1.08); }
-.timeline-item[data-kind="role"][data-reached] .timeline-dot { background: var(--tone-sky); }
-.timeline-item[data-kind="project"][data-reached] .timeline-dot { background: var(--tone-peach); color: var(--tone-peach-ink); }
-.timeline-item[data-kind="milestone"][data-reached] .timeline-dot { background: var(--tone-butter); }
+.timeline-item[data-reached] .timeline-dot { background: var(--surface); }
+.timeline-item[data-kind="project"] .timeline-dot, .timeline-item[data-kind="milestone"] .timeline-dot { color: var(--accent); }
 .timeline-card {
   display: grid; gap: 0.35rem; padding: 1.1rem 1.25rem; border: 1px solid var(--line); border-radius: var(--radius); background: var(--surface);
   opacity: 0.55; transform: translateX(8px); transition: opacity 500ms var(--ease), transform 500ms var(--ease), box-shadow 300ms;
@@ -136,10 +140,7 @@
 .timeline-card h3 a { text-decoration: none; }
 .timeline-card h3 a:hover { color: var(--accent); }
 .timeline-meta { display: flex; flex-wrap: wrap; align-items: center; gap: 0.5rem; font-size: 0.85rem; font-weight: 600; }
-.timeline-kind { padding: 0.15rem 0.6rem; border-radius: 999px; background: var(--bg); font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.06em; color: var(--text-muted); }
-[data-kind="role"] .timeline-kind { background: var(--tone-sky); color: var(--tone-sky-ink); }
-[data-kind="project"] .timeline-kind { background: var(--tone-peach); color: var(--tone-peach-ink); }
-[data-kind="milestone"] .timeline-kind { background: var(--tone-butter); color: var(--tone-butter-ink); }
+.timeline-kind { font: 500 0.72rem var(--font-mono); letter-spacing: 0.08em; text-transform: uppercase; color: var(--accent); }
 .timeline-text { font-size: 0.95rem; }
 
 /* ---------- Hobby projects (HobbyProjects.tsx) ---------- */

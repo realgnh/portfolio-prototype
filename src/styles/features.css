@@ -16,7 +16,7 @@ kbd {
   box-shadow: 0 12px 34px #00000033; transition: transform 250ms var(--ease), padding 300ms var(--ease);
 }
 .chat-launcher:hover { transform: translateY(-2px); }
-.chat-launcher-icon { color: var(--tone-lilac); font-size: 1.1rem; }
+.chat-launcher-icon { width: 0.55rem; height: 0.55rem; border-radius: 999px; background: var(--accent-fill); }
 .chat-launcher-label { overflow: hidden; max-width: 13rem; white-space: nowrap; transition: max-width 300ms var(--ease), opacity 200ms; }
 .chat-launcher[data-compact="true"] { gap: 0; padding: 0.9rem 1.15rem; }
 .chat-launcher[data-compact="true"] .chat-launcher-label { max-width: 0; opacity: 0; }
@@ -40,13 +40,16 @@ kbd {
 .chat-messages li[data-role="assistant"] { justify-self: start; border-bottom-left-radius: 0.3rem; background: var(--bg); }
 .chat-messages li[data-role="user"] { justify-self: end; border-bottom-right-radius: 0.3rem; background: var(--button); color: var(--button-text); }
 .chat-messages .arrow-link { font-size: 0.85rem; }
-.chat-suggestions { display: flex; flex-wrap: wrap; gap: 0.4rem; max-height: 7.5rem; overflow-y: auto; overscroll-behavior: contain; padding: 0 1rem 0.75rem; }
+.chat-suggestions { display: grid; gap: 0.15rem; max-height: 7.5rem; overflow-y: auto; overscroll-behavior: contain; padding: 0 1rem 0.75rem; }
 /* Answers fade in word by word (FadingText in AskPortfolio.tsx); --i is each word's position. */
 .chat-words span, .chat-link { animation: word-in 420ms ease both; animation-delay: calc(var(--i) * 28ms); }
 @keyframes word-in { from { opacity: 0; transform: translateY(4px); } }
 .chat-words span { display: inline-block; }
-.chat-chip { cursor: pointer; font: inherit; font-size: 0.8rem; }
-.chat-chip:hover { border-color: var(--text); color: var(--text); }
+.chat-chip {
+  padding: 0.35rem 0; border: 0; border-bottom: 1px solid var(--line); background: none; color: var(--text-muted);
+  font: inherit; font-size: 0.85rem; text-align: left; cursor: pointer; transition: color 200ms, border-color 200ms;
+}
+.chat-chip:hover { border-color: var(--accent-fill); color: var(--text); }
 .chat-form { display: flex; gap: 0.5rem; padding: 0.75rem; border-top: 1px solid var(--line); }
 .chat-form input {
   flex: 1; min-width: 0; padding: 0.6rem 0.9rem; border: 1px solid var(--line); border-radius: 999px;
@@ -146,8 +149,8 @@ kbd {
 .activity-row a { overflow-wrap: anywhere; }
 .activity-bar { flex: 0 0 auto; width: calc(5.5rem * var(--share)); min-width: 0.6rem; height: 0.45rem; margin-left: auto; border-radius: 999px; background: var(--level-3); }
 .activity-date { margin-left: auto; font-size: 0.8rem; }
-.activity-state { padding: 0.05rem 0.5rem; border-radius: 999px; background: var(--tone-mint); color: var(--tone-mint-ink); font-size: 0.75rem; font-weight: 600; }
-.activity-state[data-merged="true"] { background: var(--tone-lilac); color: var(--tone-lilac-ink); }
+.activity-state { font: 500 0.72rem var(--font-mono); letter-spacing: 0.06em; text-transform: uppercase; color: var(--text-muted); }
+.activity-state[data-merged="true"] { color: var(--accent); }
 
 /* ---------- Notes ---------- */
 .note-list { display: grid; border-top: 1px solid var(--line); }
@@ -189,8 +192,8 @@ kbd {
 .demo-tabs { display: flex; flex-wrap: wrap; gap: 0.5rem; }
 .demo-stage { display: grid; gap: 1rem; justify-items: center; padding: 1.5rem 1rem; border-radius: calc(var(--radius) - 0.25rem); background: var(--tone-peach); }
 .demo-progress { display: flex; gap: 0.3rem; }
-.demo-progress span { width: 1.6rem; height: 0.35rem; border-radius: 999px; background: color-mix(in srgb, var(--tone-peach-ink) 22%, transparent); }
-.demo-progress span[data-on] { background: var(--tone-peach-ink); }
+.demo-progress span { width: 1.6rem; height: 0.35rem; border-radius: 999px; background: var(--line); }
+.demo-progress span[data-on] { background: var(--accent-fill); }
 .demo-screen {
   display: grid; gap: 0.7rem; width: min(100%, 20rem); padding: 1.25rem; border-radius: 1rem; background: var(--surface);
   box-shadow: var(--shadow); animation: demo-in 260ms var(--ease);

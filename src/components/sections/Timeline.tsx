@@ -54,7 +54,7 @@ export function Timeline() {
             <div className="timeline-dot" aria-hidden="true">
               {entry.kind === 'role' && (entry.logo ? <img src={`/images/companies/${entry.logo}`} alt="" /> : initials(entry.company))}
               {entry.kind === 'project' && '◆'}
-              {entry.kind === 'milestone' && entry.emoji}
+              {entry.kind === 'milestone' && '◆'}
             </div>
             <div className="timeline-card">
               <p className="timeline-meta">

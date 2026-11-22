@@ -125,7 +125,7 @@ export default function AskPortfolio({ onClose }: { onClose: () => void }) {
       {!busy && suggestions.length > 0 && (
         <ul className="chat-suggestions" aria-label="Suggested questions">
           {suggestions.map(suggestion => (
-            <li key={suggestion}><button type="button" className="chip chat-chip" onClick={() => send(suggestion)}>{suggestion}</button></li>
+            <li key={suggestion}><button type="button" className="chat-chip" onClick={() => send(suggestion)}>{suggestion}</button></li>
           ))}
         </ul>
       )}
