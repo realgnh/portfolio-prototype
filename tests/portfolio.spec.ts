@@ -478,6 +478,34 @@ test('click pops swell once and settle without extra bounces', async ({ page }) 
   expect(Math.min(...scales)).toBeGreaterThanOrEqual(0.999)
 })
 
+test('the GitHub year picker loads each calendar year', async ({ page }) => {
+  const asked: string[] = []
+  await page.route('**/api/github-contributions?**', route => {
+    const url = new URL(route.request().url())
+    asked.push(url.search)
+    const year = url.searchParams.get('year')
+    const days = Array.from({ length: 30 }, (_, index) => ({ date: `${year ?? '2026'}-01-${String(index + 1).padStart(2, '0')}`, count: 1, level: 1 }))
+    return route.fulfill({ json: { total: year ? Number(year) % 100 : 42, days, year: year ? Number(year) : null } })
+  })
+  await page.route('https://api.github.com/**', route => {
+    const url = route.request().url()
+    if (url.includes(`/user/${profile.github.id}`)) return route.fulfill({ json: { login: 'someone', name: null, avatar_url: 'https://avatars.githubusercontent.com/u/1?v=4', html_url: 'https://github.com/someone', public_repos: 1, followers: 0, created_at: '2023-05-01T00:00:00Z' } })
+    return route.fulfill({ json: [] })
+  })
+  await page.route('https://avatars.githubusercontent.com/**', route => route.fulfill({ status: 204 }))
+  await page.goto('/contact')
+  const panel = page.getByRole('region', { name: sections.github.heading })
+  await panel.scrollIntoViewIfNeeded()
+  await expect(panel).toContainText('42 contributions in the last year')
+  const picker = panel.getByRole('group', { name: sections.github.yearPicker })
+  const thisYear = new Date().getFullYear()
+  await expect(picker.getByRole('button')).toHaveCount(1 + (thisYear - 2023 + 1))
+  await picker.getByRole('button', { name: '2024' }).click()
+  await expect(panel).toContainText('24 contributions in 2024')
+  await expect(picker.getByRole('button', { name: '2024' })).toHaveAttribute('aria-pressed', 'true')
+  expect(asked.some(search => search.includes('year=2024'))).toBe(true)
+})
+
 test('the contribution parser reads GitHub calendar HTML', () => {
   const html = `<h2 class="f4"> 42
       contributions
@@ -686,10 +714,28 @@ test('the scroll ruler has one keyframe per scene on Home', async ({ page }) => 
   expect(scenes.length).toBeGreaterThan(4)
   const ruler = page.locator('.ruler')
   await expect(ruler.locator('.ruler-key')).toHaveCount(scenes.length)
-  await expect(ruler.locator('.ruler-key').first()).toHaveAttribute('aria-label', `Jump to ${scenes[0]}`)
-  // Clicking a keyframe scrolls to that section.
-  await ruler.getByRole('button', { name: 'Jump to Skills' }).click()
+  await expect(ruler.locator('.ruler-key').first()).toHaveText(scenes[0]!)
+  await expect(ruler.locator('.ruler-key').first()).toHaveAttribute('data-active', 'true')
+  // Clicking a keyframe scrolls to that section, and it becomes the current one.
+  const skills = ruler.getByRole('button', { name: 'Skills', exact: true })
+  await skills.click()
   await expect.poll(() => page.evaluate(() => scrollY)).toBeGreaterThan(500)
+  await expect(skills).toHaveAttribute('data-active', 'true')
+  // Keyframes are spread out, not stacked at the end.
+  const lefts = await ruler.locator('.ruler-key').evaluateAll(els => els.map(el => parseFloat((el as HTMLElement).style.left)))
+  expect(new Set(lefts.map(left => Math.round(left))).size).toBe(lefts.length)
+})
+
+test('page changes wait for the slate to cover the screen', async ({ page }) => {
+  await page.emulateMedia({ reducedMotion: 'reduce' }) // the site keeps animations on regardless
+  await page.goto('/')
+  await mainNav(page).getByRole('link', { name: pages.projects.label }).click()
+  // Straight after the click the slate is showing and we haven't left Home yet.
+  await expect(page.locator('.slate')).toBeVisible()
+  expect(new URL(page.url()).pathname).toBe('/')
+  await expect(page).toHaveURL('/work')
+  await expect(page.locator('.slate-name')).toHaveText(pages.projects.title)
+  await expect(page.locator('.slate')).toHaveCount(0, { timeout: 3000 })
 })
 
 test('the 404 page has a jump game that starts with Space', async ({ page }) => {

@@ -16,7 +16,7 @@ Everything you'd normally change is text in **`src/content/`**. You rarely need 
 | Easter egg triggers, hint text and the character's message | `src/content/easterEggs.ts` |
 | Keyboard shortcuts and the `?` cheat sheet | `src/content/shortcuts.ts` (the floating Ask and keyboard buttons are in `src/components/chat/ChatLauncher.tsx`) |
 | Where the GitHub section shows | It's on the Contact page: `<GitHubActivity />` in `src/pages/Contact.tsx` |
-| GitHub contribution chart and activity | `src/components/sections/ContributionCalendar.tsx` / `ContributionActivity.tsx`; data in `src/lib/github.ts` and `src/lib/contributions.ts` |
+| GitHub contribution chart, year picker and activity | `src/components/sections/ContributionCalendar.tsx` / `ContributionActivity.tsx`; data in `src/lib/github.ts` and `src/lib/contributions.ts` |
 | Your GitHub account for the activity panel | `profile.github` in `src/content/profile.ts` (uses your permanent account ID, so renames are fine) |
 | What "Ask my portfolio" knows | Nothing extra: it reads your content files |
 | Chat suggested questions, your availability and most impactful project | `src/content/chat.ts` |
@@ -47,7 +47,9 @@ Everything you'd normally change is text in **`src/content/`**. You rarely need 
 | Header, menu, footer, Quick search, toast, loading screen, page progress bar | `src/styles/layout.css` |
 | Hero, bubbles (and their wandering paths), experience rows, project cards, Selected work band, Skills, About, orange Contact band | `src/styles/home.css` |
 | Work, project detail, Hobby projects, Experience, Résumé, Contact and 404 pages | `src/styles/pages.css` |
-| Scroll ruler, page-change slate, loader and jump game | `src/styles/layout.css` |
+| Scroll ruler (look and size) | `src/styles/ruler.css` (`--ruler-height` at the top) |
+| Page-change slate, loader and jump game | `src/styles/layout.css` |
+| Navigating from code with the slate transition (e.g. a new Quick search action) | `sceneNavigate(to, navigate)` from `src/lib/sceneTransition.ts`; links get it automatically |
 | Which sections get a ◆ on the scroll ruler | Add `data-scene="Name"` to a section (see `src/pages/Home.tsx`) |
 | Page names on the scene-cut slate | `src/lib/sceneName.ts` |
 | Jump game speed, block spacing and jump length | Constants at the top of `src/lib/useJumpGame.ts` |
