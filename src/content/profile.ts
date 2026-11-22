@@ -1,5 +1,3 @@
-import type { Area } from './skills'
-
 /**
  * PROFILE — your name, hero text, contact details and what's on your mind.
  * Everything here is placeholder text; replace it with your own.
@@ -12,14 +10,12 @@ export const profile = {
   /** Small chip above your name. Set to '' to hide it. */
   status: 'Open to internships · Summer 20XX',
 
-  /** Chips under your name; `area` picks the colour (see skills.ts). */
-  roles: [
-    { label: 'CS student', area: 'languages' },
-    { label: 'Software engineer', area: 'frontend' },
-    { label: 'AI curious', area: 'ai' },
-  ] satisfies { label: string; area: Area }[],
+  /** The line under your name in the opening section. */
+  headline: 'Software engineer who ships games to real players.',
+  /** Plain-text roles shown above your name, separated by slashes. */
+  roles: ['CS @ GIU', 'Software & AI', 'Roblox developer'],
 
-  intro: 'CS student at GIU, building software and learning how to make AI systems people can trust.',
+  intro: 'I study Computer Science at GIU and build software, applied-AI tools and Roblox games. I like work I can measure.',
 
   /** The "About" section on Home: one bold line, one short paragraph and a few quick facts. */
   about: {
@@ -63,14 +59,10 @@ export const profile = {
   /** `start` / `end` are 'YYYY-MM'. Set `expected: true` while you're still studying. */
   education: [{ program: 'B.Sc. Computer Science', school: 'German International University (GIU)', start: '2024-09', end: '2028-06', expected: true }],
 
-  /** "Currently working on…" cards on Home. Keep it to three. */
-  currently: [
-    { label: 'Building', text: 'A small PyTorch text classifier with a written error analysis.' },
-    { label: 'Reading', text: 'How teams evaluate retrieval-augmented generation against keyword search.' },
-    { label: 'Learning', text: 'Docker and deploying FastAPI services properly.' },
-  ],
+  /** One line under "The short version" on Home: what you're building right now. */
+  currently: 'A small PyTorch text classifier, with a written error analysis.',
 
-  /** How many projects appear on Home (the first N in projects.ts). */
+  /** How many projects appear in Selected work on Home (the first N in projects.ts; the first is the big one). */
   featuredCount: 3,
 
   contactIntro: 'Have an internship, a project or a question about something I built? Email is the fastest way to reach me.',

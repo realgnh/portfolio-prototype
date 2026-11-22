@@ -5,7 +5,7 @@
  */
 import { chat } from '../content/chat'
 import { experience } from '../content/experience'
-import { hobbies } from '../content/hobbies'
+import { hobbyProjects } from '../content/hobbyProjects'
 import { milestones } from '../content/milestones'
 import { profile } from '../content/profile'
 import { projects } from '../content/projects'
@@ -80,12 +80,12 @@ export function knowledgeDocs(): KnowledgeDoc[] {
       link: `/work/${project.slug}`,
       keywords: `project projects built build made ${project.tags.join(' ')} ${project.tools.join(' ')}`,
     })),
-    ...hobbies.map(hobby => ({
-      title: `Hobby: ${hobby.title}`,
-      text: `${hobby.description} (${hobby.tags.join(', ')})`,
-      link: '/#hobbies',
-      keywords: 'hobby hobbies fun free time roblox games game animation animator luau',
-    })),
+    {
+      title: 'Hobby projects (Roblox)',
+      text: `${hobbyProjects.intro} Featured game: ${hobbyProjects.featured.title} (${hobbyProjects.featured.genre}, ${hobbyProjects.featured.role}). Systems built: ${hobbyProjects.systems.map(system => system.title).join(', ')}.`,
+      link: '/hobby-projects',
+      keywords: 'hobby hobbies fun free time roblox games game animation animator luau scripting',
+    },
     ...milestones.map(milestone => ({
       title: milestone.title,
       text: milestone.text,

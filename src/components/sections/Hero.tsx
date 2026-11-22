@@ -1,27 +1,32 @@
 import { profile } from '../../content/profile'
 import { sections } from '../../content/sections'
-import { toneOf } from '../../content/skills'
 import { smoothScrollToElement } from '../../lib/smoothScroll'
 import { Button } from '../ui/Button'
-import { Chip } from '../ui/Chip'
+import { OnionText } from '../ui/OnionText'
 import { SkillBubbles } from './SkillBubbles'
 
-/** Top of Home: status, big name, role chips, intro, buttons and a cue to scroll; skill bubbles float around it. */
+/**
+ * Top of Home, left-aligned: roles, big name (with onion-skin hover), one line, intro and buttons.
+ * The skill bubbles float in their own stage on the right. Styles: "Hero" in home.css.
+ */
 export function Hero() {
   return (
-    <section className="hero shell" aria-labelledby="hero-title">
-      <SkillBubbles />
+    <section className="hero shell" aria-labelledby="hero-title" data-scene="Intro">
       <div className="hero-content">
-        {profile.status && <p className="status-chip">{profile.status}</p>}
-        <h1 id="hero-title"><span className="hero-im">I’m </span>{profile.name}</h1>
-        <ul className="chip-row hero-roles" aria-label="Roles">
-          {profile.roles.map(({ label, area }) => <li key={label}><Chip tone={toneOf(area)}>{label}</Chip></li>)}
-        </ul>
+        <p className="hero-roles mono-meta">{profile.roles.join(' / ')}</p>
+        <OnionText as="h1" id="hero-title" text={`${profile.name}.`} className="hero-name">
+          {profile.name}<span className="hero-dot">.</span>
+        </OnionText>
+        <p className="hero-headline">{profile.headline}</p>
         <p className="hero-intro muted">{profile.intro}</p>
         <div className="button-row">
           <Button to="/contact">{sections.hero.primary} <span aria-hidden="true">→</span></Button>
           <Button variant="outline" href={profile.resume.href} download>{sections.hero.secondary} <span aria-hidden="true">↓</span></Button>
         </div>
+        {profile.status && <p className="hero-status mono-meta"><span className="status-dot" aria-hidden="true" />{profile.status}</p>}
+      </div>
+      <div className="hero-stage">
+        <SkillBubbles />
       </div>
       <a
         className="scroll-cue"

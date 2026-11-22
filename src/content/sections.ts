@@ -4,11 +4,10 @@
  */
 export const sections = {
   hero: { primary: 'Get in touch', secondary: 'Download résumé', skillsLabel: 'Tools I use', scrollCue: 'See experience below' },
-  about: { heading: 'The short version', nowPlaying: 'Now playing', nowLearning: 'Now learning' },
+  about: { heading: 'The short version', nowPlaying: 'Now playing', nowLearning: 'Now learning', currently: 'Currently building' },
   experience: { heading: 'Experience', intro: 'Where I’ve worked and studied.', all: 'See all experience', pageIntro: 'Roles, projects and milestones on one path, newest first.', homeCount: 2 },
   skills: { heading: 'Skills', intro: 'Languages, frameworks and tools I use, grouped by area.' },
-  hobbies: { heading: 'Outside of class', intro: 'What I do for fun, and where a lot of my shipping instincts come from.' },
-  projects: { heading: 'Selected projects', intro: 'Things I’ve built, and what changed because of them.', all: 'See all projects', pageIntro: 'Everything I’ve built so far. Filter by area.', allFilter: 'All' },
+  projects: { heading: 'Selected projects', intro: 'Things I’ve built, and what changed because of them.', all: 'See all projects', pageIntro: 'Everything I’ve built so far. Filter by area.', allFilter: 'All', hobbyTag: 'Hobby project' },
   currently: { heading: 'Currently working on' },
   contactBand: { heading: 'Let’s build something.', text: 'Open to internships and interesting projects.' },
   project: { back: 'All projects', problem: 'Problem', approach: 'Approach', result: 'Result', summary: 'In one sentence', faq: 'Questions', previous: 'Previous', next: 'Next', tools: 'Built with', year: 'Year', demo: 'Try it yourself', demoIntro: 'A small interactive version of the idea. Click through both flows and compare.' },

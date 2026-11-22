@@ -4,7 +4,7 @@
  */
 import { chat } from '../content/chat'
 import { experience } from '../content/experience'
-import { hobbies } from '../content/hobbies'
+import { hobbyProjects } from '../content/hobbyProjects'
 import { profile } from '../content/profile'
 import { projects } from '../content/projects'
 import { skillAreas, skills } from '../content/skills'
@@ -83,7 +83,7 @@ export const intents: { id: string; pattern: RegExp; answer: () => Answer }[] = 
   {
     id: 'hobbies',
     pattern: /\b(roblox|hobb|games?|animat|fun|free time|luau)/i,
-    answer: () => ({ text: `Outside of class, ${name} is ${list(hobbies.map(hobby => `a ${hobby.title.toLowerCase()}`))}. ${hobbies[0]?.description ?? ''}`, link: '/#hobbies' }),
+    answer: () => ({ text: `${name} builds and animates Roblox games in Luau. The featured one is ${hobbyProjects.featured.title}, and the engineering behind them includes ${list(hobbyProjects.systems.slice(0, 3).map(system => system.title.toLowerCase()))}.`, link: '/hobby-projects' }),
   },
 ]
 

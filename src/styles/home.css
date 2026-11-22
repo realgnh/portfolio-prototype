@@ -1,22 +1,21 @@
-/* HOME — hero, floating skill bubbles, experience rows, project cards, Currently, closing band. */
-.hero {
-  position: relative; display: grid; place-items: center;
-  min-height: clamp(32rem, 78vh, 44rem); padding-block: 3rem;
-}
-.hero-content { position: relative; z-index: 1; display: grid; justify-items: center; gap: 1.25rem; max-width: 46rem; text-align: center; }
-.status-chip {
-  padding: 0.35rem 0.9rem; border: 1px solid var(--line); border-radius: 999px;
-  background: var(--surface); font-size: 0.85rem; font-weight: 600; color: var(--text-muted);
-}
-.hero h1 { font-size: clamp(3rem, 10vw, 6.5rem); letter-spacing: -0.055em; line-height: 0.95; }
-.hero-im { font-weight: 500; }
-.hero-roles { justify-content: center; }
-.hero-intro { max-width: 34rem; font-size: 1.1rem; }
-.hero .button-row { justify-content: center; margin-top: 0.5rem; }
+/* HOME — hero, floating skill bubbles, experience rows, Selected work band, Skills, About, orange Contact. */
 
-/* Bubbles float inside a box inset from the hero's edges, so their wandering never pokes
-   above the hero (under the header) or below it. */
-.skill-bubbles { position: absolute; inset: 3rem 0 2.5rem; --mx: 0; --my: 0; }
+/* Hero: text on the left, the bubble stage on the right. */
+.hero {
+  position: relative; display: grid; grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr); gap: 2rem;
+  align-items: center; min-height: clamp(34rem, 82vh, 46rem); padding-block: 3rem 4.5rem;
+}
+.hero-content { position: relative; z-index: 1; display: grid; justify-items: start; gap: 1.1rem; }
+.hero-name { font-size: clamp(3.5rem, 9.5vw, 7.75rem); letter-spacing: -0.055em; line-height: 0.9; }
+.hero-dot { color: var(--accent-fill); }
+.hero-headline { max-width: 22ch; font: 600 clamp(1.35rem, 2.6vw, 1.9rem)/1.2 var(--font-display); letter-spacing: -0.02em; }
+.hero-intro { max-width: 34rem; font-size: 1.05rem; }
+.hero .button-row { margin-top: 0.4rem; }
+.hero-status { display: inline-flex; align-items: center; gap: 0.55rem; margin-top: 0.4rem; }
+.status-dot { width: 0.5rem; height: 0.5rem; border-radius: 999px; background: var(--accent-fill); }
+.hero-stage { position: relative; height: clamp(22rem, 52vh, 30rem); }
+
+.skill-bubbles { position: absolute; inset: 0; --mx: 0; --my: 0; }
 
 /* Each bubble has three layers so the motions don't fight:
    .bubble = position + lean toward the cursor, .bubble-float = slow wandering path + tilt,
@@ -134,7 +133,8 @@
 @keyframes dot-bounce { 0%, 60%, 100% { transform: translateY(0); opacity: 1; } 30% { transform: translateY(-0.18em); opacity: 0.45; } }
 
 @media (max-width: 52rem) {
-  .hero { min-height: auto; padding-block: 2rem 1rem; gap: 2rem; }
+  .hero { grid-template-columns: 1fr; min-height: auto; padding-block: 2rem 1rem; gap: 2rem; }
+  .hero-stage { height: auto; }
   .skill-bubbles { position: static; order: 2; display: flex; flex-wrap: wrap; justify-content: center; gap: 1.4rem 1.6rem; padding-inline: 0.5rem; }
   .bubble { position: relative; left: auto; top: auto; translate: none; transform: none; }
   .scroll-cue { position: static; translate: none; order: 3; justify-self: center; }
@@ -163,54 +163,62 @@
   .experience-period { grid-column: 2; margin-top: 0.25rem; justify-items: start; white-space: normal; }
 }
 
-.project-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 19rem), 1fr)); gap: 1.25rem; }
-.project-grid > li { display: grid; }
+/* Project cards (Work page and Selected work). A glow follows the cursor (ProjectCard.tsx sets --glow-x/y). */
+.project-grid, .work-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 19rem), 1fr)); gap: 1.25rem; }
+.project-grid > li, .work-grid > li { display: grid; }
 .project-card {
-  position: relative; isolation: isolate; display: grid; grid-template-rows: auto 1fr auto; gap: 1rem; padding: 0.75rem 0.75rem 1.25rem;
+  position: relative; isolation: isolate; display: grid; grid-template-rows: auto 1fr; gap: 1rem; padding: 0.75rem 0.75rem 1.25rem;
   border: 1px solid var(--line); border-radius: var(--radius); background: var(--surface);
   transition: transform 250ms var(--ease), box-shadow 250ms var(--ease), border-color 250ms;
 }
-.project-card:hover, .project-card:focus-within { transform: translateY(-4px); box-shadow: var(--shadow); }
-/* Glow in the card's pastel colour that follows the cursor (ProjectCard.tsx sets --glow-x/y).
-   A bright, light centre fading out wide; the card edge picks up the colour too. */
-.project-card { --glow: color-mix(in srgb, var(--tone) 70%, #fff); }
-:root[data-theme="dark"] .project-card { --glow: color-mix(in srgb, var(--tone-ink) 26%, transparent); }
+.project-card:hover, .project-card:focus-within { transform: translateY(-4px); box-shadow: var(--shadow); border-color: var(--text); }
 .project-card::before {
   position: absolute; z-index: -1; inset: 0; border-radius: inherit; pointer-events: none; content: "";
-  background: radial-gradient(26rem circle at var(--glow-x, 50%) var(--glow-y, 0%), var(--glow), color-mix(in srgb, var(--glow) 45%, transparent) 35%, transparent 70%);
+  background: radial-gradient(22rem circle at var(--glow-x, 50%) var(--glow-y, 0%), color-mix(in srgb, var(--accent-fill) 16%, transparent), transparent 70%);
   opacity: 0; transition: opacity 300ms ease;
 }
 .project-card:hover::before { opacity: 1; }
-.project-card:hover { border-color: color-mix(in srgb, var(--tone-ink) 22%, transparent); }
 .project-card .image-slot { transition: transform 400ms var(--ease); }
 .project-card:hover .image-slot { transform: scale(1.015); }
-.project-card-body { display: grid; align-content: start; gap: 0.5rem; padding-inline: 0.5rem; }
+.project-card-body { display: grid; align-content: start; gap: 0.55rem; padding-inline: 0.5rem; }
 .project-card-body > p { font-size: 0.95rem; }
-.project-card .chip-row { position: relative; padding-inline: 0.5rem; }
+.project-card-body h3 { font-size: 1.4rem; }
 .card-link { text-decoration: none; }
 .card-link::after { position: absolute; inset: 0; border-radius: var(--radius); content: ""; }
 .card-link:focus-visible { outline: none; }
 .project-card:has(.card-link:focus-visible) { outline: 2px solid var(--accent); outline-offset: 3px; }
-.project-card-meta { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 0.5rem; margin-top: 0.25rem; font-size: 0.85rem; }
-.result-pill { padding: 0.25rem 0.7rem; border-radius: 999px; background: var(--tone); color: var(--tone-ink); font-weight: 600; }
+.card-result { margin-top: 0.25rem; font: 500 0.8rem var(--font-mono); letter-spacing: 0.04em; text-transform: uppercase; color: var(--text-muted); }
+.card-result strong { margin-right: 0.35rem; font: 800 1.6rem var(--font-display); letter-spacing: -0.03em; text-transform: none; color: var(--accent); }
 
-.currently-list { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 15rem), 1fr)); gap: 1rem; margin-top: 1.5rem; }
-.currently-list > div { padding-top: 0.9rem; border-top: 2px solid var(--line); }
-.currently-list dt { margin-bottom: 0.4rem; font-size: 0.8rem; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; color: var(--accent); }
+/* Selected work, on a black band: one big lead project, then smaller cards. */
+.band-heading { display: flex; flex-wrap: wrap; align-items: end; justify-content: space-between; gap: 1rem; }
+.work-lead { position: relative; display: grid; grid-template-columns: minmax(0, 1.3fr) minmax(0, 1fr); gap: clamp(1.25rem, 4vw, 3rem); align-items: center; margin-block: 0.75rem 1.5rem; }
+.work-lead .image-slot { border-radius: var(--radius); }
+.work-lead-body { display: grid; gap: 0.8rem; }
+.work-lead-body h3 { font-size: clamp(2rem, 4.5vw, 3.25rem); letter-spacing: -0.04em; }
+.work-lead-body > p { font-size: 1.05rem; color: var(--band-text); }
+.work-lead-result { font: 500 0.8rem var(--font-mono); letter-spacing: 0.04em; text-transform: uppercase; color: var(--band-muted); }
+.work-lead-result strong { display: block; font: 800 clamp(3rem, 7vw, 4.75rem)/1 var(--font-display); letter-spacing: -0.05em; text-transform: none; color: var(--accent-fill); }
+.work-lead .card-link:hover { color: var(--accent-fill); }
+.band .project-card { border-color: var(--band-line); background: #1b1b1a; color: var(--band-text); }
+.band .project-card:hover { border-color: var(--band-text); box-shadow: none; }
+.band .project-card .muted { color: var(--band-muted); }
+.band .card-result strong { color: var(--accent-fill); }
+.band .image-slot.is-placeholder { background: #232321; color: var(--band-muted); }
+@media (max-width: 52rem) { .work-lead { grid-template-columns: 1fr; } }
 
-.contact-band {
-  display: grid; justify-items: center; gap: 0.75rem; margin-top: clamp(3rem, 8vw, 5.5rem);
-  padding: clamp(2.5rem, 7vw, 4.5rem) 1.5rem; border-radius: calc(var(--radius) * 1.5);
-  background:
-    radial-gradient(circle at 15% 20%, var(--tone-lilac), transparent 45%),
-    radial-gradient(circle at 85% 80%, var(--tone-peach), transparent 45%),
-    radial-gradient(circle at 80% 15%, var(--tone-mint), transparent 40%),
-    var(--surface);
-  text-align: center;
-}
-.contact-band h2 { font-size: clamp(2rem, 6vw, 3.5rem); }
-.contact-band .button-row { justify-content: center; margin-top: 0.75rem; }
+/* Closing Contact section: full-width signal orange. */
+.contact-band { margin-top: clamp(4rem, 10vw, 7rem); padding-block: clamp(3.5rem, 9vw, 6rem); background: var(--accent-fill); color: var(--on-accent); }
+.contact-band-inner { display: grid; justify-items: start; gap: 0.9rem; }
+.contact-band h2 { max-width: 16ch; font-size: clamp(2.5rem, 7vw, 5rem); letter-spacing: -0.05em; }
+.contact-band p { max-width: 36rem; font-size: 1.1rem; }
+.contact-band .button-row { align-items: center; gap: 1.25rem; margin-top: 0.5rem; }
+.contact-band .button-primary { background: #121212; border-color: #121212; color: #f6f4ef; }
+.contact-band-email { font: 500 0.95rem var(--font-mono); color: inherit; text-underline-offset: 0.25em; }
 
+/* "Currently building" one-liner under The short version. */
+.currently { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-top: 0.25rem; padding-top: 0.75rem; border-top: 1px solid var(--line); }
+.currently span { text-transform: none; letter-spacing: 0; color: var(--text); font-family: var(--font-sans); font-size: 0.95rem; }
 
 /* About: photo beside one bold line, a paragraph, quick facts and Now playing / learning. */
 .about-grid { display: grid; grid-template-columns: 11rem minmax(0, 1fr); gap: clamp(1.5rem, 4vw, 2.75rem); align-items: center; }
@@ -237,26 +245,12 @@
   .about-photo { width: 9rem; }
 }
 
-/* Skills grid: one column per area; the area's colour shows only in its heading and icons. */
-.skills-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 9rem), 1fr)); gap: 1.5rem clamp(1.25rem, 3vw, 2rem); }
-.skill-group h3 { margin-bottom: 0.85rem; padding-bottom: 0.5rem; border-bottom: 2px solid var(--tone); font-size: 1rem; color: var(--tone-ink); }
-.skill-group ul { display: grid; gap: 0.6rem; }
-.skill-group li { display: flex; align-items: center; gap: 0.6rem; font-weight: 600; }
-.skill-icon {
-  display: grid; place-items: center; width: 2rem; height: 2rem; padding: 0.4rem; border-radius: 0.6rem;
-  background: var(--tone); transition: transform 250ms var(--ease);
-}
-.skill-group li:hover .skill-icon { transform: rotate(-8deg) scale(1.1); }
+/* Skills: plain columns, one per area. */
+.skills-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 9rem), 1fr)); gap: 1.75rem clamp(1.25rem, 3vw, 2.5rem); }
+.skill-group h3 { margin-bottom: 0.9rem; padding-bottom: 0.5rem; border-bottom: 2px solid var(--text); font: 500 0.75rem var(--font-mono); letter-spacing: 0.08em; text-transform: uppercase; }
+.skill-group ul { display: grid; gap: 0.65rem; }
+.skill-group li { display: flex; align-items: center; gap: 0.6rem; font-weight: 500; }
+.skill-icon { display: grid; place-items: center; width: 1.6rem; height: 1.6rem; transition: transform 250ms var(--ease); }
+.skill-group li:hover .skill-icon { transform: rotate(-8deg) scale(1.15); }
 
-/* Hobbies. */
-.hobby-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 20rem), 1fr)); gap: 1rem; }
-.hobby-card {
-  display: grid; align-content: start; gap: 0.75rem; padding: 1.5rem; border-radius: var(--radius);
-  background: var(--tone); color: var(--tone-ink); transition: transform 300ms var(--ease);
-}
-.hobby-card:hover { transform: translateY(-4px) rotate(-0.4deg); }
-.hobby-card h3 { font-size: 1.5rem; color: var(--text); }
-.hobby-card > p { color: var(--text); }
-.hobby-icons { display: flex; gap: 0.5rem; }
-.hobby-icon { display: grid; place-items: center; width: 2.75rem; height: 2.75rem; padding: 0.6rem; border-radius: 0.85rem; background: var(--surface); }
-.hobby-card .chip { background: var(--surface); border-color: transparent; color: var(--tone-ink); }
+
