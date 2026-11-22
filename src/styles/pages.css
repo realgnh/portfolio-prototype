@@ -163,3 +163,15 @@
   .game-featured { grid-template-columns: 1fr; }
   .game-list li { grid-template-columns: 1fr; }
 }
+
+/* ---------- 404 page jump game (JumpGame.tsx) ---------- */
+.jump-stage {
+  position: relative; inset: auto; z-index: auto; display: grid; place-items: stretch; gap: 0.5rem; padding: 1.5rem 1.5rem 1rem;
+  border: 1px solid var(--line); border-radius: var(--radius); background: var(--surface); cursor: pointer; user-select: none;
+}
+.jump-track { height: 4.5rem; padding-top: 0; margin-inline: 0; overflow: hidden; }
+.jump-track .jump-lane { top: auto; bottom: 0.5rem; height: 0.8rem; }
+.jump-cube { position: absolute; bottom: 0.2rem; width: 2.6rem; height: 3.1rem; translate: -50% 0; }
+.jump-cube .loader-hop { bottom: 0.3rem; }
+.jump-floor { position: absolute; left: 0; right: 0; bottom: 0.45rem; height: 2px; background: var(--text); }
+.jump-stage[data-over] .loader-hop, .jump-stage[data-over] .loader-block { animation-play-state: paused; }

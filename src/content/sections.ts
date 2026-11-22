@@ -57,5 +57,5 @@ export const sections = {
   },
   shortcuts: { title: 'Keyboard shortcuts', hint: 'Shortcuts are paused while you type in a box. Press ? or Esc to close.' },
   skip: 'Skip to content',
-  notFound: { title: 'Page not found', description: 'This page doesn’t exist, but the projects do.' },
+  notFound: { code: '404: frame not found', title: 'Page not found', description: 'git bisect blames a typo in the URL. While you’re here:', gameHint: 'Press Space or tap to jump the blocks', gameOver: 'Bonk. Cleared', retry: 'Jump to try again.' },
 }
