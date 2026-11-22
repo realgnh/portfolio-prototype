@@ -1,6 +1,6 @@
 /* LAYOUT — header and navigation, footer, Quick search (⌘K), toasts, loader, slate and easter egg. */
 .site-header { position: sticky; z-index: 20; top: var(--ruler-height); padding-block: 0.9rem; } /* sits under the scroll ruler */
-/* Header layout: "AK." at the far left with the tabs just after it, the actions pushed to the far right.
+/* Header layout: "AK." at the far left, the tabs centred in their own bubble, the actions at the far right.
    It spans wider than the page content so the bar feels roomy. */
 .header-inner { position: relative; display: flex; align-items: center; gap: 1rem; min-height: 2.5rem; }
 .header-inner.shell { width: min(100% - 2 * clamp(1rem, 3vw, 2.25rem), 100rem); }
@@ -10,7 +10,11 @@
 .monogram span { color: var(--accent); }
 
 /* Main navigation: plain text links; the current page gets an orange underline. */
-.site-nav { display: flex; gap: clamp(1rem, 2.2vw, 1.9rem); margin-left: clamp(1.75rem, 4vw, 3.5rem); }
+.site-nav {
+  position: absolute; left: 50%; translate: -50% 0; display: flex; gap: clamp(0.9rem, 1.8vw, 1.6rem);
+  padding: 0.35rem 1.25rem; border: 1px solid var(--line); border-radius: 999px;
+  background: color-mix(in srgb, var(--surface) 85%, transparent); backdrop-filter: blur(12px); box-shadow: var(--shadow);
+}
 .site-nav a {
   position: relative; padding-block: 0.35rem; font-size: 0.95rem; font-weight: 500; color: var(--text-muted); text-decoration: none;
   transition: color 200ms;
@@ -38,21 +42,21 @@
 .search-button svg { width: 1rem; height: 1rem; }
 .search-label { white-space: nowrap; }
 /* Medium screens: icon only, so the navigation has room. */
-@media (max-width: 72rem) {
+@media (max-width: 86rem) {
   .search-button { width: 2.5rem; padding: 0; justify-content: center; }
   .search-label { display: none; }
 }
 .menu-button { display: none; }
 
-@media (max-width: 62rem) {
+@media (max-width: 68rem) {
   .header-inner { position: static; }
   .menu-button { display: inline-grid; }
   .search-button { width: 2.5rem; padding: 0; justify-content: center; }
   .search-label { display: none; }
   .site-nav {
-    position: absolute; top: calc(100% - 0.25rem); right: 0; left: 0; margin: 0; transform: none;
+    position: absolute; top: calc(100% - 0.25rem); right: 0; left: 0; margin: 0; transform: none; translate: none;
     flex-direction: column; gap: 0; padding: 0.5rem 1rem; border: 1px solid var(--line); border-radius: var(--radius);
-    background: var(--surface); box-shadow: var(--shadow); visibility: hidden; opacity: 0; translate: 0 -6px;
+    background: var(--surface); box-shadow: var(--shadow); visibility: hidden; opacity: 0;
     transition: opacity 200ms, translate 200ms var(--ease), visibility 200ms;
   }
   .site-nav[data-open="true"] { visibility: visible; opacity: 1; translate: none; }
