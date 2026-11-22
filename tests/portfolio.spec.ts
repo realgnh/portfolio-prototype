@@ -726,6 +726,58 @@ test('the scroll ruler has one keyframe per scene on Home', async ({ page }) => 
   expect(new Set(lefts.map(left => Math.round(left))).size).toBe(lefts.length)
 })
 
+test('the ruler runs from 0 at the top of the page to 1 at the bottom', async ({ page }) => {
+  await page.goto('/')
+  const ruler = page.locator('.ruler')
+  const progress = () => ruler.evaluate(el => Number(getComputedStyle(el).getPropertyValue('--progress')))
+  await expect.poll(progress).toBe(0)
+  await expect(ruler.locator('.ruler-key').first()).toHaveAttribute('data-active', 'true')
+  await page.evaluate(() => scrollTo(0, document.documentElement.scrollHeight))
+  await expect.poll(progress).toBe(1)
+  await expect(ruler.locator('.ruler-key').last()).toHaveAttribute('data-active', 'true')
+})
+
+test('pressing T quickly still animates and ends on the right theme', async ({ page }) => {
+  await page.emulateMedia({ colorScheme: 'light', reducedMotion: 'no-preference' })
+  await page.goto('/')
+  await page.locator('body').click({ position: { x: 5, y: 400 } })
+  await page.keyboard.press('t')
+  await page.keyboard.press('t')
+  await page.keyboard.press('t')
+  // A switch is animating, and three presses land on dark.
+  await expect(page.locator('html')).toHaveAttribute('data-theme-switch', '')
+  await expect(page.locator('html')).toHaveAttribute('data-theme', 'dark')
+  await expect(page.locator('html')).not.toHaveAttribute('data-theme-switch', { timeout: 3000 })
+  await expect(page.locator('html')).toHaveAttribute('data-theme', 'dark')
+  // Holding the key doesn't repeat the toggle.
+  await page.keyboard.down('t')
+  await page.keyboard.down('t')
+  await page.keyboard.up('t')
+  await expect(page.locator('html')).toHaveAttribute('data-theme', 'light')
+})
+
+test('links that leave the site open in a new tab', async ({ page }) => {
+  await page.goto('/contact')
+  const links = page.getByRole('list', { name: 'Contact links' }).getByRole('link')
+  for (const link of await links.all()) {
+    await expect(link).toHaveAttribute('target', '_blank')
+    await expect(link).toHaveAttribute('rel', /noopener/)
+  }
+  for (const link of await page.getByRole('contentinfo').locator('a[href^="http"]').all()) await expect(link).toHaveAttribute('target', '_blank')
+  await expect(page.getByRole('main').locator('a[href^="mailto:"]').first()).not.toHaveAttribute('target', '_blank')
+})
+
+test('the header puts AK. far left, the tabs after it and the actions far right', async ({ page }) => {
+  await page.setViewportSize({ width: 1440, height: 800 })
+  await page.goto('/')
+  const box = async (selector: string) => (await page.locator(selector).first().boundingBox())!
+  const [logo, nav, actions] = [await box('.monogram'), await box('.site-nav'), await box('.header-actions')]
+  expect(logo.x).toBeLessThan(60)
+  expect(nav.x).toBeGreaterThan(logo.x + logo.width)
+  expect(nav.x + nav.width / 2).toBeLessThan(720 - 50) // left of centre, leaving space
+  expect(actions.x + actions.width).toBeGreaterThan(1440 - 60)
+})
+
 test('page changes wait for the slate to cover the screen', async ({ page }) => {
   await page.emulateMedia({ reducedMotion: 'reduce' }) // the site keeps animations on regardless
   await page.goto('/')
