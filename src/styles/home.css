@@ -73,21 +73,32 @@
   box-shadow: 17px -30px var(--accent), 34px 0 var(--tone-ink), 17px 30px var(--accent),
     -17px 30px var(--tone-ink), -34px 0 var(--accent), -17px -30px var(--tone-ink);
 }
-.bubble-inner::before { animation: firework 520ms cubic-bezier(.1, .7, .3, 1) calc(var(--enter, 0ms) + 220ms) backwards; }
-.bubble-burst[data-pop] { animation: bubble-burst 380ms linear; }
-.bubble-burst[data-pop]::before { animation: firework 480ms cubic-bezier(.1, .7, .3, 1) 70ms; }
-.bubble-burst[data-pop]::after { animation: firework 420ms cubic-bezier(.1, .7, .3, 1) 100ms; }
+.bubble-inner::before, .bubble-burst::before, .bubble-burst::after { will-change: transform, opacity; }
+.bubble-inner::before { animation: firework 1000ms linear calc(var(--enter, 0ms) + 220ms) backwards; }
+.bubble-burst[data-pop] { animation: bubble-burst 460ms linear; }
+.bubble-burst[data-pop]::before { animation: firework 1000ms linear 60ms; }
+.bubble-burst[data-pop]::after { animation: firework-inner 850ms linear 90ms; }
+
+/* Squish: swell, snap a little smaller, settle. Each step has its own easing for a soft, springy feel. */
 @keyframes bubble-burst {
-  0%   { transform: scale(1); animation-timing-function: ease-out; }
-  25%  { transform: scale(1.22); animation-timing-function: cubic-bezier(.6, 0, .9, .5); }
-  45%  { transform: scale(0.86); animation-timing-function: ease-out; }
-  72%  { transform: scale(1.06); animation-timing-function: ease-in-out; }
+  0%   { transform: scale(1); animation-timing-function: cubic-bezier(.25, .8, .4, 1); }
+  28%  { transform: scale(1.2); animation-timing-function: cubic-bezier(.5, 0, .5, 1); }
+  52%  { transform: scale(0.9); animation-timing-function: cubic-bezier(.4, 0, .4, 1); }
+  76%  { transform: scale(1.04); animation-timing-function: cubic-bezier(.4, 0, .4, 1); }
   100% { transform: scale(1); }
 }
+/* Firework: sparks shoot out fast and slow down (0–30%), hang for a moment,
+   then fall with gravity (speeding up) while fading out. */
 @keyframes firework {
-  0%   { opacity: 1; transform: scale(0.15); }
-  60%  { opacity: 1; }
-  100% { opacity: 0; transform: translateY(5px) scale(1.15); }
+  0%   { opacity: 1; transform: translateY(0) scale(0.15); animation-timing-function: cubic-bezier(.05, .7, .3, 1); }
+  30%  { opacity: 1; transform: translateY(0) scale(1); animation-timing-function: cubic-bezier(.4, 0, .9, .6); }
+  55%  { opacity: 0.9; transform: translateY(6px) scale(1.04); animation-timing-function: cubic-bezier(.4, .2, .9, .7); }
+  100% { opacity: 0; transform: translateY(26px) scale(1.08); }
+}
+@keyframes firework-inner {
+  0%   { opacity: 1; transform: translateY(0) scale(0.2); animation-timing-function: cubic-bezier(.05, .7, .3, 1); }
+  32%  { opacity: 1; transform: translateY(0) scale(1); animation-timing-function: cubic-bezier(.4, 0, .9, .6); }
+  100% { opacity: 0; transform: translateY(20px) scale(1.05); }
 }
 
 /* Three slow, uneven wandering paths with a gentle tilt (no two bubbles share a rhythm). */
