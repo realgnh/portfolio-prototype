@@ -31,9 +31,9 @@ test('keyboard navigation, active page and metadata follow the route', async ({ 
   await expect(page.getByRole('link', { name: sections.skip })).toBeFocused()
   await page.keyboard.press('Enter')
   await expect(page.getByRole('main')).toBeFocused()
-  // Home is the "AK." logo, not a menu item.
+  // Home is both the "AK." logo and the first menu tab.
   await expect(page.locator('.monogram').first()).toHaveAttribute('href', '/')
-  expect(navItems.map(item => item.label)).toEqual(['Work', 'Hobby projects', 'Experience', 'Contact'])
+  expect(navItems.map(item => item.label)).toEqual(['Home', 'Work', 'Hobby projects', 'Experience', 'Contact'])
 
   for (const key of ['projects', 'hobby', 'experience', 'contact'] as const) {
     const { label, title, description } = pages[key]

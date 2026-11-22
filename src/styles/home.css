@@ -211,9 +211,9 @@
 .contact-band-inner { display: grid; justify-items: start; gap: 0.9rem; }
 .contact-band h2 { max-width: 16ch; font-size: clamp(2.5rem, 7vw, 5rem); letter-spacing: -0.05em; }
 .contact-band p { max-width: 36rem; font-size: 1.1rem; }
-.contact-band .button-row { align-items: center; gap: 1.25rem; margin-top: 0.5rem; }
-.contact-band .button-primary { background: #121212; border-color: #121212; color: #f6f4ef; }
-.contact-band-email { font: 500 0.95rem var(--font-mono); color: inherit; text-underline-offset: 0.25em; }
+.contact-band-links { display: flex; flex-wrap: wrap; gap: 0.5rem 1.75rem; margin-top: 0.75rem; font-size: 1.1rem; font-weight: 600; }
+.contact-band-links a { color: inherit; text-decoration: underline; text-decoration-thickness: 1.5px; text-underline-offset: 0.25em; }
+.contact-band-links a:hover { text-decoration-thickness: 3px; }
 
 /* "Currently building" one-liner under The short version. */
 .currently { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-top: 0.25rem; padding-top: 0.75rem; border-top: 1px solid var(--line); }

@@ -9,7 +9,7 @@ export const sections = {
   skills: { heading: 'Skills', intro: 'What I use day to day, grouped by area.' },
   projects: { heading: 'Selected work', intro: 'Projects with a measurable result.', all: 'All work', pageIntro: 'Every project so far, filterable by area.', empty: 'projects.filter(…) returned [].', allFilter: 'All', hobbyTag: 'Hobby project' },
   currently: { heading: 'Currently working on' },
-  contactBand: { heading: 'Have an internship or a hard problem?', text: 'Email is fastest. I reply within a couple of days.' },
+  contactBand: { heading: 'Thanks for scrolling this far.', text: 'Say hi, ask about a project, or send me a game you think I should play.' },
   project: { back: 'All projects', problem: 'Problem', approach: 'Approach', result: 'Result', summary: 'In one sentence', faq: 'Questions', previous: 'Previous', next: 'Next', tools: 'Built with', year: 'Year', demo: 'Try it yourself', demoIntro: 'A small interactive version of the idea. Click through both flows and compare.' },
   resume: { heading: 'Résumé', intro: 'Education, experience, selected projects and skills on one page.', education: 'Education', experience: 'Experience', skills: 'Skills', projects: 'Selected work', projectSlugs: ['clearpath-onboarding', 'signal-dashboard', 'index-library'] },
   contact: { heading: 'Contact', email: 'Email', copy: 'Copy email', localTime: 'My local time', elsewhere: 'Elsewhere' },
