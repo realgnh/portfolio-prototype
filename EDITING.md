@@ -26,6 +26,7 @@ Everything you'd normally change is text in **`src/content/`**. You rarely need 
 | Menu links and page titles / search descriptions | `src/content/navigation.ts` |
 | Button labels, section headings, small wording, loading-screen tips | `src/content/sections.ts` |
 | The résumé PDF | Replace `public/resume.pdf` |
+| The browser-tab icon (favicon) | Edit `public/favicon.svg`, then run `node scripts/make-icons.mjs` to refresh the PNG copies |
 
 ## Look and feel
 

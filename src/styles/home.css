@@ -14,7 +14,9 @@
 .hero-intro { max-width: 34rem; font-size: 1.1rem; }
 .hero .button-row { justify-content: center; margin-top: 0.5rem; }
 
-.skill-bubbles { position: absolute; inset: 0; --mx: 0; --my: 0; }
+/* Bubbles float inside a box inset from the hero's edges, so their wandering never pokes
+   above the hero (under the header) or below it. */
+.skill-bubbles { position: absolute; inset: 3rem 0 2.5rem; --mx: 0; --my: 0; }
 
 /* Each bubble has three layers so the motions don't fight:
    .bubble = position + lean toward the cursor, .bubble-float = slow wandering path + tilt,

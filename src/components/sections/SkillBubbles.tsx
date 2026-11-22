@@ -12,15 +12,15 @@ import { BrandIcon } from '../ui/BrandIcon'
  */
 const spots = [
   { x: 6, y: 17, depth: 18, path: 1, speed: 19 },
-  { x: 23, y: 5, depth: 10, path: 2, speed: 23 },
+  { x: 23, y: 6, depth: 10, path: 2, speed: 23 },
   { x: 3, y: 50, depth: 14, path: 3, speed: 21 },
   { x: 11, y: 83, depth: 16, path: 2, speed: 24 },
-  { x: 33, y: 97, depth: 9, path: 1, speed: 26 },
+  { x: 33, y: 96, depth: 9, path: 1, speed: 26 },
   { x: 93, y: 15, depth: 16, path: 2, speed: 18 },
-  { x: 76, y: 4, depth: 9, path: 3, speed: 25 },
+  { x: 76, y: 5, depth: 9, path: 3, speed: 25 },
   { x: 97, y: 47, depth: 12, path: 1, speed: 22 },
   { x: 89, y: 81, depth: 20, path: 3, speed: 20 },
-  { x: 67, y: 97, depth: 11, path: 1, speed: 21 },
+  { x: 67, y: 96, depth: 11, path: 1, speed: 21 },
 ]
 
 /** Brand-logo bubbles that wander slowly, tilt a little and lean toward the cursor. Hover or focus shows the name. */

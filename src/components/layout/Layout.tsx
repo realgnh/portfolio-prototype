@@ -31,7 +31,8 @@ export function Layout() {
   function closeMenu() {
     menuIsOpen.current = false
     setMenuOpen(false)
-    requestAnimationFrame(() => focusBeforeMenu.current?.focus())
+    // Only hand focus back if Quick search wasn't reopened in the meantime.
+    requestAnimationFrame(() => { if (!menuIsOpen.current) focusBeforeMenu.current?.focus() })
   }
 
   useLayoutEffect(() => {

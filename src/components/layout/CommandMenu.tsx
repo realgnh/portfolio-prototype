@@ -24,6 +24,8 @@ export function CommandMenu({ onClose }: { onClose: () => void }) {
   const copy = sections.commandMenu
 
   const items = useMemo<Item[]>(() => [
+    // Listed first on purpose so visitors notice it.
+    { id: 'easter-egg', group: copy.actions, label: copy.surprise, run: () => window.dispatchEvent(new Event(EASTER_EGG_EVENT)) },
     ...navItems.map(({ to, label }) => ({ id: `page-${to}`, group: copy.pages, label, run: () => navigate(to) })),
     ...projects.map(({ slug, title }) => ({ id: `project-${slug}`, group: copy.projects, label: title, run: () => navigate(`/projects/${slug}`) })),
     { id: 'copy-email', group: copy.actions, label: copy.copyEmail, run: () => void copyEmail() },
@@ -33,7 +35,6 @@ export function CommandMenu({ onClose }: { onClose: () => void }) {
     } },
     { id: 'toggle-theme', group: copy.actions, label: copy.toggleTheme, run: () => toggleTheme() },
     { id: 'toggle-motion', group: copy.actions, label: copy.toggleMotion, run: toggleMotion },
-    { id: 'easter-egg', group: copy.actions, label: copy.surprise, run: () => window.dispatchEvent(new Event(EASTER_EGG_EVENT)) },
   ], [navigate, copyEmail, copy])
 
   const results = items.filter(item => item.label.toLowerCase().includes(query.trim().toLowerCase()))

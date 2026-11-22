@@ -234,6 +234,24 @@ test('brick mode changes the loading screen cube', async ({ page, context }) => 
   await expect(page.locator('.loader')).toHaveAttribute('data-brick', 'true')
 })
 
+test('bubbles stay below the header, the logo scrolls Home back to the top, and the favicon loads', async ({ page }) => {
+  await page.goto('/')
+  const headerBottom = await page.locator('.site-header').evaluate(el => el.getBoundingClientRect().bottom)
+  const tops = await page.locator('.bubble').evaluateAll(els => els.map(el => el.getBoundingClientRect().top))
+  // Each bubble may drift up to ~22px and lean ~10px toward the cursor.
+  for (const top of tops) expect(top - 32).toBeGreaterThan(headerBottom)
+
+  await page.mouse.wheel(0, 1200)
+  await expect.poll(() => page.evaluate(() => scrollY)).toBeGreaterThan(300)
+  await page.locator('.monogram').first().click()
+  await expect.poll(() => page.evaluate(() => scrollY)).toBe(0)
+
+  for (const href of ['/favicon.svg', '/favicon-32.png', '/apple-touch-icon.png']) {
+    await expect(page.locator(`link[href="${href}"]`)).toHaveCount(1)
+    expect((await page.request.get(href)).ok()).toBe(true)
+  }
+})
+
 test('visitor greeting and time difference', () => {
   expect(greetingFor(8)).toBe('Good morning!')
   expect(greetingFor(14)).toBe('Good afternoon!')
@@ -317,6 +335,7 @@ test('Quick search opens with Ctrl+K, finds a project, runs actions and closes w
   await expect(opener).toBeFocused()
 
   await opener.click()
+  await expect(dialog.getByRole('option').first()).toContainText(sections.commandMenu.surprise)
   await page.keyboard.type(projects[2].title)
   await expect(dialog.getByRole('option')).toHaveCount(1)
   await page.keyboard.press('Enter')
