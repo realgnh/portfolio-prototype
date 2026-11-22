@@ -13,7 +13,21 @@ npm run build
 npm run preview
 ```
 
-Open the URL printed by Vite. Run `npm install` again whenever you pull changes that touch `package.json`; otherwise Vite reports missing imports such as fonts or logos. For a static deployment, publish `dist/` and rewrite non-file requests to `index.html` to support direct links such as `/projects/clearpath-onboarding`.
+Open the URL printed by Vite. Run `npm install` again whenever you pull changes that touch `package.json`; otherwise Vite reports missing imports such as fonts or logos. 
+
+## Deploy (Cloudflare Pages)
+
+The site deploys from GitHub: every push to `main` rebuilds and publishes it.
+
+| Setting | Value |
+|---|---|
+| Framework preset | None (or Vite) |
+| Production branch | `main` |
+| Build command | `npm run build` |
+| Build output directory | `dist` |
+| Node version | from `.nvmrc` (24) |
+
+Direct links such as `/projects/clearpath-onboarding` work because there is no `404.html`, so Pages serves the app for every route. Caching and security headers live in [`public/_headers`](public/_headers).
 
 ## Edit the content
 
