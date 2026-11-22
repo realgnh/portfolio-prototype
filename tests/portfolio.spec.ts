@@ -2,7 +2,10 @@ import { expect, test } from '@playwright/test'
 import { join } from 'node:path'
 import { experience } from '../src/content/experience'
 import { hobbies } from '../src/content/hobbies'
-import { formatDuration, formatRange } from '../src/lib/dates'
+import { formatDuration, formatMonth, formatRange } from '../src/lib/dates'
+import { differenceFrom, greetingFor } from '../src/lib/timeGreeting'
+import { easterEgg } from '../src/content/easterEggs'
+import { milestones } from '../src/content/milestones'
 import { navItems, pages } from '../src/content/navigation'
 import { profile } from '../src/content/profile'
 import { projects } from '../src/content/projects'
@@ -144,19 +147,102 @@ test('dates show month ranges and inclusive durations', () => {
   expect(formatRange('2025-10', 'present')).toBe('October 2025 – Present')
 })
 
-test('Home shows recent experience and links to the full Experience page', async ({ page }) => {
+test('Home shows recent experience and links to the timeline on the Experience page', async ({ page }) => {
   await page.goto('/')
   const section = page.getByRole('region', { name: sections.experience.heading, exact: true })
   await expect(section.getByRole('listitem')).toHaveCount(sections.experience.homeCount)
   await section.getByRole('link', { name: sections.experience.all }).click()
   await expect(page).toHaveURL('/experience')
-  for (const { role, company, start, end, highlights } of experience) {
-    const item = page.getByRole('listitem').filter({ has: page.getByRole('heading', { name: role }) })
+  const items = page.locator('.timeline-item')
+  await expect(items).toHaveCount(experience.length + projects.length + milestones.length)
+  for (const { role, start, end, highlights } of experience) {
+    const item = items.filter({ has: page.getByRole('heading', { name: role }) })
     await expect(item).toContainText(formatRange(start, end))
     await expect(item).toContainText(formatDuration(start, end))
-    await expect(item.getByRole('img', { name: `${company} logo (placeholder)` })).toBeVisible()
     for (const line of highlights) await expect(item).toContainText(line)
   }
+  for (const project of projects) {
+    await expect(items.filter({ hasText: project.title }).getByRole('link', { name: project.title })).toHaveAttribute('href', `/projects/${project.slug}`)
+    await expect(items.filter({ hasText: project.title })).toContainText(formatMonth(project.date))
+  }
+  for (const milestone of milestones) await expect(items.filter({ hasText: milestone.title })).toContainText(milestone.emoji)
+  const sortKeys = await items.evaluateAll(els => els.length)
+  expect(sortKeys).toBeGreaterThan(0)
+
+  const fill = () => page.locator('.timeline').evaluate(el => Number(getComputedStyle(el).getPropertyValue('--fill')))
+  const before = await fill()
+  await page.mouse.wheel(0, 900)
+  await expect.poll(fill).toBeGreaterThan(before)
+  await expect(page.locator('.timeline-item[data-reached]').first()).toBeVisible()
+})
+
+test('sections fade in on every page and bubbles pop in', async ({ page }) => {
+  await page.emulateMedia({ reducedMotion: 'no-preference' })
+  await page.goto('/')
+  await expect(page.locator('.bubble-inner').first()).toHaveCSS('animation-name', 'bubble-pop')
+  for (const path of ['/', '/projects', '/experience', '/resume', '/contact']) {
+    await page.goto(path)
+    const first = page.locator('.reveal').first()
+    await expect(first).toHaveClass(/is-visible/)
+    expect(await page.locator('.reveal').count()).toBeGreaterThan(1)
+  }
+  await mainNav(page).getByRole('link', { name: pages.projects.label }).click()
+  await expect(page.locator('.route-frame .reveal').first()).toHaveClass(/is-visible/)
+})
+
+test('project cards glow where the cursor is', async ({ page }) => {
+  await page.goto('/projects')
+  const card = page.locator('.project-card').first()
+  const box = (await card.boundingBox())!
+  await page.mouse.move(box.x + 40, box.y + 60)
+  await page.mouse.move(box.x + 50, box.y + 70)
+  await expect(card).toHaveCSS('--glow-x', '50px')
+  await expect.poll(() => card.evaluate(el => getComputedStyle(el, '::before').opacity)).toBe('1')
+})
+
+test('the easter egg answers its easy triggers and unlocks the brick loading screen', async ({ page }) => {
+  await page.goto('/')
+  await expect(page.getByRole('contentinfo')).toContainText(easterEgg.hint)
+  await page.locator('body').click({ position: { x: 5, y: 300 } })
+  await page.keyboard.type(easterEgg.secretWord)
+  const egg = page.locator('.egg')
+  await expect(egg).toContainText(easterEgg.speech)
+  await egg.getByRole('button', { name: 'Dismiss' }).click()
+  await expect(egg).toHaveCount(0, { timeout: 3000 })
+
+  for (const key of easterEgg.arrowCode) await page.keyboard.press(key)
+  await expect(egg).toBeVisible()
+  await egg.getByRole('button', { name: 'Dismiss' }).click()
+  await expect(egg).toHaveCount(0, { timeout: 3000 })
+
+  for (let i = 0; i < easterEgg.logoClicks; i++) await page.locator('.monogram').first().click()
+  await expect(egg).toBeVisible()
+  expect(await page.evaluate(() => localStorage.getItem('portfolio-brick'))).toBe('1')
+
+  // Typing the word inside Quick search must not trigger it.
+  await egg.getByRole('button', { name: 'Dismiss' }).click()
+  await expect(egg).toHaveCount(0, { timeout: 3000 })
+  await page.keyboard.press('Control+k')
+  await page.keyboard.type(easterEgg.secretWord)
+  await page.waitForTimeout(300)
+  await expect(egg).toHaveCount(0)
+})
+
+test('brick mode changes the loading screen cube', async ({ page, context }) => {
+  await context.addInitScript(() => localStorage.setItem('portfolio-brick', '1'))
+  await page.goto('/')
+  await expect(page.locator('.loader')).toHaveAttribute('data-brick', 'true')
+})
+
+test('visitor greeting and time difference', () => {
+  expect(greetingFor(8)).toBe('Good morning!')
+  expect(greetingFor(14)).toBe('Good afternoon!')
+  expect(greetingFor(19)).toBe('Good evening!')
+  expect(greetingFor(2)).toBe('Hey, night owl!')
+  const winter = new Date('2026-01-15T12:00:00Z')
+  expect(differenceFrom('Africa/Cairo', winter, 'Africa/Cairo')).toBe('We’re in the same time zone.')
+  expect(differenceFrom('Africa/Cairo', winter, 'Europe/London')).toBe('It’s 2 hours later for me.')
+  expect(differenceFrom('Africa/Cairo', winter, 'Asia/Kolkata')).toBe('It’s 3 hours 30 minutes earlier for me.')
 })
 
 test('experience and projects show placeholders until pictures are added', async ({ page }) => {
@@ -267,6 +353,7 @@ test('Contact shows the local time in Cairo and the social links', async ({ page
   await expect(clock).toContainText(hourMinute.split(' ')[0])
   const first = await clock.textContent()
   await expect(clock).not.toHaveText(first!, { timeout: 2500 })
+  await expect(page.locator('.time-greeting')).toHaveText(/^(Good (morning|afternoon|evening)!|Hey, night owl!) (It’s .+ (later|earlier) for me\.|We’re in the same time zone\.)$/)
   const links = page.getByRole('list', { name: 'Contact links' }).getByRole('link')
   for (const [index, { label, href }] of profile.socials.entries()) await expect(links.nth(index)).toHaveAttribute('href', href)
   const sizes = await links.evaluateAll(els => els.map(el => parseFloat(getComputedStyle(el).fontSize)))

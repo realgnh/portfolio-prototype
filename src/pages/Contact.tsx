@@ -4,6 +4,7 @@ import { Metadata } from '../components/ui/Metadata'
 import { pages } from '../content/navigation'
 import { profile } from '../content/profile'
 import { sections } from '../content/sections'
+import { differenceFrom, greetingFor } from '../lib/timeGreeting'
 import { useCopyEmail } from '../lib/useCopyEmail'
 
 function formatTime(date: Date) {
@@ -42,6 +43,9 @@ export function Contact() {
           <h2 id="contact-time" className="eyebrow">{copy.localTime}</h2>
           <p className="local-time"><time dateTime={now.toISOString()}>{formatTime(now)}</time></p>
           <p className="muted">{profile.location}</p>
+          <p className="time-greeting">
+            <strong>{greetingFor(now.getHours())}</strong> {differenceFrom(profile.timeZone, now)}
+          </p>
         </section>
 
         <section className="contact-card contact-card-elsewhere" aria-labelledby="contact-elsewhere">

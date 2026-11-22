@@ -2,6 +2,8 @@ import { useEffect, useRef, useState } from 'react'
 import { sections } from '../../content/sections'
 import { skills } from '../../content/skills'
 import { motionAllowed } from '../../lib/preferences'
+import { LOADED_EVENT } from '../../lib/reveal'
+import { brickModeOn } from '../../lib/easterEgg'
 import { BrandIcon } from '../ui/BrandIcon'
 
 /** How long the loading screen stays up on a first visit or refresh (milliseconds). */
@@ -72,7 +74,7 @@ export function LoadingScreen() {
       if (t < 1) frame = requestAnimationFrame(tick)
       else {
         root.current?.setAttribute('data-leaving', 'true')
-        timer = window.setTimeout(() => { setVisible(false); delete html.dataset.loading }, animated ? 500 : 0)
+        timer = window.setTimeout(() => { setVisible(false); delete html.dataset.loading; window.dispatchEvent(new Event(LOADED_EVENT)) }, animated ? 500 : 0)
       }
     }
     frame = requestAnimationFrame(tick)
@@ -85,6 +87,7 @@ export function LoadingScreen() {
     <div
       ref={root}
       className="loader"
+      data-brick={brickModeOn() || undefined}
       style={{ '--run': `${duration}ms`, '--hop': `${HOP}ms`, '--logos': icons.length } as React.CSSProperties}
       role="progressbar" aria-label={sections.loader.title} aria-valuemin={0} aria-valuemax={100} aria-valuenow={0}>
       <div className="loader-card">

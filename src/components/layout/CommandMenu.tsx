@@ -4,6 +4,7 @@ import { navItems } from '../../content/navigation'
 import { projects } from '../../content/projects'
 import { sections } from '../../content/sections'
 import { profile } from '../../content/profile'
+import { EASTER_EGG_EVENT } from '../../lib/easterEgg'
 import { toggleMotion, toggleTheme } from '../../lib/preferences'
 import { useCopyEmail } from '../../lib/useCopyEmail'
 
@@ -32,6 +33,7 @@ export function CommandMenu({ onClose }: { onClose: () => void }) {
     } },
     { id: 'toggle-theme', group: copy.actions, label: copy.toggleTheme, run: () => toggleTheme() },
     { id: 'toggle-motion', group: copy.actions, label: copy.toggleMotion, run: toggleMotion },
+    { id: 'easter-egg', group: copy.actions, label: copy.surprise, run: () => window.dispatchEvent(new Event(EASTER_EGG_EVENT)) },
   ], [navigate, copyEmail, copy])
 
   const results = items.filter(item => item.label.toLowerCase().includes(query.trim().toLowerCase()))

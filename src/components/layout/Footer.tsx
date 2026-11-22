@@ -1,4 +1,5 @@
 import { Link } from 'react-router-dom'
+import { easterEgg } from '../../content/easterEggs'
 import { profile } from '../../content/profile'
 import { sections } from '../../content/sections'
 import { useCopyEmail } from '../../lib/useCopyEmail'
@@ -16,6 +17,7 @@ export function Footer() {
         </div>
       </div>
       <p className="muted footer-note">{profile.footerNote}</p>
+      {easterEgg.hint && <p className="footer-hint">🎮 {easterEgg.hint}</p>}
     </footer>
   )
 }

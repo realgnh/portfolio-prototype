@@ -5,7 +5,7 @@
 export const sections = {
   hero: { primary: 'Get in touch', secondary: 'Download résumé', skillsLabel: 'Tools I use', scrollCue: 'See experience below' },
   about: { heading: 'About me', nowPlaying: 'Now playing', nowLearning: 'Now learning' },
-  experience: { heading: 'Experience', intro: 'Where I’ve worked and studied.', all: 'See all experience', pageIntro: 'Internships, research and work, newest first.', homeCount: 2 },
+  experience: { heading: 'Experience', intro: 'Where I’ve worked and studied.', all: 'See all experience', pageIntro: 'Roles, projects and milestones on one path, newest first.', homeCount: 2 },
   skills: { heading: 'Skills', intro: 'Languages, frameworks and tools I use, grouped by area.' },
   hobbies: { heading: 'Outside of class', intro: 'What I do for fun, and where a lot of my shipping instincts come from.' },
   projects: { heading: 'Selected projects', intro: 'Things I’ve built, and what changed because of them.', all: 'See all projects', pageIntro: 'Everything I’ve built so far. Filter by area.', allFilter: 'All' },
@@ -15,7 +15,7 @@ export const sections = {
   resume: { heading: 'Résumé', intro: 'Education, experience, selected projects and skills.', education: 'Education', experience: 'Experience', skills: 'Skills', projects: 'Selected projects', projectSlugs: ['clearpath-onboarding', 'signal-dashboard', 'index-library'] },
   contact: { heading: 'Contact', email: 'Email', copy: 'Copy email', localTime: 'My local time', elsewhere: 'Elsewhere' },
   placeholders: { project: 'Add screenshot', projectMedia: 'Add screenshot or video', photo: 'Add photo' },
-  commandMenu: { label: 'Quick search', button: 'Quick search', placeholder: 'Search pages, projects and actions…', copyEmail: 'Copy email address', toggleTheme: 'Switch light / dark mode', toggleMotion: 'Turn animations on / off', downloadResume: 'Download résumé', empty: 'Nothing matches.', pages: 'Pages', projects: 'Projects', actions: 'Actions' },
+  commandMenu: { label: 'Quick search', button: 'Quick search', placeholder: 'Search pages, projects and actions…', copyEmail: 'Copy email address', toggleTheme: 'Switch light / dark mode', toggleMotion: 'Turn animations on / off', surprise: 'Summon a surprise 🎮', downloadResume: 'Download résumé', empty: 'Nothing matches.', pages: 'Pages', projects: 'Projects', actions: 'Actions' },
   toast: { copied: 'Email copied', failed: 'Couldn’t copy. Select the address and press Ctrl+C.' },
   theme: { label: 'Dark mode' },
   motion: { label: 'Animations', on: 'Animations on', off: 'Animations off' },

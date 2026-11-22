@@ -33,12 +33,11 @@ main:focus { outline: none; }
 }
 .skip-link:not(:focus) { clip-path: inset(50%); width: 1px; height: 1px; overflow: hidden; }
 
-/* Page transition: each new page fades up out of a soft blur. */
-.route-frame { animation: page-in 520ms var(--ease) both; }
-@keyframes page-in {
-  from { opacity: 0; transform: translateY(14px) scale(0.995); filter: blur(6px); }
-  to { opacity: 1; transform: none; filter: none; }
-}
+/* Page transition: the page fades in, then each section fades up in turn (lib/reveal.ts). */
+.route-frame { animation: page-in 300ms ease both; }
+@keyframes page-in { from { opacity: 0; } }
+.reveal { opacity: 0; transform: translateY(22px); transition: opacity 650ms var(--ease), transform 650ms var(--ease); }
+.reveal.is-visible { opacity: 1; transform: none; }
 
 /* Theme switch: the new theme spreads out in a circle from the toggle button (lib/preferences.ts). */
 ::view-transition-old(root), ::view-transition-new(root) { animation: none; mix-blend-mode: normal; }

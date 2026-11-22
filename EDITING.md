@@ -10,6 +10,9 @@ Everything you'd normally change is text in **`src/content/`**. You rarely need 
 | The "Now playing / Now learning" line | `profile.now` in `src/content/profile.ts` |
 | The "Currently working on…" cards on Home | `profile.currently` in `src/content/profile.ts` |
 | Hobbies ("Outside of class") | `src/content/hobbies.ts` |
+| Milestones on the Experience timeline (awards, firsts…) | `src/content/milestones.ts` |
+| When a project appears on the timeline | `date` on that project in `src/content/projects.ts` |
+| Easter egg triggers, hint text and the character's message | `src/content/easterEggs.ts` |
 | How many projects show on Home | `profile.featuredCount` in `src/content/profile.ts` |
 | Education | `profile.education` in `src/content/profile.ts` |
 | Internships and jobs (dates as `'2026-04'`, or `'present'`) | `src/content/experience.ts` — ranges and durations ("3 months") are worked out for you |
@@ -38,6 +41,11 @@ Everything you'd normally change is text in **`src/content/`**. You rarely need 
 | Loading-screen length and bar segments (the cube's hop/roll speed is `hop`/`roll` in `layout.css`) | `DURATION` / `SEGMENTS` at the top of `src/components/layout/LoadingScreen.tsx` |
 | Quick search actions | `items` in `src/components/layout/CommandMenu.tsx` |
 | Order of sections on Home | `src/pages/Home.tsx` |
+| Section fade-in timing (and which elements fade) | `STAGGER` / `SELECTOR` in `src/lib/reveal.ts`; look at `.reveal` in `src/styles/base.css` |
+| Timeline line and dots | `.timeline…` rules at the bottom of `src/styles/pages.css`; data merge in `src/lib/timeline.ts` |
+| Project card cursor glow | `.project-card::before` in `src/styles/home.css` |
+| Contact greeting wording ("Good evening!") | `src/lib/timeGreeting.ts` |
+| The easter-egg character and brick loading cube | `src/components/layout/EasterEgg.tsx`; styles at the bottom of `src/styles/layout.css` |
 
 ## How the code is organised
 
@@ -48,10 +56,11 @@ src/
   components/
     ui/        ← small reusable pieces: Button, Chip, ImageSlot, BrandIcon, SectionHeading, Metadata
     layout/    ← frame around every page: Layout, Header, Footer, ThemeToggle, MotionToggle,
-                 CommandMenu (Quick search), LoadingScreen, RouteProgress
+                 CommandMenu (Quick search), LoadingScreen, RouteProgress, EasterEgg
     sections/  ← bigger blocks used on pages: Hero, SkillBubbles, About, ExperienceList, ProjectCard,
-                 ProjectMedia, SkillsGrid, Hobbies, CurrentlyList, ContactBand
-  lib/         ← behaviour helpers: preferences (theme + animations), dates, toast, copy-email
+                 ProjectMedia, SkillsGrid, Hobbies, CurrentlyList, ContactBand, Timeline
+  lib/         ← behaviour helpers: preferences (theme + animations), dates, timeline, reveal,
+                 timeGreeting, easterEgg, toast, copy-email
   styles/      ← CSS, split as in the table above
   main.tsx     ← fonts, CSS imports and the list of routes (URLs)
 public/

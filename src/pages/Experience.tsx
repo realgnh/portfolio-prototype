@@ -1,9 +1,9 @@
-import { ExperienceList } from '../components/sections/ExperienceList'
+import { Timeline } from '../components/sections/Timeline'
 import { Metadata } from '../components/ui/Metadata'
 import { pages } from '../content/navigation'
 import { sections } from '../content/sections'
 
-/** /experience — every role with all its highlights. Data: src/content/experience.ts. */
+/** /experience — roles, projects and milestones on one timeline. Data: src/lib/timeline.ts. */
 export function Experience() {
   return (
     <section className="page shell" aria-labelledby="experience-page-title">
@@ -12,7 +12,7 @@ export function Experience() {
         <h1 id="experience-page-title">{pages.experience.title}</h1>
         <p className="muted">{sections.experience.pageIntro}</p>
       </header>
-      <ExperienceList />
+      <Timeline />
     </section>
   )
 }

@@ -20,6 +20,8 @@ export type Project = {
   title: string
   summary: string
   year: string
+  /** When it shipped, 'YYYY-MM'. Places the project on the Experience timeline. */
+  date: string
   role: string
   tags: string[]
   tools: string[]
@@ -42,6 +44,7 @@ export const projects: Project[] = [
     title: 'Clearpath Onboarding',
     summary: 'Raised signup completion by 36% by replacing a sprawling setup flow with three clear steps.',
     year: '2025',
+    date: '2025-03',
     role: 'Full-stack contributor',
     tags: ['Onboarding', 'TypeScript'],
     tools: ['TypeScript', 'React', 'PostgreSQL'],
@@ -72,6 +75,7 @@ export const projects: Project[] = [
     title: 'Signal Dashboard',
     summary: 'Cut weekly reporting time by 42% by bringing operational alerts and sources into one view.',
     year: '2024',
+    date: '2024-11',
     role: 'Frontend contributor',
     tags: ['Dashboards', 'Data visualization'],
     tools: ['TypeScript', 'React', 'SQL'],
@@ -102,6 +106,7 @@ export const projects: Project[] = [
     title: 'Index Library',
     summary: 'Improved first-search success by 28% with clearer categories and a more useful results page.',
     year: '2024',
+    date: '2024-05',
     role: 'Search prototype developer',
     tags: ['Search', 'Information architecture'],
     tools: ['Python', 'FastAPI', 'PostgreSQL'],
@@ -132,6 +137,7 @@ export const projects: Project[] = [
     title: 'Relay Handoffs',
     summary: 'Reduced missed handoffs by 24% by showing who owned each request and what needed to happen next.',
     year: '2023',
+    date: '2023-10',
     role: 'Full-stack contributor',
     tags: ['Workflow', 'State modeling'],
     tools: ['Python', 'FastAPI', 'PostgreSQL', 'Docker'],
@@ -162,6 +168,7 @@ export const projects: Project[] = [
     title: 'Common Components',
     summary: 'Halved the time needed to prototype recurring screens by making reliable patterns easier to find.',
     year: '2023',
+    date: '2023-04',
     role: 'Frontend contributor',
     tags: ['Components', 'Documentation'],
     tools: ['TypeScript', 'React'],

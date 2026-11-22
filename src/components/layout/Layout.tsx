@@ -1,8 +1,10 @@
 import { useEffect, useLayoutEffect, useRef, useState } from 'react'
 import { Outlet, useLocation, useNavigationType } from 'react-router-dom'
 import { sections } from '../../content/sections'
+import { useSectionReveal } from '../../lib/reveal'
 import { ToastProvider } from '../../lib/toast'
 import { CommandMenu } from './CommandMenu'
+import { EasterEgg } from './EasterEgg'
 import { Footer } from './Footer'
 import { Header } from './Header'
 import { LoadingScreen } from './LoadingScreen'
@@ -14,6 +16,8 @@ export function Layout() {
   const navigationType = useNavigationType()
   const previousPath = useRef(pathname)
   const main = useRef<HTMLElement>(null)
+  const frame = useRef<HTMLDivElement>(null)
+  useSectionReveal(frame, pathname)
   const [menuOpen, setMenuOpen] = useState(false)
   const focusBeforeMenu = useRef<HTMLElement | null>(null)
   const menuIsOpen = useRef(false)
@@ -57,10 +61,11 @@ export function Layout() {
       <a className="skip-link" href="#main-content">{sections.skip}</a>
       <Header onOpenSearch={openMenu} />
       <main id="main-content" ref={main} tabIndex={-1}>
-        <div className="route-frame" key={pathname}><Outlet /></div>
+        <div className="route-frame" key={pathname} ref={frame}><Outlet /></div>
       </main>
       <Footer />
       {menuOpen && <CommandMenu onClose={closeMenu} />}
+      <EasterEgg />
     </ToastProvider>
   )
 }

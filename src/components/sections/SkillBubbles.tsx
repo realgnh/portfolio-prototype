@@ -67,7 +67,7 @@ export function SkillBubbles() {
             aria-label={skill.name}
             style={{
               '--x': `${spot.x}%`, '--y': `${spot.y}%`, '--depth': `${spot.depth}px`,
-              '--speed': `${spot.speed}s`, '--delay': `${index * -2.7}s`, '--enter': `${index * 70}ms`,
+              '--speed': `${spot.speed}s`, '--delay': `${index * -2.7}s`, '--enter': `${150 + index * 90}ms`,
             } as React.CSSProperties}
           >
             <span className="bubble-float">
