@@ -18,8 +18,10 @@
     repeating-linear-gradient(90deg, var(--band-text) 0 1px, transparent 1px 120px) bottom / 100% 10px no-repeat;
   opacity: 0.45;
 }
+/* Inset track so the first and last keyframes (0% and 100%) aren't cut off at the screen edges. */
+.ruler-track { position: absolute; inset: 0 1.5rem 0 1.25rem; }
 .ruler-fill {
-  position: absolute; left: 0; bottom: 0; height: 3px; width: 100%; pointer-events: none;
+  position: absolute; left: 0; width: 100%; bottom: 0; height: 3px; pointer-events: none;
   background: var(--accent-fill); transform-origin: left; transform: scaleX(var(--progress));
 }
 .ruler-playhead {
