@@ -1,7 +1,7 @@
 import { expect, test } from '@playwright/test'
 import { join } from 'node:path'
 import { experience } from '../src/content/experience'
-import { hobbies } from '../src/content/hobbies'
+import { hobbyProjects } from '../src/content/hobbyProjects'
 import { formatDuration, formatMonth, formatRange } from '../src/lib/dates'
 import { differenceFrom, greetingFor } from '../src/lib/timeGreeting'
 import { easterEgg } from '../src/content/easterEggs'
@@ -31,9 +31,11 @@ test('keyboard navigation, active page and metadata follow the route', async ({ 
   await expect(page.getByRole('link', { name: sections.skip })).toBeFocused()
   await page.keyboard.press('Enter')
   await expect(page.getByRole('main')).toBeFocused()
-  await expect(mainNav(page).getByRole('link', { name: pages.home.label })).toHaveAttribute('aria-current', 'page')
+  // Home is the "AK." logo, not a menu item.
+  await expect(page.locator('.monogram').first()).toHaveAttribute('href', '/')
+  expect(navItems.map(item => item.label)).toEqual(['Work', 'Hobby projects', 'Experience', 'Contact'])
 
-  for (const key of ['projects', 'experience', 'resume', 'contact'] as const) {
+  for (const key of ['projects', 'hobby', 'experience', 'contact'] as const) {
     const { label, title, description } = pages[key]
     const link = mainNav(page).getByRole('link', { name: label })
     await link.focus()
@@ -44,21 +46,27 @@ test('keyboard navigation, active page and metadata follow the route', async ({ 
     await expect(page.locator('meta[name="description"]')).toHaveAttribute('content', description)
   }
 
+  // The résumé is a button in the header rather than a menu item.
+  await page.locator('.resume-button').click()
+  await expect(page).toHaveURL('/resume')
+  await expect(page).toHaveTitle(`${pages.resume.title} · ${profile.name}`)
+  await expect(page.locator('meta[name="description"]')).toHaveAttribute('content', pages.resume.description)
+
   await mainNav(page).getByRole('link', { name: pages.experience.label }).click()
   await expect(page).toHaveURL('/experience')
   await expect(page.getByRole('heading', { level: 1 })).toHaveText(pages.experience.title)
   expect(navItems.map(item => item.label)).not.toContain('Experiments')
 })
 
-test('hero shows the name, roles, a plain status chip and both buttons', async ({ page }) => {
+test('hero shows the name, roles, a plain status line and both buttons', async ({ page }) => {
   await page.goto('/')
   const hero = page.locator('.hero')
-  await expect(hero.getByRole('heading', { level: 1 })).toHaveText(`I’m ${profile.name}`)
-  const status = hero.locator('.status-chip')
-  await expect(status).toHaveText(profile.status)
-  await expect(status.locator('*')).toHaveCount(0)
-  expect(await status.evaluate(el => getComputedStyle(el, '::before').content)).toBe('none')
-  for (const { label } of profile.roles) await expect(hero.getByText(label, { exact: true })).toBeVisible()
+  await expect(hero.getByRole('heading', { level: 1 })).toHaveText(`${profile.name}.`)
+  await expect(hero.locator('.hero-name .hero-dot')).toHaveText('.')
+  await expect(hero.locator('.hero-roles')).toHaveText(profile.roles.join(' / '))
+  await expect(hero.getByText(profile.headline, { exact: true })).toBeVisible()
+  await expect(hero.locator('.hero-status')).toHaveText(profile.status)
+  await expect(hero.locator('.status-chip')).toHaveCount(0)
   await expect(hero.getByRole('link', { name: sections.hero.primary })).toHaveAttribute('href', '/contact')
   const resume = hero.getByRole('link', { name: sections.hero.secondary })
   await expect(resume).toHaveAttribute('href', profile.resume.href)
@@ -138,14 +146,17 @@ test('the loading screen plays on a fresh load but not when changing pages', asy
   await expect(loader).toContainText(sections.loader.title)
   expect(await loader.locator('.loader-logos svg').count()).toBeGreaterThan(3)
   await expect(loader.locator('.loader-block')).toBeVisible()
+  await expect(loader.locator('.jump-hint')).toHaveText(sections.loader.gameHint)
   await expect(loader).toBeHidden({ timeout: 4000 })
   await mainNav(page).getByRole('link', { name: pages.projects.label }).click()
   await expect(page.getByRole('heading', { level: 1 })).toHaveText(pages.projects.title)
   await expect(loader).toHaveCount(0)
-  await expect(page.locator('.route-progress')).toHaveCount(1)
+  // The old colour sweep is gone; the scroll ruler is on every page.
+  await expect(page.locator('.route-progress')).toHaveCount(0)
+  await expect(page.locator('.ruler')).toHaveCount(1)
 })
 
-test('About, Skills, Hobbies and Currently sections are on Home', async ({ page }) => {
+test('Selected work, Skills and About sections are on Home', async ({ page }) => {
   await page.goto('/')
   const about = page.locator('#about')
   await expect(about.getByText(profile.about.statement)).toBeVisible()
@@ -158,13 +169,18 @@ test('About, Skills, Hobbies and Currently sections are on Home', async ({ page 
   expect(skills.map(skill => skill.name)).toEqual(expect.arrayContaining(['Luau', 'Java']))
   expect(skills.map(skill => skill.name)).not.toContain('Git')
 
-  const hobbyRegion = page.getByRole('region', { name: sections.hobbies.heading })
-  for (const { title } of hobbies) await expect(hobbyRegion.getByRole('heading', { name: title })).toBeVisible()
-  await expect(hobbyRegion).toContainText('Roblox')
+  await expect(about.locator('.currently')).toContainText(profile.currently)
+  // The old Currently cards and the hobbies section are gone.
+  await expect(page.locator('.currently-list')).toHaveCount(0)
+  await expect(page.getByRole('region', { name: 'Outside of class' })).toHaveCount(0)
 
-  const currently = page.getByRole('heading', { name: sections.currently.heading })
-  await expect(currently).toBeVisible()
-  await expect(currently.locator('.dots span')).toHaveCount(3)
+  const work = page.locator('#work')
+  await expect(work.getByRole('heading', { level: 2, name: sections.projects.heading })).toBeVisible()
+  await expect(work.locator('.work-lead').getByRole('link', { name: projects[0].title })).toHaveAttribute('href', `/work/${projects[0].slug}`)
+  // The grid holds the remaining featured projects plus the featured hobby game.
+  await expect(work.locator('.work-grid > li')).toHaveCount(profile.featuredCount)
+  await expect(work.locator('.work-grid').getByRole('link', { name: hobbyProjects.featured.title })).toHaveAttribute('href', '/hobby-projects')
+  await expect(work.getByRole('link', { name: sections.projects.all })).toHaveAttribute('href', '/work')
 })
 
 test('dates show month ranges and inclusive durations', () => {
@@ -191,10 +207,10 @@ test('Home shows recent experience and links to the timeline on the Experience p
     for (const line of highlights) await expect(item).toContainText(line)
   }
   for (const project of projects) {
-    await expect(items.filter({ hasText: project.title }).getByRole('link', { name: project.title })).toHaveAttribute('href', `/projects/${project.slug}`)
+    await expect(items.filter({ hasText: project.title }).getByRole('link', { name: project.title })).toHaveAttribute('href', `/work/${project.slug}`)
     await expect(items.filter({ hasText: project.title })).toContainText(formatMonth(project.date))
   }
-  for (const milestone of milestones) await expect(items.filter({ hasText: milestone.title })).toContainText(milestone.emoji)
+  for (const milestone of milestones) await expect(items.filter({ hasText: milestone.title })).toContainText('◆')
   const sortKeys = await items.evaluateAll(els => els.length)
   expect(sortKeys).toBeGreaterThan(0)
 
@@ -209,7 +225,7 @@ test('sections fade in on every page and bubbles pop in', async ({ page }) => {
   await page.emulateMedia({ reducedMotion: 'no-preference' })
   await page.goto('/')
   await expect(page.locator('.bubble-inner').first()).toHaveCSS('animation-name', 'bubble-pop')
-  for (const path of ['/', '/projects', '/experience', '/resume', '/contact']) {
+  for (const path of ['/', '/work', '/hobby-projects', '/experience', '/resume', '/contact']) {
     await page.goto(path)
     const first = page.locator('.reveal').first()
     await expect(first).toHaveClass(/is-visible/)
@@ -220,7 +236,7 @@ test('sections fade in on every page and bubbles pop in', async ({ page }) => {
 })
 
 test('project cards glow where the cursor is', async ({ page }) => {
-  await page.goto('/projects')
+  await page.goto('/work')
   const card = page.locator('.project-card').first()
   const box = (await card.boundingBox())!
   await page.mouse.move(box.x + 40, box.y + 60)
@@ -286,10 +302,10 @@ test('bubbles stay below the header, the logo scrolls Home back to the top, and 
   }
 })
 
-test('headings use Bricolage Grotesque and text uses Inter', async ({ page }) => {
+test('headings use Bricolage Grotesque and text uses IBM Plex Sans', async ({ page }) => {
   await page.goto('/')
   await expect(page.getByRole('heading', { level: 1 })).toHaveCSS('font-family', /Bricolage Grotesque/)
-  await expect(page.locator('body')).toHaveCSS('font-family', /^"?Inter/)
+  await expect(page.locator('body')).toHaveCSS('font-family', /^"?IBM Plex Sans/)
   expect(await page.evaluate(() => document.fonts.check('800 40px "Bricolage Grotesque"'))).toBe(true)
 })
 
@@ -298,7 +314,8 @@ test('About is short and the Skills section has no card backgrounds', async ({ p
   const about = page.locator('#about')
   await expect(about.getByRole('heading', { name: sections.about.heading })).toBeVisible()
   await expect(about.getByText('About me', { exact: true })).toHaveCount(0)
-  await expect(about.locator('.about-body > p')).toHaveCount(2)
+  // Statement, paragraph and the one-line "currently".
+  await expect(about.locator('.about-body > p')).toHaveCount(3)
   const backgrounds = await page.locator('.skill-group').evaluateAll(els => els.map(el => getComputedStyle(el).backgroundColor))
   for (const background of backgrounds) expect(background).toBe('rgba(0, 0, 0, 0)')
 })
@@ -314,8 +331,12 @@ test('keyboard shortcuts navigate, toggle and show the ? cheat sheet', async ({ 
   await expect(help).toBeHidden()
 
   await page.keyboard.press('g')
-  await page.keyboard.press('p')
-  await expect(page).toHaveURL('/projects')
+  await page.keyboard.press('w')
+  await expect(page).toHaveURL('/work')
+  await page.keyboard.press('g')
+  await page.keyboard.press('b')
+  await expect(page).toHaveURL('/hobby-projects')
+  expect(shortcuts.map(item => item.keys.join(''))).not.toEqual(expect.arrayContaining(['gp']))
   await page.keyboard.press('g')
   await page.keyboard.press('e')
   await expect(page).toHaveURL('/experience')
@@ -325,7 +346,7 @@ test('keyboard shortcuts navigate, toggle and show the ? cheat sheet', async ({ 
   await page.keyboard.press('/')
   await expect(page.getByRole('dialog', { name: sections.commandMenu.label })).toBeVisible()
   // Shortcuts don't fire while typing.
-  await page.keyboard.type('gp')
+  await page.keyboard.type('gw')
   await expect(page).toHaveURL('/experience')
 })
 
@@ -335,13 +356,15 @@ test('Ask my portfolio answers with the AI when available and offline otherwise,
   const chatPanel = page.getByRole('dialog', { name: sections.chat.title })
   await expect(chatPanel).toBeVisible()
   for (const suggestion of chat.suggestions) await expect(chatPanel.getByRole('button', { name: suggestion })).toBeVisible()
+  await expect(chatPanel.locator('.chat-chip')).toHaveCount(chat.suggestions.length)
+  await expect(chatPanel.getByText(sections.chat.greeting)).toBeVisible()
   // No /api/ask in local development → offline answer from the site's own content.
   await chatPanel.getByRole('button', { name: chat.suggestions[0] }).click()
   const last = chatPanel.locator('li[data-role="assistant"]').last()
   await expect(last).toContainText(projects[0].title)
   await expect(last.locator('.chat-words span').first()).toHaveCSS('animation-name', 'word-in')
   expect(await last.locator('.chat-words span').count()).toBeGreaterThan(5)
-  await expect(chatPanel.getByRole('link', { name: sections.chat.open })).toHaveAttribute('href', '/projects')
+  await expect(chatPanel.getByRole('link', { name: sections.chat.open })).toHaveAttribute('href', '/work')
   // Unasked suggestions stay available.
   await expect(chatPanel.getByRole('button', { name: chat.suggestions[1] })).toBeVisible()
 
@@ -373,10 +396,10 @@ test('a small keyboard button opens the shortcuts list', async ({ page }) => {
 })
 
 test('offline answers give clear answers to common questions', () => {
-  expect(localAnswer('What has Abdalla built?').link).toBe('/projects')
+  expect(localAnswer('What has Abdalla built?').link).toBe('/work')
   expect(localAnswer('What is the tech stack?').link).toBe('/#skills')
   expect(localAnswer('How can I contact Abdalla?').link).toBe('/contact')
-  expect(localAnswer('Does Abdalla do Roblox?').link).toBe('/#hobbies')
+  expect(localAnswer('Does Abdalla do Roblox?').link).toBe('/hobby-projects')
 
   const open = localAnswer('Is Abdalla open to internships?')
   expect(open.text).toContain(chat.availability)
@@ -393,7 +416,7 @@ test('offline answers give clear answers to common questions', () => {
 
   const impact = localAnswer('What’s Abdalla’s most impactful project?')
   expect(impact.text).toContain(mostImpactfulProject().title)
-  expect(impact.link).toBe(`/projects/${chat.mostImpactful.slug}`)
+  expect(impact.link).toBe(`/work/${chat.mostImpactful.slug}`)
 })
 
 test('GitHub on Contact: contribution chart and activity, looked up by permanent ID', async ({ page }) => {
@@ -467,7 +490,7 @@ test('the contribution parser reads GitHub calendar HTML', () => {
 })
 
 test('the Clearpath project has a working interactive demo', async ({ page }) => {
-  await page.goto(`/projects/${projects[0].slug}`)
+  await page.goto(`/work/${projects[0].slug}`)
   const demo = page.getByRole('region', { name: sections.project.demo })
   await demo.getByRole('button', { name: /After/ }).click()
   for (let i = 0; i < 2; i++) await demo.getByRole('button', { name: /Continue/ }).click()
@@ -494,39 +517,44 @@ test('experience and projects show placeholders until pictures are added', async
     await expect(section.getByRole('heading', { name: role })).toBeVisible()
     await expect(section.getByRole('img', { name: `${company} logo (placeholder)` })).toBeVisible()
   }
-  const featured = page.getByRole('region', { name: sections.projects.heading }).getByRole('article')
-  await expect(featured).toHaveCount(profile.featuredCount)
+  const featured = page.locator('#work').getByRole('article')
+  // The lead project, the other featured projects and the featured hobby game.
+  await expect(featured).toHaveCount(profile.featuredCount + 1)
   for (const project of projects.slice(0, profile.featuredCount)) {
     await expect(page.getByRole('img', { name: `${project.title} screenshot (placeholder)` })).toBeVisible()
   }
+  await expect(page.getByRole('img', { name: `${hobbyProjects.featured.title} screenshot (placeholder)` })).toBeVisible()
   await expect(featured.first().getByText(sections.placeholders.project)).toBeVisible()
 })
 
-test('the Projects page filters by area and keeps the choice in the URL', async ({ page }) => {
-  await page.goto('/projects')
-  await expect(page.getByRole('heading', { level: 1 })).toHaveText('Projects')
+test('the Work page filters by area and keeps the choice in the URL', async ({ page }) => {
+  await page.goto('/work')
+  await expect(page.getByRole('heading', { level: 1 })).toHaveText(pages.projects.title)
   await expect(page.getByRole('article')).toHaveCount(projects.length)
   const filters = page.getByRole('group', { name: 'Filter projects by area' })
   const area = projects[0].area
   const matching = projects.filter(project => project.area === area)
   await filters.getByRole('button', { name: skillAreas[area].label }).click()
-  await expect(page).toHaveURL(`/projects?area=${area}`)
+  await expect(page).toHaveURL(`/work?area=${area}`)
   await expect(page.getByRole('article')).toHaveCount(matching.length)
   await expect(page.getByRole('status').filter({ hasText: 'of' })).toHaveText(`${matching.length} of ${projects.length}`)
   await page.reload()
   await expect(filters.getByRole('button', { name: skillAreas[area].label })).toHaveAttribute('aria-pressed', 'true')
   await filters.getByRole('button', { name: sections.projects.allFilter }).click()
   await expect(page.getByRole('article')).toHaveCount(projects.length)
+  // Filters are underlined text tabs, and each project card shows its result as a big number.
+  await expect(filters.locator('button.filter').first()).toHaveAttribute('aria-pressed', 'true')
+  await expect(page.locator('.card-result')).toHaveCount(projects.length)
 })
 
 test('every project card opens a detail page with results, questions and neighbours', async ({ page }) => {
   for (const [index, project] of projects.entries()) {
     const next = projects[(index + 1) % projects.length]
     const previous = projects[(index - 1 + projects.length) % projects.length]
-    await page.goto('/projects')
+    await page.goto('/work')
     await page.getByRole('link', { name: project.title, exact: true }).click()
     await expect(page.getByRole('heading', { level: 1 })).toHaveText(project.title)
-    await expect(mainNav(page).getByRole('link', { name: 'Projects' })).toHaveAttribute('aria-current', 'page')
+    await expect(mainNav(page).getByRole('link', { name: pages.projects.label })).toHaveAttribute('aria-current', 'page')
     const { accomplished, measuredBy, byDoing } = project.xyz
     await expect(page.getByRole('region', { name: sections.project.summary })).toContainText(`${accomplished}, as measured by ${measuredBy}, by ${byDoing}.`)
     for (const metric of project.metrics) await expect(page.getByText(metric.value, { exact: true })).toBeVisible()
@@ -537,10 +565,10 @@ test('every project card opens a detail page with results, questions and neighbo
       await page.getByText(question, { exact: true }).click()
       await expect(page.getByText(answer, { exact: true })).toBeVisible()
     }
-    await expect(page.locator('a[rel="next"]')).toHaveAttribute('href', `/projects/${next.slug}`)
-    await expect(page.locator('a[rel="prev"]')).toHaveAttribute('href', `/projects/${previous.slug}`)
+    await expect(page.locator('a[rel="next"]')).toHaveAttribute('href', `/work/${next.slug}`)
+    await expect(page.locator('a[rel="prev"]')).toHaveAttribute('href', `/work/${previous.slug}`)
   }
-  await page.goto('/projects/not-a-project')
+  await page.goto('/work/not-a-project')
   await expect(page.getByRole('heading', { level: 1 })).toHaveText(sections.notFound.title)
 })
 
@@ -563,7 +591,7 @@ test('Quick search opens with Ctrl+K, finds a project, runs actions and closes w
   await page.keyboard.type(projects[2].title)
   await expect(dialog.getByRole('option')).toHaveCount(1)
   await page.keyboard.press('Enter')
-  await expect(page).toHaveURL(`/projects/${projects[2].slug}`)
+  await expect(page).toHaveURL(`/work/${projects[2].slug}`)
   await expect(dialog).toBeHidden()
 
   await page.keyboard.press('Control+k')
@@ -623,9 +651,58 @@ test('the résumé lists experience with logos, skills and a PDF download', asyn
   expect((await response.body()).subarray(0, 5).toString()).toBe('%PDF-')
 })
 
-test('old URLs redirect', async ({ page }) => {
-  await page.goto(`/work/${projects[0].slug}?from=bookmark`)
-  await expect(page).toHaveURL(`/projects/${projects[0].slug}?from=bookmark`)
+test('old URLs redirect to the new pages', async ({ page }) => {
+  await page.goto('/projects')
+  await expect(page).toHaveURL('/work')
+  await page.goto('/projects?area=ai')
+  await expect(page).toHaveURL('/work?area=ai')
+  await page.goto('/projects/clearpath-onboarding')
+  await expect(page).toHaveURL('/work/clearpath-onboarding')
+  await page.goto(`/projects/${projects[0].slug}?from=bookmark`)
+  await expect(page).toHaveURL(`/work/${projects[0].slug}?from=bookmark`)
+  await expect(page.getByRole('heading', { level: 1 })).toHaveText(projects[0].title)
+})
+
+test('the Hobby projects page shows the featured game and the systems behind it', async ({ page }) => {
+  await page.goto('/hobby-projects')
+  await expect(page.getByRole('heading', { level: 1 })).toHaveText(pages.hobby.title)
+  const { featured, games, systems } = hobbyProjects
+  const game = page.locator('.game-featured')
+  await expect(game.getByRole('heading', { level: 2, name: featured.title })).toBeVisible()
+  await expect(game).toContainText(sections.hobby.featured)
+  for (const stat of featured.stats) await expect(game).toContainText(stat.value)
+  await expect(game.locator('ul.tags li')).toHaveCount(featured.tags.length)
+  if (featured.url) await expect(game.getByRole('link', { name: sections.hobby.play })).toHaveAttribute('href', featured.url)
+  for (const { title } of games) await expect(page.getByRole('heading', { level: 3, name: title })).toBeVisible()
+  const band = page.getByRole('region', { name: sections.hobby.systems })
+  await expect(band.getByRole('heading', { level: 2 })).toHaveText(sections.hobby.systems)
+  for (const { title } of systems) await expect(band.getByRole('heading', { level: 3, name: title })).toBeVisible()
+  await expect(mainNav(page).getByRole('link', { name: pages.hobby.label })).toHaveAttribute('aria-current', 'page')
+})
+
+test('the scroll ruler has one keyframe per scene on Home', async ({ page }) => {
+  await page.goto('/')
+  const scenes = await page.locator('main [data-scene]').evaluateAll(els => els.map(el => (el as HTMLElement).dataset.scene))
+  expect(scenes.length).toBeGreaterThan(4)
+  const ruler = page.locator('.ruler')
+  await expect(ruler.locator('.ruler-key')).toHaveCount(scenes.length)
+  await expect(ruler.locator('.ruler-key').first()).toHaveAttribute('aria-label', `Jump to ${scenes[0]}`)
+  // Clicking a keyframe scrolls to that section.
+  await ruler.getByRole('button', { name: 'Jump to Skills' }).click()
+  await expect.poll(() => page.evaluate(() => scrollY)).toBeGreaterThan(500)
+})
+
+test('the 404 page has a jump game that starts with Space', async ({ page }) => {
+  await page.goto('/no-such-page')
+  await expect(page.getByRole('heading', { level: 1 })).toHaveText(sections.notFound.title)
+  await expect(page.getByText(sections.notFound.code)).toBeVisible()
+  await expect(page.locator('.jump-stage')).toBeVisible()
+  const hint = page.locator('.jump-stage .jump-hint')
+  await expect(hint).toHaveText(sections.notFound.gameHint)
+  await page.locator('body').click({ position: { x: 5, y: 300 } })
+  await page.keyboard.press('Space')
+  await expect(hint).toContainText('Cleared')
+  await expect(page.locator('.jump-stage .is-leaping')).toHaveCount(1)
 })
 
 test('uses the OS theme first and remembers an explicit choice', async ({ page }) => {
@@ -649,11 +726,10 @@ function luminance(rgb: number[]) {
 }
 
 for (const theme of ['light', 'dark'] as const) {
-  test(`${theme} theme text meets WCAG AA, including on every pastel tone`, async ({ page }) => {
+  test(`${theme} theme text meets WCAG AA on the page and on the black band`, async ({ page }) => {
     await page.emulateMedia({ colorScheme: theme })
     await page.goto('/')
-    const tones = ['butter', 'peach', 'mint', 'lilac', 'sky', 'rose']
-    const names = ['text', 'text-muted', 'accent', 'bg', 'surface', 'accent-soft', ...tones.flatMap(tone => [`tone-${tone}`, `tone-${tone}-ink`])]
+    const names = ['text', 'text-muted', 'accent', 'bg', 'surface', 'band', 'band-text', 'band-muted']
     const palette = await page.locator('html').evaluate((element, list) => {
       const ctx = document.createElement('canvas').getContext('2d')!
       return Object.fromEntries(list.map(name => {
@@ -669,8 +745,7 @@ for (const theme of ['light', 'dark'] as const) {
     for (const surface of ['bg', 'surface']) {
       for (const color of ['text', 'text-muted', 'accent']) expect(ratio(color, surface), `${color} on ${surface}`).toBeGreaterThanOrEqual(4.5)
     }
-    expect(ratio('text', 'accent-soft')).toBeGreaterThanOrEqual(4.5)
-    for (const tone of tones) expect(ratio(`tone-${tone}-ink`, `tone-${tone}`), tone).toBeGreaterThanOrEqual(4.5)
+    for (const color of ['band-text', 'band-muted']) expect(ratio(color, 'band'), `${color} on band`).toBeGreaterThanOrEqual(4.5)
   })
 }
 
@@ -680,7 +755,7 @@ for (const width of [360, 768, 1440]) {
       await page.setViewportSize({ width, height: 900 })
       await page.emulateMedia({ colorScheme: theme })
       const evidence = process.env.PORTFOLIO_SCREENSHOTS
-      for (const path of ['/', '/projects', `/projects/${projects[0].slug}`, '/experience', '/resume', '/contact']) {
+      for (const path of ['/', '/work', `/work/${projects[0].slug}`, '/hobby-projects', '/experience', '/resume', '/contact']) {
         await page.goto(path)
         await expect(page.getByRole('heading', { level: 1 })).toBeVisible()
         await page.evaluate(() => document.fonts.ready)
@@ -689,9 +764,9 @@ for (const width of [360, 768, 1440]) {
       }
       if (width === 360) {
         await page.getByRole('button', { name: 'Menu', exact: true }).click()
-        await expect(mainNav(page).getByRole('link', { name: pages.resume.label })).toBeVisible()
+        await expect(mainNav(page).locator('.nav-resume')).toBeVisible()
       } else if (width === 1440) {
-        await expect(mainNav(page).getByRole('link', { name: pages.resume.label })).toBeVisible()
+        await expect(page.locator('.resume-button')).toBeVisible()
       }
     })
   }
