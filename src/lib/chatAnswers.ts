@@ -48,7 +48,7 @@ export const intents: { id: string; pattern: RegExp; answer: () => Answer }[] = 
     pattern: /\b(impact|impactful|biggest|best|proudest|favou?rite|most important|strongest)\b/i,
     answer: () => {
       const project = mostImpactfulProject()
-      return { text: `${name}'s most impactful project is ${project.title}. ${project.summary} It stands out because ${chat.mostImpactful.why}`, link: `/projects/${project.slug}` }
+      return { text: `${name}'s most impactful project is ${project.title}. ${project.summary} It stands out because ${chat.mostImpactful.why}`, link: `/work/${project.slug}` }
     },
   },
   {
@@ -62,7 +62,7 @@ export const intents: { id: string; pattern: RegExp; answer: () => Answer }[] = 
   {
     id: 'projects',
     pattern: /\b(built|build|made|make|projects?|portfolio|created)\b/i,
-    answer: () => ({ text: `${name} has built ${projects.length} projects, including ${list(projects.slice(0, 3).map(project => project.title))}. For example, ${projects[0].summary.charAt(0).toLowerCase()}${projects[0].summary.slice(1)}`, link: '/projects' }),
+    answer: () => ({ text: `${name} has built ${projects.length} projects, including ${list(projects.slice(0, 3).map(project => project.title))}. For example, ${projects[0].summary.charAt(0).toLowerCase()}${projects[0].summary.slice(1)}`, link: '/work' }),
   },
   {
     id: 'stack',

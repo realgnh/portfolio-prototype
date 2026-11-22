@@ -7,17 +7,21 @@
 .monogram { font-family: var(--font-display); font-size: 1.4rem; font-weight: 800; letter-spacing: -0.05em; text-decoration: none; }
 .monogram span { color: var(--accent); }
 
-.pill-nav {
-  display: flex; gap: 0.15rem; padding: 0.3rem; border: 1px solid var(--line); border-radius: 999px;
-  background: color-mix(in srgb, var(--surface) 82%, transparent); backdrop-filter: blur(12px);
-  box-shadow: var(--shadow);
+/* Main navigation: plain text links; the current page gets an orange underline. */
+.site-nav { display: flex; gap: clamp(1rem, 2.4vw, 2rem); }
+.site-nav a {
+  position: relative; padding-block: 0.35rem; font-size: 0.95rem; font-weight: 500; color: var(--text-muted); text-decoration: none;
+  transition: color 200ms;
 }
-.pill-nav a {
-  padding: 0.45rem 0.95rem; border-radius: 999px; font-size: 0.9rem; font-weight: 600;
-  color: var(--text-muted); text-decoration: none; transition: background-color 200ms, color 200ms;
+.site-nav a::after {
+  position: absolute; left: 0; right: 0; bottom: 0; height: 2px; background: var(--accent-fill);
+  transform: scaleX(0); transform-origin: left; transition: transform 300ms var(--ease); content: "";
 }
-.pill-nav a:hover { color: var(--text); background: var(--bg); }
-.pill-nav a[aria-current="page"] { background: var(--button); color: var(--button-text); }
+.site-nav a:hover { color: var(--text); }
+.site-nav a[aria-current="page"] { color: var(--text); }
+.site-nav a[aria-current="page"]::after, .site-nav a:hover::after { transform: scaleX(1); }
+.resume-button { min-height: 2.5rem; padding: 0.5rem 1.1rem; font-size: 0.9rem; }
+.site-nav .nav-resume { display: none; } /* shown in the phone menu only */
 
 .header-actions { display: flex; align-items: center; justify-content: flex-end; gap: 0.5rem; }
 .header-actions .icon-button { background: color-mix(in srgb, var(--surface) 82%, transparent); backdrop-filter: blur(12px); }
@@ -43,14 +47,17 @@
   .menu-button { display: inline-grid; }
   .search-button { width: 2.5rem; padding: 0; justify-content: center; }
   .search-label { display: none; }
-  .pill-nav {
+  .site-nav {
     position: absolute; top: calc(100% - 0.25rem); right: var(--gutter); left: var(--gutter);
-    flex-direction: column; padding: 0.5rem; border-radius: var(--radius);
-    background: var(--surface); visibility: hidden; opacity: 0; transform: translateY(-6px);
+    flex-direction: column; gap: 0; padding: 0.5rem 1rem; border: 1px solid var(--line); border-radius: var(--radius);
+    background: var(--surface); box-shadow: var(--shadow); visibility: hidden; opacity: 0; transform: translateY(-6px);
     transition: opacity 200ms, transform 200ms var(--ease), visibility 200ms;
   }
-  .pill-nav[data-open="true"] { visibility: visible; opacity: 1; transform: none; }
-  .pill-nav a { padding: 0.75rem 1rem; font-size: 1rem; }
+  .site-nav[data-open="true"] { visibility: visible; opacity: 1; transform: none; }
+  .site-nav a { padding: 0.8rem 0; font-size: 1.05rem; }
+  .site-nav a::after { display: none; }
+  .site-nav .nav-resume { display: block; }
+  .resume-button { display: none; }
 }
 
 .site-footer { margin-top: clamp(4rem, 10vw, 7rem); padding-block: 2rem 2.5rem; border-top: 1px solid var(--line); }

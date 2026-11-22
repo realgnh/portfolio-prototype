@@ -9,7 +9,8 @@ export type ShortcutAction =
 
 export const shortcuts: { keys: string[]; label: string; action: ShortcutAction }[] = [
   { keys: ['g', 'h'], label: 'Go to Home', action: { type: 'go', to: '/' } },
-  { keys: ['g', 'p'], label: 'Go to Projects', action: { type: 'go', to: '/projects' } },
+  { keys: ['g', 'w'], label: 'Go to Work', action: { type: 'go', to: '/work' } },
+  { keys: ['g', 'b'], label: 'Go to Hobby projects', action: { type: 'go', to: '/hobby-projects' } },
   { keys: ['g', 'e'], label: 'Go to Experience', action: { type: 'go', to: '/experience' } },
   { keys: ['g', 'r'], label: 'Go to Résumé', action: { type: 'go', to: '/resume' } },
   { keys: ['g', 'c'], label: 'Go to Contact', action: { type: 'go', to: '/contact' } },

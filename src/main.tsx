@@ -23,17 +23,18 @@ import { createBrowserRouter, Navigate, RouterProvider, useLocation, useParams }
 import { Layout } from './components/layout/Layout'
 import { Contact } from './pages/Contact'
 import { Experience } from './pages/Experience'
+import { HobbyProjects } from './pages/HobbyProjects'
 import { Home } from './pages/Home'
 import { NotFound } from './pages/NotFound'
 import { ProjectDetail } from './pages/ProjectDetail'
 import { Projects } from './pages/Projects'
 import { Resume } from './pages/Resume'
 
-/** Keeps old /work and /work/:slug links working. */
+/** Keeps old /projects and /projects/:slug links working (the page is now /work). */
 function LegacyProjectsRedirect() {
   const { slug } = useParams()
   const { search, hash } = useLocation()
-  const pathname = slug ? `/projects/${encodeURIComponent(slug)}` : '/projects'
+  const pathname = slug ? `/work/${encodeURIComponent(slug)}` : '/work'
   return <Navigate to={{ pathname, search, hash }} replace />
 }
 
@@ -43,12 +44,13 @@ const router = createBrowserRouter([
     element: <Layout />,
     children: [
       { index: true, element: <Home /> },
-      { path: 'projects', element: <Projects /> },
-      { path: 'projects/:slug', element: <ProjectDetail /> },
+      { path: 'work', element: <Projects /> },
+      { path: 'work/:slug', element: <ProjectDetail /> },
+      { path: 'hobby-projects', element: <HobbyProjects /> },
       { path: 'experience', element: <Experience /> },
       { path: 'resume', element: <Resume /> },
       { path: 'contact', element: <Contact /> },
-      { path: 'work/:slug?', element: <LegacyProjectsRedirect /> },
+      { path: 'projects/:slug?', element: <LegacyProjectsRedirect /> },
       { path: 'about', element: <Navigate to="/" replace /> },
       { path: '*', element: <NotFound /> },
     ],

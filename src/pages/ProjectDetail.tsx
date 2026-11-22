@@ -26,7 +26,7 @@ export function ProjectDetail() {
   return (
     <article className="page shell project-page">
       <Metadata title={project.title} description={project.summary} />
-      <Link className="arrow-link back-link" to="/projects"><span aria-hidden="true">←</span> {copy.back}</Link>
+      <Link className="arrow-link back-link" to="/work"><span aria-hidden="true">←</span> {copy.back}</Link>
 
       <header className="page-header">
         <ul className="chip-row" aria-label="Tags">
@@ -91,8 +91,8 @@ export function ProjectDetail() {
 
       {next !== project && (
         <nav className="pager" aria-label="More projects">
-          <Link to={`/projects/${previous.slug}`} rel="prev"><span className="muted">← {copy.previous}</span><strong>{previous.title}</strong></Link>
-          <Link to={`/projects/${next.slug}`} rel="next"><span className="muted">{copy.next} →</span><strong>{next.title}</strong></Link>
+          <Link to={`/work/${previous.slug}`} rel="prev"><span className="muted">← {copy.previous}</span><strong>{previous.title}</strong></Link>
+          <Link to={`/work/${next.slug}`} rel="next"><span className="muted">{copy.next} →</span><strong>{next.title}</strong></Link>
         </nav>
       )}
     </article>

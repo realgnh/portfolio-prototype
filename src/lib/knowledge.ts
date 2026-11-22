@@ -53,13 +53,13 @@ export function knowledgeDocs(): KnowledgeDoc[] {
     {
       title: 'Most impactful project',
       text: `${mostImpactfulProject().title}: ${mostImpactfulProject().summary} Why: ${chat.mostImpactful.why}`,
-      link: `/projects/${mostImpactfulProject().slug}`,
+      link: `/work/${mostImpactfulProject().slug}`,
       keywords: 'impact impactful best biggest proudest project',
     },
     {
       title: 'Projects overview',
       text: `${profile.firstName} has built ${projects.length} projects: ${projects.map(project => `${project.title} (${project.summary})`).join(' ')}`,
-      link: '/projects',
+      link: '/work',
       keywords: 'projects project built build made making portfolio work examples shipped created',
     },
     {
@@ -77,7 +77,7 @@ export function knowledgeDocs(): KnowledgeDoc[] {
     ...projects.map(project => ({
       title: `Project: ${project.title}`,
       text: `${project.summary} Role: ${project.role}. Built with ${project.tools.join(', ')}. Results: ${project.metrics.map(metric => `${metric.value} ${metric.label}`).join(', ')}. ${project.caseStudy.problem}`,
-      link: `/projects/${project.slug}`,
+      link: `/work/${project.slug}`,
       keywords: `project projects built build made ${project.tags.join(' ')} ${project.tools.join(' ')}`,
     })),
     ...hobbies.map(hobby => ({

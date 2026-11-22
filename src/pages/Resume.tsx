@@ -45,7 +45,7 @@ export function Resume() {
         <ul className="plain-list">
           {selected.map(project => (
             <li key={project.slug}>
-              <h3><Link className="arrow-link" to={`/projects/${project.slug}`}>{project.title} <span aria-hidden="true">↗</span></Link></h3>
+              <h3><Link className="arrow-link" to={`/work/${project.slug}`}>{project.title} <span aria-hidden="true">↗</span></Link></h3>
               <p className="muted">{project.summary}</p>
             </li>
           ))}

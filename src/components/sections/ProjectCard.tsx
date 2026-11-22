@@ -21,7 +21,7 @@ export function ProjectCard({ project }: { project: Project }) {
     <article className="project-card" data-tone={tone} onPointerMove={followCursor}>
       <ImageSlot src={project.image} folder="projects" alt={project.imageAlt ?? `${project.title} screenshot`} label={sections.placeholders.project} tone={tone} />
       <div className="project-card-body">
-        <h3><Link to={`/projects/${project.slug}`} className="card-link">{project.title}</Link></h3>
+        <h3><Link to={`/work/${project.slug}`} className="card-link">{project.title}</Link></h3>
         <p className="muted">{project.summary}</p>
         <div className="project-card-meta">
           <span className="result-pill" data-tone={tone}><strong>{result.value}</strong> {result.label.toLowerCase()}</span>

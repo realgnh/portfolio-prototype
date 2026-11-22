@@ -10,7 +10,7 @@ export function NotFound() {
         <h1>{sections.notFound.title}</h1>
         <p className="muted">{sections.notFound.description}</p>
       </header>
-      <div><Button to="/projects">{sections.project.back} <span aria-hidden="true">→</span></Button></div>
+      <div><Button to="/work">{sections.project.back} <span aria-hidden="true">→</span></Button></div>
     </section>
   )
 }

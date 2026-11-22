@@ -27,7 +27,7 @@ export function CommandMenu({ onClose, onAsk, onShortcuts }: { onClose: () => vo
     // Listed first on purpose so visitors notice it.
     { id: 'easter-egg', group: copy.actions, label: copy.surprise, run: () => window.dispatchEvent(new Event(EASTER_EGG_EVENT)) },
     ...navItems.map(({ to, label }) => ({ id: `page-${to}`, group: copy.pages, label, run: () => navigate(to) })),
-    ...projects.map(({ slug, title }) => ({ id: `project-${slug}`, group: copy.projects, label: title, run: () => navigate(`/projects/${slug}`) })),
+    ...projects.map(({ slug, title }) => ({ id: `project-${slug}`, group: copy.projects, label: title, run: () => navigate(`/work/${slug}`) })),
     { id: 'ask', group: copy.actions, label: copy.ask, run: onAsk },
     { id: 'shortcuts', group: copy.actions, label: copy.shortcuts, run: onShortcuts },
     { id: 'copy-email', group: copy.actions, label: copy.copyEmail, run: () => void copyEmail() },

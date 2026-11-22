@@ -4,7 +4,7 @@ type Props = {
   /** File name inside public/images/<folder>/. Leave undefined for a placeholder. */
   src?: string
   /** 'root' means public/images/ itself (used for your photo). */
-  folder: 'projects' | 'companies' | 'root'
+  folder: 'projects' | 'companies' | 'hobby' | 'root'
   alt: string
   /** Text shown on the placeholder, e.g. "Add screenshot" or a company's initials. */
   label: string

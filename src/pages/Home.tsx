@@ -38,7 +38,7 @@ export function Home() {
           id="projects-title"
           title={sections.projects.heading}
           intro={sections.projects.intro}
-          action={<Link className="arrow-link" to="/projects">{sections.projects.all} <span aria-hidden="true">→</span></Link>}
+          action={<Link className="arrow-link" to="/work">{sections.projects.all} <span aria-hidden="true">→</span></Link>}
         />
         <ul className="project-grid">
           {projects.slice(0, profile.featuredCount).map(project => <li key={project.slug}><ProjectCard project={project} /></li>)}

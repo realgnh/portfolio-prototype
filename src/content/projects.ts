@@ -3,7 +3,7 @@ import type { Area } from './skills'
 /**
  * PROJECTS — one object per project, shown in this order everywhere.
  *
- * - `slug`: the URL, e.g. /projects/clearpath-onboarding. Keep it unique and lowercase.
+ * - `slug`: the URL, e.g. /work/clearpath-onboarding. Keep it unique and lowercase.
  * - `area`: picks the pastel colour (see `skillAreas` in skills.ts).
  * - `image`: a screenshot file name in public/images/projects/, e.g. 'clearpath.png'.
  *   Leave it undefined to show a placeholder tile.

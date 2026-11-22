@@ -62,7 +62,7 @@ export function Timeline() {
                 <span>{entry.when}</span>
                 {entry.kind === 'role' && entry.length && <span className="muted">· {entry.length}</span>}
               </p>
-              <h3>{entry.kind === 'project' ? <Link to={`/projects/${entry.slug}`}>{entry.title} <span aria-hidden="true">↗</span></Link> : entry.title}</h3>
+              <h3>{entry.kind === 'project' ? <Link to={`/work/${entry.slug}`}>{entry.title} <span aria-hidden="true">↗</span></Link> : entry.title}</h3>
               {'subtitle' in entry && <p className="muted">{entry.subtitle}</p>}
               {entry.text.map(line => <p key={line} className="timeline-text">{line}</p>)}
             </div>
