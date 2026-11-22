@@ -83,7 +83,7 @@ export const intents: { id: string; pattern: RegExp; answer: () => Answer }[] = 
   {
     id: 'hobbies',
     pattern: /\b(roblox|hobb|games?|animat|fun|free time|luau)/i,
-    answer: () => ({ text: `${name} builds and animates Roblox games in Luau. The featured one is ${hobbyProjects.featured.title}, and the engineering behind them includes ${list(hobbyProjects.systems.slice(0, 3).map(system => system.title.toLowerCase()))}.`, link: '/hobby-projects' }),
+    answer: () => ({ text: `${name} makes Roblox games, scripted in Luau, and separately works as an animator (combat, emotes and cutscenes). The featured game is ${hobbyProjects.featured.title}, and the engineering behind it includes ${list(hobbyProjects.systems.slice(0, 3).map(system => system.title.toLowerCase()))}.`, link: '/hobby-projects' }),
   },
 ]
 

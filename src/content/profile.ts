@@ -13,14 +13,14 @@ export const profile = {
   /** The line under your name in the opening section. */
   headline: 'Software engineer who ships games to real players.',
   /** Plain-text roles shown above your name, separated by slashes. */
-  roles: ['CS @ GIU', 'Software & AI', 'Roblox developer'],
+  roles: ['CS @ GIU', 'Software & AI', 'Roblox developer', 'Animator'],
 
   intro: 'I study Computer Science at GIU and build software, applied-AI tools and Roblox games. I like work I can measure.',
 
   /** The "About" section on Home: one bold line, one short paragraph and a few quick facts. */
   about: {
     statement: 'I like building things I can measure.',
-    paragraph: 'CS student at GIU, heading toward Software / AI Engineering. I care about results you can see: a faster workflow, a clearer interface, a model I can explain. Off the clock I animate and build games on Roblox, which taught me to ship and listen to players.',
+    paragraph: 'CS student at GIU, heading toward Software / AI Engineering. I care about results you can see: a faster workflow, a clearer interface, a model I can explain. Off the clock I make Roblox games in Luau, which taught me to ship and listen to players, and I animate as a separate craft.',
     facts: [
       { label: 'Based in', value: 'Cairo' },
       { label: 'Studying', value: 'Computer Science' },

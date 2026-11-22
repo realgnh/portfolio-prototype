@@ -21,7 +21,8 @@ export type Game = {
 export type System = { title: string; summary: string; tags: string[] }
 
 export const hobbyProjects = {
-  intro: 'I build and animate Roblox games in Luau. They’re where I learned to ship to real players, read the analytics and fix things live.',
+  /** Two separate skills: making games (Luau) and animating. */
+  intro: 'I make Roblox games, scripted in Luau, which is where I learned to ship to real players, read the analytics and fix things live. Separately, I animate: combat, emotes and cutscenes, for my own games and for other developers.',
 
   featured: {
     title: 'Placeholder Arena',
@@ -65,7 +66,7 @@ export const hobbyProjects = {
 
   reel: {
     title: 'Animation reel',
-    summary: 'Combat, emotes and cutscenes animated in Roblox Studio and Blender.',
+    summary: 'Animation is its own craft for me, separate from scripting: combat, emotes and cutscenes made in Roblox Studio and Blender.',
     // video: 'reel.mp4',
     video: undefined as string | undefined,
   },
