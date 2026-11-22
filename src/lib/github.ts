@@ -25,7 +25,7 @@ export type GitHubData = {
   activity: ActivityMonth[]
 }
 
-const CACHE_KEY = 'portfolio-github-v2'
+const CACHE_KEY = 'portfolio-github-v3'
 const CACHE_MS = 60 * 60 * 1000
 /** How many recently pushed repositories to count commits in (one request each). */
 const COMMIT_REPOS = 5
@@ -37,7 +37,7 @@ async function get<T>(url: string): Promise<T> {
 }
 
 type RawUser = { login: string; name: string | null; avatar_url: string; html_url: string; public_repos: number; followers: number }
-type RawRepo = { name: string; full_name: string; description: string | null; language: string | null; stargazers_count: number; html_url: string; pushed_at: string; created_at: string; fork: boolean }
+type RawRepo = { name: string; full_name: string; description: string | null; language: string | null; stargazers_count: number; html_url: string; pushed_at: string; created_at: string; fork: boolean; private?: boolean; visibility?: string }
 type RawEvent = { type: string; repo: { name: string }; created_at: string; payload?: { action?: string; number?: number } }
 type RawCommit = { commit: { author: { date: string } } }
 type RawPull = { title: string; html_url: string; merged_at: string | null; created_at: string }
@@ -66,11 +66,12 @@ export async function loadGitHub(): Promise<GitHubData> {
   const login = user.login
   const since = windowStart()
   const [repos, events, contributions] = await Promise.all([
-    get<RawRepo[]>(`https://api.github.com/users/${login}/repos?sort=pushed&per_page=30`),
+    get<RawRepo[]>(`https://api.github.com/users/${login}/repos?type=owner&sort=pushed&per_page=30`),
     get<RawEvent[]>(`https://api.github.com/users/${login}/events/public?per_page=100`).catch(() => [] as RawEvent[]),
     loadContributions(login),
   ])
-  const own = repos.filter(repo => !repo.fork)
+  // Only your own, public repositories (never forks or private ones).
+  const own = repos.filter(repo => !repo.fork && !repo.private && (repo.visibility ?? 'public') === 'public')
 
   // Commits per repository, per month (only commits GitHub links to this account).
   const recent = own.filter(repo => repo.pushed_at >= since).slice(0, COMMIT_REPOS)

@@ -66,7 +66,7 @@
 .bubble-burst:not([data-popped]) .sparks { animation: spark-fall 850ms cubic-bezier(.4, 0, .85, .6) calc(var(--enter, 0ms) + 200ms) backwards; }
 .bubble-burst:not([data-popped]) .sparks i { animation: spark-shoot 850ms cubic-bezier(.12, .75, .3, 1) calc(var(--enter, 0ms) + 200ms) backwards; }
 /* Click firework. */
-.bubble-burst[data-pop] { animation: bubble-burst 420ms linear; }
+.bubble-burst[data-pop] { animation: bubble-burst 380ms linear; }
 .bubble-burst[data-pop] .sparks { animation: spark-fall 850ms cubic-bezier(.4, 0, .85, .6) backwards; }
 .bubble-burst[data-pop] .sparks i { animation: spark-shoot 850ms cubic-bezier(.12, .75, .3, 1) backwards; }
 
@@ -79,14 +79,13 @@
   to   { opacity: 0; transform: translateY(26px); }
 }
 
-/* Squish: swell, snap a little smaller, settle. Each step has its own easing for a soft, springy feel. */
+/* Click pop: one quick swell, then a single smooth settle back to normal size (no extra bounces). */
 @keyframes bubble-burst {
-  0%   { transform: scale(1); animation-timing-function: cubic-bezier(.25, .8, .4, 1); }
-  28%  { transform: scale(1.2); animation-timing-function: cubic-bezier(.5, 0, .5, 1); }
-  52%  { transform: scale(0.9); animation-timing-function: cubic-bezier(.4, 0, .4, 1); }
-  76%  { transform: scale(1.04); animation-timing-function: cubic-bezier(.4, 0, .4, 1); }
+  0%   { transform: scale(1); animation-timing-function: cubic-bezier(.3, .7, .4, 1); }
+  35%  { transform: scale(1.2); animation-timing-function: cubic-bezier(.45, 0, .25, 1); }
   100% { transform: scale(1); }
 }
+
 /* Three slow, uneven wandering paths with a gentle tilt (no two bubbles share a rhythm). */
 @keyframes wander-1 {
   0%, 100% { transform: translate(0, 0) rotate(0deg); }

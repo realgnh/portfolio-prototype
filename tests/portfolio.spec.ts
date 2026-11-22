@@ -359,10 +359,26 @@ test('Ask my portfolio answers with the AI when available and offline otherwise,
   await chatPanel.getByRole('button', { name: sections.chat.send }).click()
   await expect(chatPanel.locator('.chat-typing')).toBeVisible()
   await expect(chatPanel.locator('li[data-role="assistant"]').last().locator('.chat-words')).toHaveText('Alex builds software and applied AI projects.')
+  // Scrolling over the chat never scrolls the page behind it.
+  const before = await page.evaluate(() => scrollY)
+  const box = (await chatPanel.boundingBox())!
+  await page.mouse.move(box.x + box.width / 2, box.y + 30)
+  await page.mouse.wheel(0, 800)
+  await page.waitForTimeout(300)
+  expect(await page.evaluate(() => scrollY)).toBe(before)
+
   await page.keyboard.press('Escape')
   await expect(chatPanel).toBeHidden()
   await page.keyboard.press('a')
   await expect(chatPanel).toBeVisible()
+})
+
+test('a small keyboard button opens the shortcuts list', async ({ page }) => {
+  await page.goto('/')
+  await page.locator('.floating-actions').getByRole('button', { name: sections.shortcuts.title }).click()
+  await expect(page.getByRole('dialog', { name: sections.shortcuts.title })).toBeVisible()
+  const launcher = page.getByRole('button', { name: sections.chat.title })
+  expect((await launcher.boundingBox())!.height).toBeGreaterThanOrEqual(52)
 })
 
 test('offline answers give clear answers to common questions', () => {
@@ -401,7 +417,7 @@ test('GitHub on Contact: contribution chart and activity, looked up by permanent
     const url = route.request().url()
     requested.push(url)
     if (url.includes(`/user/${profile.github.id}`)) return route.fulfill({ json: { login: 'renamed-user', name: null, avatar_url: 'https://avatars.githubusercontent.com/u/1?v=4', html_url: 'https://github.com/renamed-user', public_repos: 3, followers: 2 } })
-    if (url.includes('/users/renamed-user/repos')) return route.fulfill({ json: [{ name: 'cool-repo', full_name: 'renamed-user/cool-repo', description: 'A repo', language: 'TypeScript', stargazers_count: 5, html_url: 'https://github.com/renamed-user/cool-repo', pushed_at: new Date().toISOString(), created_at: new Date().toISOString(), fork: false }] })
+    if (url.includes('/users/renamed-user/repos')) return route.fulfill({ json: [{ name: 'secret-repo', full_name: 'renamed-user/secret-repo', description: 'Private', language: 'Go', stargazers_count: 0, html_url: 'https://github.com/renamed-user/secret-repo', pushed_at: new Date().toISOString(), created_at: new Date().toISOString(), fork: false, private: true, visibility: 'private' }, { name: 'cool-repo', full_name: 'renamed-user/cool-repo', description: 'A repo', language: 'TypeScript', stargazers_count: 5, html_url: 'https://github.com/renamed-user/cool-repo', pushed_at: new Date().toISOString(), created_at: new Date().toISOString(), fork: false }] })
     if (url.includes('/commits')) return route.fulfill({ json: Array.from({ length: 4 }, () => ({ commit: { author: { date: new Date().toISOString() } } })) })
     if (url.includes('/pulls/7')) return route.fulfill({ json: { title: 'Add a feature', html_url: 'https://github.com/renamed-user/cool-repo/pull/7', merged_at: new Date().toISOString(), created_at: new Date().toISOString() } })
     return route.fulfill({ json: [{ type: 'PullRequestEvent', repo: { name: 'renamed-user/cool-repo' }, created_at: new Date().toISOString(), payload: { action: 'opened', number: 7 } }] })
@@ -414,14 +430,38 @@ test('GitHub on Contact: contribution chart and activity, looked up by permanent
   await panel.scrollIntoViewIfNeeded()
   await expect(panel).toContainText('24 contributions in the last year')
   await expect(panel.locator('.calendar-grid i[data-level]')).toHaveCount(365)
-  await expect(panel.locator('.calendar-grid i[data-level="2"]').first()).toHaveAttribute('title', /^3 contributions on /)
+  const square = panel.locator('.calendar-grid i[data-level="2"]').first()
+  await square.hover()
+  await expect(panel.getByRole('tooltip')).toHaveText(/^3 contributions on [A-Z][a-z]+ \d{1,2}(st|nd|rd|th)$/)
+  await expect(panel.getByText('secret-repo')).toHaveCount(0)
   await expect(panel).toContainText('Created 4 commits in 1 repository')
   await expect(panel).toContainText('Created 1 repository')
+  await expect(panel.locator('.github-repos li')).toHaveCount(1)
   await expect(panel.getByRole('link', { name: 'Add a feature' })).toHaveAttribute('href', 'https://github.com/renamed-user/cool-repo/pull/7')
   await expect(panel.locator('.activity-month').first()).toContainText(thisMonth.slice(0, 4))
   await expect(panel.getByRole('link', { name: sections.github.profile })).toHaveAttribute('href', 'https://github.com/renamed-user')
   expect(requested[0]).toContain(`/user/${profile.github.id}`)
   expect(requested.some(url => url.includes('/commits?author=renamed-user'))).toBe(true)
+})
+
+test('click pops swell once and settle without extra bounces', async ({ page }) => {
+  await page.goto('/')
+  const burst = page.locator('.bubble').first().locator('.bubble-burst')
+  await page.locator('.bubble').first().click()
+  const scales = await burst.evaluate(el => {
+    const animation = el.getAnimations().find(item => (item as CSSAnimation).animationName === 'bubble-burst')!
+    const duration = Number(animation.effect!.getComputedTiming().duration)
+    return Array.from({ length: 21 }, (_, step) => {
+      animation.currentTime = (duration * step) / 20
+      const matrix = new DOMMatrix(getComputedStyle(el).transform)
+      return matrix.a
+    })
+  })
+  const peak = scales.indexOf(Math.max(...scales))
+  // Rises to one peak, then only shrinks back to 1 (never dips below and comes back up).
+  for (let i = 1; i <= peak; i++) expect(scales[i]).toBeGreaterThanOrEqual(scales[i - 1] - 0.001)
+  for (let i = peak + 1; i < scales.length; i++) expect(scales[i]).toBeLessThanOrEqual(scales[i - 1] + 0.001)
+  expect(Math.min(...scales)).toBeGreaterThanOrEqual(0.999)
 })
 
 test('the contribution parser reads GitHub calendar HTML', () => {

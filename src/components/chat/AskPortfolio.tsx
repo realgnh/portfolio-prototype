@@ -61,6 +61,29 @@ export default function AskPortfolio({ onClose }: { onClose: () => void }) {
   const [busy, setBusy] = useState(false)
   const input = useRef<HTMLInputElement>(null)
   const list = useRef<HTMLOListElement>(null)
+  const panel = useRef<HTMLDivElement>(null)
+
+  // Scrolling over the chat scrolls the chat only, never the page behind it.
+  useEffect(() => {
+    const element = panel.current
+    if (!element) return
+    function onWheel(event: WheelEvent) {
+      let node = event.target as HTMLElement | null
+      while (node && node !== element) {
+        const scrollable = node.scrollHeight > node.clientHeight && /(auto|scroll)/.test(getComputedStyle(node).overflowY)
+        if (scrollable) {
+          const atTop = node.scrollTop <= 0 && event.deltaY < 0
+          const atBottom = node.scrollTop + node.clientHeight >= node.scrollHeight - 1 && event.deltaY > 0
+          if (!atTop && !atBottom) return // let this box scroll normally
+          break
+        }
+        node = node.parentElement
+      }
+      event.preventDefault()
+    }
+    element.addEventListener('wheel', onWheel, { passive: false })
+    return () => element.removeEventListener('wheel', onWheel)
+  }, [])
 
   // All suggestions at first; afterwards up to three you haven't asked yet.
   const asked = new Set(messages.filter(message => message.role === 'user').map(message => message.content))
@@ -84,7 +107,7 @@ export default function AskPortfolio({ onClose }: { onClose: () => void }) {
   }
 
   return (
-    <div className="chat-panel" role="dialog" aria-label={copy.title} onKeyDown={event => { if (event.key === 'Escape') onClose() }}>
+    <div ref={panel} className="chat-panel" role="dialog" aria-label={copy.title} onKeyDown={event => { if (event.key === 'Escape') onClose() }}>
       <header className="chat-header">
         <p><strong>{copy.title}</strong> <span className="muted">{copy.subtitle}</span></p>
         <button type="button" className="icon-button" aria-label="Close" onClick={onClose}>×</button>

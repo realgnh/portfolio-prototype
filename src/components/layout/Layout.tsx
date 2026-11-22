@@ -91,7 +91,7 @@ export function Layout() {
       <Footer />
       {menuOpen && <CommandMenu onClose={closeMenu} onAsk={() => setChatOpen(true)} onShortcuts={() => setHelpOpen(true)} />}
       {helpOpen && <ShortcutsHelp onClose={() => setHelpOpen(false)} />}
-      <ChatLauncher open={chatOpen} onOpen={() => setChatOpen(true)} onClose={() => setChatOpen(false)} />
+      <ChatLauncher open={chatOpen} onOpen={() => setChatOpen(true)} onClose={() => setChatOpen(false)} onShortcuts={() => setHelpOpen(true)} />
       <EasterEgg />
     </ToastProvider>
   )

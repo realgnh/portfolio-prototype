@@ -14,7 +14,7 @@ Everything you'd normally change is text in **`src/content/`**. You rarely need 
 | When a project appears on the timeline | `date` on that project in `src/content/projects.ts` |
 | Easter egg triggers, hint text and the character's message | `src/content/easterEggs.ts` |
 | Notes (blog posts) | Add a Markdown file to `src/content/notes/` (see the README there for the header) |
-| Keyboard shortcuts and the `?` cheat sheet | `src/content/shortcuts.ts` |
+| Keyboard shortcuts and the `?` cheat sheet | `src/content/shortcuts.ts` (the floating Ask and keyboard buttons are in `src/components/chat/ChatLauncher.tsx`) |
 | Where the GitHub section shows | It's on the Contact page: `<GitHubActivity />` in `src/pages/Contact.tsx` |
 | GitHub contribution chart and activity | `src/components/sections/ContributionCalendar.tsx` / `ContributionActivity.tsx`; data in `src/lib/github.ts` and `src/lib/contributions.ts` |
 | Your GitHub account for the activity panel | `profile.github` in `src/content/profile.ts` (uses your permanent account ID, so renames are fine) |
