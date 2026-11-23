@@ -9,7 +9,7 @@ export function SkillsGrid() {
   const areas = (Object.keys(skillAreas) as Area[]).filter(area => skills.some(skill => skill.area === area))
   return (
     <section id="skills" className="section shell" aria-labelledby="skills-title" data-scene="Skills">
-      <SectionHeading id="skills-title" title={sections.skills.heading} intro={sections.skills.intro} />
+      <SectionHeading id="skills-title" title={sections.skills.heading} />
       <div className="skills-grid">
         {areas.map(area => (
           <section key={area} className="skill-group" aria-labelledby={`skills-${area}`}>

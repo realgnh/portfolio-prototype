@@ -59,7 +59,6 @@ export function HobbyProjects() {
       <section className="band" aria-labelledby="systems-title" data-scene={copy.systems}>
         <div className="shell band-inner">
           <h2 id="systems-title" className="section-title">{copy.systems}</h2>
-          <p className="band-intro">{copy.systemsIntro}</p>
           <ul className="system-grid">
             {systems.map(system => (
               <li key={system.title}>
@@ -74,7 +73,6 @@ export function HobbyProjects() {
 
       <section className="shell section" aria-labelledby="reel-title" data-scene={reel.title}>
         <h2 id="reel-title" className="section-title">{reel.title}</h2>
-        <p className="muted">{reel.summary}</p>
         <div className="reel">
           {reel.video
             ? <video src={`/videos/hobby/${reel.video}`} controls playsInline preload="metadata" />

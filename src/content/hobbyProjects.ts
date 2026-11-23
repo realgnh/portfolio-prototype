@@ -66,7 +66,6 @@ export const hobbyProjects = {
 
   reel: {
     title: 'Animation reel',
-    summary: 'Animation is its own craft for me, separate from scripting: combat, emotes and cutscenes made in Roblox Studio and Blender.',
     // video: 'reel.mp4',
     video: undefined as string | undefined,
   },

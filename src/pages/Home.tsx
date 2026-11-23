@@ -24,7 +24,6 @@ export function Home() {
         <SectionHeading
           id="experience-title"
           title={sections.experience.heading}
-          intro={sections.experience.intro}
           action={<Link className="arrow-link" to="/experience">{sections.experience.all} <span aria-hidden="true">→</span></Link>}
         />
         <ExperienceList compact limit={sections.experience.homeCount} />

@@ -41,7 +41,6 @@ export function GitHubActivity() {
       <SectionHeading
         id="github-title"
         title={copy.heading}
-        intro={copy.intro}
         action={<a className="arrow-link" href={profileUrl} {...newTab}>{copy.profile} <span aria-hidden="true">↗</span></a>}
       />
       {state.status === 'error' && <p className="muted github-note">{copy.error} <a href={profileUrl} {...newTab}>{copy.profile}</a>.</p>}
