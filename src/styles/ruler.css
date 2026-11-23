@@ -18,8 +18,9 @@
     repeating-linear-gradient(90deg, var(--band-text) 0 1px, transparent 1px 120px) bottom / 100% 10px no-repeat;
   opacity: 0.45;
 }
-/* Inset track so the first and last keyframes (0% and 100%) aren't cut off at the screen edges. */
-.ruler-track { position: absolute; inset: 0 1.5rem 0 1.25rem; }
+/* The track spans the full width, so the playhead goes all the way from edge to edge.
+   Keyframes are clamped 10px inside the edges (ScrollRuler.tsx) so they're never cut off. */
+.ruler-track { position: absolute; inset: 0; }
 .ruler-fill {
   position: absolute; left: 0; width: 100%; bottom: 0; height: 3px; pointer-events: none;
   background: var(--accent-fill); transform-origin: left; transform: scaleX(var(--progress));
@@ -28,11 +29,11 @@
   position: absolute; top: 0; bottom: 0; left: 0; width: 100%; pointer-events: none;
   transform: translateX(calc(var(--progress) * 100%));
 }
-.ruler-playhead::before { /* the line */
-  position: absolute; top: 0; bottom: 0; left: -1px; width: 2px; background: var(--accent-fill); content: "";
+.ruler-playhead::before { /* the line (shifts inward at the very ends so it stays visible) */
+  position: absolute; top: 0; bottom: 0; left: calc(var(--progress) * -2px); width: 2px; background: var(--accent-fill); content: "";
 }
 .ruler-playhead::after { /* the handle */
-  position: absolute; top: 0; left: -7px; width: 14px; height: 9px; background: var(--accent-fill);
+  position: absolute; top: 0; left: calc(var(--progress) * -14px); width: 14px; height: 9px; background: var(--accent-fill);
   clip-path: polygon(0 0, 100% 0, 100% 45%, 50% 100%, 0 45%); content: "";
 }
 

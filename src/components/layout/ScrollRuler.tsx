@@ -165,7 +165,8 @@ export function ScrollRuler() {
             data-active={key.name === active || undefined}
             data-fit={fits[index] ?? 'hide'}
             data-passed={key.name !== active && keys.indexOf(key) < keys.findIndex(item => item.name === active) || undefined}
-            style={{ left: `${key.at * 100}%` }}
+            data-at={key.at.toFixed(4)}
+            style={{ left: `clamp(10px, ${(key.at * 100).toFixed(4)}%, calc(100% - 10px))` }}
             onClick={() => jumpTo(key)}
           >
             <span className="ruler-diamond" aria-hidden="true" />
