@@ -309,6 +309,13 @@ test('headings use Bricolage Grotesque and text uses IBM Plex Sans', async ({ pa
   expect(await page.evaluate(() => document.fonts.check('800 40px "Bricolage Grotesque"'))).toBe(true)
 })
 
+test('section headings have no grey sub-captions', async ({ page }) => {
+  await page.goto('/')
+  await expect(page.locator('.section-heading p')).toHaveCount(0)
+  await page.goto('/hobby-projects')
+  await expect(page.locator('.band-intro')).toHaveCount(0)
+})
+
 test('About is short and the Skills section has no card backgrounds', async ({ page }) => {
   await page.goto('/')
   const about = page.locator('#about')
@@ -723,11 +730,11 @@ test('the scroll ruler has one keyframe per scene on Home', async ({ page }) => 
   await expect.poll(() => page.evaluate(() => scrollY)).toBeGreaterThan(500)
   await expect(skills).toHaveAttribute('data-active', 'true')
   // Clicking lands the playhead exactly on the keyframe.
-  const at = await skills.evaluate(el => parseFloat((el as HTMLElement).style.left) / 100)
+  const at = await skills.evaluate(el => Number((el as HTMLElement).dataset.at))
   const progress = await ruler.evaluate(el => Number(getComputedStyle(el).getPropertyValue('--progress')))
   expect(Math.abs(progress - at)).toBeLessThan(0.004)
   // Keyframes are spread out, not stacked at the end.
-  const lefts = await ruler.locator('.ruler-key').evaluateAll(els => els.map(el => parseFloat((el as HTMLElement).style.left)))
+  const lefts = await ruler.locator('.ruler-key').evaluateAll(els => els.map(el => Number((el as HTMLElement).dataset.at) * 100))
   expect(new Set(lefts.map(left => Math.round(left))).size).toBe(lefts.length)
 })
 
@@ -751,6 +758,14 @@ test('the ruler runs from 0 at the top of the page to 1 at the bottom', async ({
   await expect(ruler.locator('.ruler-key').first()).toHaveAttribute('data-active', 'true')
   await page.evaluate(() => scrollTo(0, document.documentElement.scrollHeight))
   await expect.poll(progress).toBe(1)
+  // At the bottom the playhead reaches the right edge of the screen.
+  const width = page.viewportSize()!.width
+  const handle = await ruler.locator('.ruler-playhead').evaluate(el => {
+    const box = el.getBoundingClientRect()
+    const after = getComputedStyle(el, '::after')
+    return box.left + parseFloat(after.left) + parseFloat(after.width)
+  })
+  expect(handle).toBeGreaterThan(width - 2)
   await expect(ruler.locator('.ruler-key').last()).toHaveAttribute('data-active', 'true')
 })
 
