@@ -905,3 +905,15 @@ for (const width of [360, 768, 1440]) {
     })
   }
 }
+
+test('page titles have no sub-captions underneath', async ({ page }) => {
+  for (const path of ['/work', '/contact', '/experience', '/resume', '/hobby-projects']) {
+    await page.goto(path)
+    await expect(page.locator('main h1').first()).toBeVisible()
+    await expect(page.locator('main .lede')).toHaveCount(0)
+  }
+  await page.goto('/contact')
+  await expect(page.getByText('Email is the fastest way')).toHaveCount(0)
+  await page.goto('/work')
+  await expect(page.getByText('filterable by area')).toHaveCount(0)
+})
