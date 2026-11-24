@@ -65,6 +65,5 @@ export const profile = {
   /** How many projects appear in Selected work on Home (the first N in projects.ts; the first is the big one). */
   featuredCount: 3,
 
-  contactIntro: 'Have an internship, a project or a question about something I built? Email is the fastest way to reach me.',
   footerNote: 'Prototype · All names, links and outcomes are placeholders.',
 }

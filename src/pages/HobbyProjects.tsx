@@ -12,7 +12,7 @@ import { newTab } from '../lib/links'
  * Data: src/content/hobbyProjects.ts. Styles: "Hobby projects" in pages.css.
  */
 export function HobbyProjects() {
-  const { featured, games, systems, reel, intro } = hobbyProjects
+  const { featured, games, systems, reel } = hobbyProjects
   const copy = sections.hobby
 
   return (
@@ -21,7 +21,6 @@ export function HobbyProjects() {
         <Metadata title={pages.hobby.title} description={pages.hobby.description} />
         <header className="page-header" data-scene={pages.hobby.title}>
           <OnionText as="h1" id="hobby-title" text={pages.hobby.title} />
-          <p className="lede muted">{intro}</p>
         </header>
 
         <article className="game-featured" aria-labelledby="featured-game" data-scene={copy.featured}>

@@ -21,7 +21,6 @@ export function Resume() {
       <header className="page-header page-header-split">
         <div>
           <h1>{copy.heading}</h1>
-          <p className="muted">{copy.intro}</p>
         </div>
         <Button href={profile.resume.href} download>{profile.resume.label} <span aria-hidden="true">↓</span></Button>
       </header>

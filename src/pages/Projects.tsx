@@ -24,7 +24,6 @@ export function Projects() {
       <Metadata title={pages.projects.title} description={pages.projects.description} />
       <header className="page-header" data-scene="Work">
         <h1 id="projects-title">{pages.projects.title}</h1>
-        <p className="muted">{sections.projects.pageIntro}</p>
       </header>
       <div className="filter-row" role="group" aria-label="Filter projects by area">
         <button type="button" className="filter" aria-pressed={!area} onClick={() => choose(null)}>{sections.projects.allFilter}</button>
